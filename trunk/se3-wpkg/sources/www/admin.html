@@ -1,0 +1,983 @@
+<html>
+<!-- ## $Id$ ## -->
+<head>
+<meta http-equiv="content-style-type" content="text/css">
+<link  href='../style.css' rel='StyleSheet' type='text/css'>
+<meta http-equiv="content-type" content="text/html; charset=iso-8859-1">
+<title>Déploiement d'applications</title>
+<link  href='se3-wpkg.css' rel='StyleSheet' type='text/css'>
+<script language="javascript" src="testConfigWpkg.php"></script>
+<script language="javascript" src="WindowsUpdate.js"></script>
+<script type = "text/javascript">
+
+	var WindowObjectReference; // objet autre fenetre 
+	var Debug=false;
+	// dans testConfigWpkg.php
+	//
+	var PageEnCours="PackagesProfiles";
+	var PageDestination;
+
+	var wpkgXml="wpkg.php";
+	var urlUpload="index.php?upload=1";  // http://se3:909/wpkg/index.php?upload=1
+
+	// url de la page fournissant les packages officiels SambaEdu
+	//var urlWawadeb="http://www.etab.ac-caen.fr/serveurmalherbe/se3/wpkg/packages/packages.html"
+	var urlWawadeb="http://www.crdp.ac-caen.fr/forum/index.php";
+	// url du fichier md5sum sur le secure serveur
+	//var urlWawadebMD5="http://www.etab.ac-caen.fr/serveurmalherbe/se3/wpkg/packages/packages.md5";
+	var urlWawadebMD5="http://www.crdp.ac-caen.fr/forum/se3_wpkglist.php";
+	var se3urlWawadeb;
+
+	var UpdateEnCours="";
+	// transformation pour afficher le tableau profiles x Apps
+	var PackagesProfiles="PackagesProfiles.xsl";
+	// transformation bidon (en fait c'est du html fixe) pour afficher la page upload des applis
+	var AjoutPackage="AjoutPackage.xsl";
+	// transformation pour afficher la définition d'un profile
+	var AfficheProfile="AfficheProfile.xsl";
+	//var ProfileEnCours="_TousLesPostes";
+	var ProfileEnCours="";
+	// transformation pour afficher la définition d'un package
+	var AffichePackage="AffichePackage.xsl";
+	var PackageEnCours="";
+	// transformation pour afficher le détail d'un poste (host)
+	var AfficheHost="AfficheHost.xsl";
+	var HostEnCours="", ipHost;
+	
+	var nav="inconnu";
+	var nCmdWait = 0;
+	var iCmd = 0;
+	var wpkgDoc;  // Contiendra le document wpkg.xml
+	var Profiles; // Liste des profiles  (dans /wpkg/profiles/profile)
+	var ListProfiles; // Liste des profiles  (dans /wpkg/profiles/profile)
+
+	var documentEnCours;
+	var inChangePageEnCours = false; // indique si un calcule de rafraichissement de page est en cours
+	
+	var Tableau, ordre ;
+	var headTableau=''; // pour IE
+	var nChamps;
+	var KeyActuel;
+	
+	var sortPackages='ascending'; //ordre de tri des Packages sur la page 'Associations Appli.<->Parcs'
+	var sortProfiles='ascending'; //ordre de tri des Parcs sur la page 'Associations Appli.<->Parcs'
+	
+	var busy = 0; // cursor busy
+	var noReloadWpkgXml = false; //pour empêcher la relecture de wpkg.xml
+	var AssocierOperation, AssocierIdProfile, AssocierIdPackage;
+	var aXmlDoc = new Array();  //  wpkg.php (contient hosts, packages, rapports) , profiles.php, timeStamps.php, wpkglist.php, wpkgtesting.php
+	//var aUrl = new Array('wpkg.php', 'profiles.php', 'timeStamps.php', 'wpkglist.php', 'wpkgtesting.php');  //  wpkg.php (contient hosts, packages, rapports) , profiles.php, timeStamps.php, wpkglist.php, wpkgtesting.php
+	var aLastModified = new Array();  //  date de modif des fichiers
+	var aIsModified = new Array();  //  aXmlDoc a été mis à jour
+	var aXmlNeeded = new Array();  //  array des xml nécessaires à la construction de wpkgDoc
+	
+	var decalX=0, decalY=0, H, L, X, Y; // scrolling de la page PackagesProfiles
+	
+	var MAJPackages = 0;
+	
+	if (window.ActiveXObject) var LastModified = new ActiveXObject("Scripting.Dictionary");
+
+	///////////////////////////////////
+	function FirstLoad(evt){
+		//processParameters();
+		// Teste si la configuration de wpkg a été effectuée par l'admin
+		var i, j;
+		var s="", t, lien;
+		var destPage;
+		try {
+			if (window.XSLTProcessor && window.XMLHttpRequest) {
+				// Navigateur type Firefox
+				window.nav='firefox'
+			} else if (window.ActiveXObject) {
+				window.nav = "ie";				
+			} else {
+				alert("Pas de processeur xml pour ce navigateur");
+				return 0;
+			}				
+		} catch (e) {
+			alert("FirstLoad\n" + e);
+			return e;
+		}
+				
+		//alert("In Firstload\nwpkgAdmin=" + wpkgAdmin + "\nwpkgUser=" + wpkgUser + "\nlogin=" + login);
+		alertConfigWpkg();
+		if ( ShowParcsUpdateLink ) document.getElementById("liensUpdateParcs").style.display = "block";
+		
+		document.getElementById("Debian").innerHTML = Debian;
+		//document.getElementById("bonjour").innerHTML = "Bonjour " + login + ( wpkgAdmin ? " (wpkgAdmin)" : wpkgUser ? " (wpkgUser)" : " (?)" );
+		document.getElementById("bonjour").innerHTML = "Bonjour " + login ;
+		destPage = processParameters();
+		var TagA;
+		var TmpPageDest;
+		
+		//alert( "typeof(parent.frames['menu']=" + typeof parent.frames["menu"]);
+		if ( (typeof parent.frames["menu"]) != 'undefined' ) {
+			// Changement des liens du menu
+			documentEnCours = parent.frames["main"].document;
+			parent.frames["main"].onunload = quitter;
+			//alert("in FirstLoad : onunload=\n" + onunload);
+			TagA = parent.frames["menu"].document.getElementsByTagName("a");
+			//alert("testencours=" + typeof(TagA) + " length=" + TagA.length);
+			for (i = 0; i< TagA.length; i++) {
+				t = TagA[i];
+				lien = t.getAttribute("href");
+				j = lien.indexOf("wpkg/admin.html?PageEnCours=");
+				if ( j >= 0 ) {
+					//alert("in FirstLoad, lien=" + lien + ", j=" + j);
+					TmpPageDest = lien.substr(j+28);
+					t.setAttribute("href", "javascript:ChangePageEnCoursFromMenu('" + TmpPageDest + "');");
+				}
+			}
+		} else {
+			documentEnCours = document;
+		}
+		
+		ChangePageEnCours(destPage, true);
+		
+	}
+	function testUpdatedXml() {
+		var forceRefresh = documentEnCours.getElementById("forceRefresh").checked;
+		// Appelé à partir de AjoutPackage.xsl
+		MAJPackages = 1;
+		//alert("In testUpdatedXml() MAJPackages=" + MAJPackages + ", forceRefresh=" + forceRefresh);
+		var target = documentEnCours.getElementById("transform");
+		target.innerHTML = "Accès au serveur www.crdp.ac-caen.fr. Veuillez patienter ...";
+		// Mise à jour des applis du forum
+		var http = null; 
+		if(window.nav=='firefox') // Firefox 
+			http = new XMLHttpRequest(); 
+		else if(window.nav=='ie') // Internet Explorer 
+			http = new ActiveXObject("Microsoft.XMLHTTP"); 
+		else { // XMLHttpRequest non supporté par le navigateur 
+			alert("Votre navigateur ne supporte pas les objets XMLHTTPRequest..."); 
+			return false; 
+		} 
+		// Requete en mode asynchrone
+		//var url = "wpkgtesting.php";
+		var url = "wpkglist.php";
+		if ( forceRefresh ) {
+			url += "?refresh=1";
+		}
+		//if (urlWawadebMD5 == "http://www.crdp.ac-caen.fr/forum/se3_wpkglist.php" ) {
+		//	url = "wpkglist.php";
+		//}
+		http.open("GET", url , true); 
+		http.onreadystatechange = function() { 
+			if (http.readyState == 4) {
+				if ( http.status == "200" ) {
+					//alert("http.status = " + http.status + "\n" + http.responseText); 
+					ChangePageEnCours('AjoutPackage');
+				} else {
+					target.innerHTML = http.responseText; 
+					alert("http.status = " + http.status + "\n" + http.responseText);
+					ChangePageEnCours('AjoutPackage');
+				}
+			}
+		}
+		http.send(null); 
+		
+		
+	}
+	function dateFromIso8601(iso8601) {
+		//var d = new Date('06/09/2007 23:51:18+0200'); 
+		//2007-06-07T21:35:36+0000
+		if (iso8601 == "") {
+			return "";
+		} else {
+			var d0;
+			d0 = iso8601.substr(5 , 2) + '/' + iso8601.substr(8 , 2) + '/' + iso8601.substr(0 , 4) + ' ' + iso8601.substr(11, 8) + ' ' + iso8601.substr(19, 5) ;
+			//alert ("iso8601=" + iso8601 + ", d0=" + d0);
+			//var dInt = Date.parse(d0); 
+			var d = new Date(Date.parse(d0));
+			//return "iso8601="+iso8601+"<br>d0='"+d0+"'<br>" + d.toLocaleString();
+			return d.toLocaleString();
+		}
+	}
+
+	function updateTableau() {
+		//alert("In updateTableau");
+		var i, l;
+		var idScriptTableau = document.getElementById('ScriptTableau');
+		if ( idScriptTableau != null ) {
+			var InitTableau = idScriptTableau.innerHTML;
+			// initialise le tableau en exécutant le script
+			eval(InitTableau);
+			//alert("In updateTableau : typeof Tableau=" + (typeof Tableau) + "\nTableau.length=" + Tableau.length);
+			if ( Tableau.length > 0 ) {
+				if (nav == 'ie') {
+					try {
+						if (headTableau == '')	headTableau = document.getElementById('headTableau').innerHTML;
+						var r = '<table class="postes"><thead id="headTableau">' + headTableau + '</thead><tbody id="bodyTableau">' + Tableau.join("") + '</tbody></table>';
+						try {
+							document.getElementById('divTableau').innerHTML =  r;
+							nChamps = Tableau[0].length - 2; // indice du champ n°
+						} catch (e) {
+							alert( "Erreur updateTableau : innerText : r=\n" + r + "\n" +e + "\n" + e.description);
+						}
+					} catch (e) {
+						alert("Erreur updateTableau InitTableau : InitTableau=\n" + InitTableau + "\n" +e);
+						return e;
+					}
+				} else {
+					var idTableau = documentEnCours.getElementById('bodyTableau');
+					if ( idTableau != null ) {
+						
+						idTableau.innerHTML = Tableau.join("");
+						//alert("updateTableau : Tableau.length=" + Tableau.length);
+						nChamps = Tableau[0].length - 2; // indice du champ n°
+					}
+				}
+				if ( (typeof ordre) == 'object' ) {
+					//alert("In updateTableau ordre.length=" + ordre.length + "\nordre=" + ordre + "\nnChamps=" + nChamps);
+					tri(nChamps+1); // tri pour rétablir l'ordre du tableau avant le rafraichissement de la page
+				} else {
+					// alert("In updateTableau typeof ordre=" + (typeof ordre));
+					l = Tableau.length;
+					ordre = new Array(l);
+					for (i=0; i<l; i++ ) ordre[i] = i;
+					//alert("In updateTableau avant tri nChamps=" + nChamps);
+					try {
+						tri(nChamps + 1);
+					} catch (e) {
+						alert("Erreur updateTableau tri : nChamps=" + nChamps + "\n" +e);
+						return e;
+					}
+					//alert("In updateTableau apres tri");
+				}
+			}
+		}
+	
+	}
+	function processParameters() {
+		// lit les paramètres passés lors de l'appel de la page html
+		var destPage = PageEnCours;
+		var parameters = location.search.substring(1).split("&");
+		
+		var temp = parameters[0].split("=");
+		var varName;
+		var varVal;
+		varName = unescape(temp[0]);
+		varVal = unescape(temp[1]);
+		if ( varName == 'PageEnCours' ) destPage = unescape(temp[1]);
+		//alert("varName=" + varName + ", varVal=" + varVal);
+		return destPage;
+	}
+	function to_utf8 (doc) {
+		// Function inutilisée
+		if (window.nav=='firefox') {
+			// Navigateur type Firefox
+			//window.nav='firefox'
+			var processor;
+			//alert("typeof(doc)=" + typeof(doc));
+			var xslt= document.implementation.createDocument("", "", null);
+			//alert("xsl=" +xsl + ", xslt défini!");
+			xslt.async=false;
+			xslt.load(to_utf8.xsl);
+			if (Debug) alert(xsl + " chargé ! , typeof(xslt)=" + typeof(xslt));
+			processor = new XSLTProcessor();
+			try {
+				processor.importStylesheet(xslt);
+				try {
+					//var resultat = processor.transformToFragment(doc, document);
+					var resultat = processor.transformToDocument(doc);
+					return resultat;
+					
+				} catch (e) {
+					alert("processor.transformToDocument(doc)\n" + e);
+					return e;
+				}
+			} catch (e) {
+				alert("processor.importStylesheet(xslt)\n" + e);
+				return e;
+			}
+		}
+	}
+
+
+	function GetHTML(url){
+		var XmlHttp;
+		if (window.nav=='firefox') // Firefox 
+			XmlHttp = new XMLHttpRequest(); 
+		else if(window.nav=='ie') // Internet Explorer 
+			XmlHttp = new ActiveXObject("Microsoft.XMLHTTP"); 
+		
+		XmlHttp.open('GET', url, true);
+		XmlHttp.onreadystatechange = function() {
+			var runfunction2 = runfunction;
+			if ( XmlHttp.readyState == 4 ) {
+				alert(url + " XmlHttp.readyState == 4, XmlHttp.status=" + XmlHttp.status);
+				window.aLastModified[url] = XmlHttp.getResponseHeader('Last-Modified');
+				window.aXmlDoc[url] = XmlHttp.responseXML;
+				window.aIsModified[url] = true;
+				window.aXmlNeeded[url] = false;
+				//buildWpkgXml(runfunction);
+			}
+		}
+		XmlHttp.send(null);
+	}
+	function PP(evt, idSrc, redraw) {
+		// appellé lors d'un click sur une case du Tableau profiles/packages (de la page PackageProfile)
+		// ou lors d'un clic sur une case 'Installer sur ce poste' (de la page AfficheHost ou AffichePackage)
+		// idSrc de la forme : "idProfile:idPackage"
+		if (typeof redraw == "undefined") redraw = false;
+
+		var e = (evt ? evt : window.event);
+		var eltsrc = (e.target ? e.target : e.srcElement);
+		
+		var a;
+		a = idSrc.split(":");
+		//alert("a.length=" + a.length + "\nidSrc=" + idSrc);
+		var idProfile = a[0];
+		var idPackage = a[1];
+		var status;
+		PackageEnCours=idPackage;
+		status = eltsrc.style.zIndex;
+		// zIndex = 3 : Non installé
+		// zIndex = 4 : installé
+		
+		var checked = (status==4 ) ? true : false;
+		//alert("in PP idPackage=" + idPackage + "\nidProfile=" + idProfile + "\nredraw=" + redraw + "\nchecked=" + checked);
+
+		try {
+
+			if (status==4) {
+				// On retire l'association
+				try {
+					associer(eltsrc, idProfile, idPackage, 'Dissocier', redraw);
+				} catch (e) {
+					alert("Suppression association\n" + e + "\n" + e.description);
+					return e;
+				}
+			} else {
+				// On ajoute l'association
+				try {
+					try {
+						//updateCmdWait ( ++nCmdWait );
+						associer(eltsrc, idProfile, idPackage, 'Associer', redraw);
+					} catch (e) {
+						alert("Cmd Associer\n" + e);
+						return e;
+					}
+				} catch (e) {
+					alert("Ajout association\n" + e);
+					return e;
+				}
+			}
+		} catch (e) {
+			alert("PP()\n" + e);
+			return e;
+		}
+		// alert ("Sortie PP()");
+		return true;
+	}
+	function modeDebug() {
+		Debug = document.getElementById("idDebug").checked;
+		ChangePageEnCours('PackagesProfiles');
+	}
+	function defPackage(idPackage) {
+		// Affichage de la page de définition du Package
+		PackageEnCours=idPackage;
+		ChangePageEnCours('AffichePackage');
+		//setTimeout("document.getElementById('idPackage').focus();", 200);
+	}
+	function defParcPackage(idPackage) {
+		// Affichage de la page de définition du Package
+		PackageEnCours=idPackage;
+		ChangePageEnCours('AffichePackage');
+		setTimeout("document.getElementById('idParcPackage').focus();", 200);
+	}
+	function defProfile(idProfile) {
+		// Affichage de la page de définition du Profile
+		ProfileEnCours=idProfile;
+		ChangePageEnCours('AfficheProfile');
+		//setTimeout("document.getElementById('idProfile').focus();", 200);
+	}
+	function defHost(idHost) {
+		// Affichage de la page de détail d'un poste
+		HostEnCours=idHost;
+		ChangePageEnCours('AfficheHost');
+		//setTimeout("document.getElementById('idHost').focus();", 200);
+	}
+	function posteini(NomPoste, Param, Valeur) {
+		var url, contentHtml;
+		url = "posteconf.php?Poste=" + NomPoste + "&Param=" + Param + "&Valeur=" + Valeur;
+		// alert("NomPoste=" + NomPoste + ", Param=" + Param + ", Valeur=" + Valeur + "\nurl=" + url);
+		documentEnCours.getElementById("posteparam").innerHTML = getHttp( url, "html" );
+	}
+	function startHost(NomPoste, AddIp, Masque, Mac) {
+		var Broadcast, i;
+		var ArrAddIp, ArrMasque, ArrBroadcast = new Array();
+		// Nettoyage des chaines par prudence
+		AddIp = AddIp.replace( /[^0-9\.]/g , "" );
+		Masque = Masque.replace( /[^0-9\.]/g , "" );
+		ArrAddIp = AddIp.split(".");
+		if ((typeof(Masque) == 'undefined') || (Masque == '')) {
+			Masque = "255.255.255.0";
+		}
+		ArrMasque = Masque.split(".");
+		
+		//alert("ArrAddIp.length=" + ArrAddIp.length + ", ArrMasque.length=" + ArrMasque.length );
+		for ( i in ArrAddIp) {
+			ArrBroadcast[i] = eval( "(" + ArrAddIp[i] + " | ( ~ " + ArrMasque[i] + ")  & 0xFF )" );
+		}
+		Broadcast = ArrBroadcast.join(".");
+		// alert("Envoi d'une trame réseau pour démarrer le poste '" + NomPoste + "'.\n" + "\nwakeonlan -i " + Broadcast + " " + Mac);
+		getHttp( "restart-client.php?Poste=" + NomPoste + "&Broadcast=" + Broadcast + "&Mac=" + Mac  + "&Ip=" + AddIp );
+		
+	}
+	function getHttp( url, content) {
+		// envoi une requête http et affiche le résultat dans une alert
+		var http = null; 
+		if(window.nav=='firefox') // Firefox 
+			http = new XMLHttpRequest(); 
+		else if(window.nav=='ie') // Internet Explorer 
+			http = new ActiveXObject("Microsoft.XMLHTTP"); 
+		else { // XMLHttpRequest non supporté par le navigateur 
+			alert("Votre navigateur ne supporte pas les objets XMLHTTPRequest..."); 
+			return false; 
+		} 
+		
+		if (typeof(content) == "undefined") {
+			// Requete en mode asynchrone
+			http.open("GET", url , true); 
+			http.onreadystatechange = function() { 
+				if (http.readyState == 4) {
+					if ( http.status != "200" ) {
+						alert("http.status = " + http.status + "\n" + http.responseText); 
+					} else {
+						alert(http.responseText); 
+					}
+				}
+			}
+			http.send(null); 
+		} else if (content == "html"){
+			// Requete en mode synchrone
+			http.open("GET", url , false); 
+			http.send(null); 
+			if(http.readyState == 4) {
+				if ( http.status != "200" ) {
+					alert("http.status = " + http.status + "\n" + http.responseText); 
+				} else {
+					return http.responseText;
+				}
+			}
+		}
+	}
+	
+	function tri(key, evt) {
+		
+		var evnt = (evt ? evt : window.event);
+		//alert("In tri apres var evnt : typeof evnt=" + (typeof evnt));
+		try {
+			var eltsrc = ((typeof evnt == "undefined") ? undefined : (evnt.target ? evnt.target : evnt.srcElement));
+		} catch (e) {
+			//var eltsrc = "undefined";
+		}
+		var sens=0;
+		
+		//alert("In tri apres var eltsrc");
+		
+		KeyActuel = key;
+		//alert("In tri : nav=" + nav);
+		if (nav == "ie") {
+			headTableau = '';
+			//alert("In tri apres var : typeof eltsrc=" + typeof eltsrc);
+			if ((typeof eltsrc) != "undefined" ) {
+				if ( eltsrc.id == '') {
+					if (eltsrc.style.cursor == "ne-resize") {
+						Tableau.sort(triTableau);
+						eltsrc.style.cursor = "nw-resize";
+					} else {
+						Tableau.sort(triRevTableau);
+						eltsrc.style.cursor = "ne-resize";
+					}
+				}
+			} else {
+				// tri pour remettre le résultat du dernier tri
+				//alert("In tri : KeyActuel=" + KeyActuel + ", nChamps=" + nChamps + " typeof ordre=" + typeof ordre);
+				try {
+					Tableau.sort(triTableau);
+				} catch (e) {
+					alert("Erreur Tableau.sort \n" + e + "\n" + e.description);
+				}
+				//alert("In tri apres Tableau.sort");
+			}
+		} else {
+			// firefox
+			if ((typeof eltsrc) != "undefined" ) {
+				if (eltsrc.style.cursor == "ne-resize") {
+					Tableau.sort(triTableau);
+					eltsrc.style.cursor = "nw-resize";
+				} else {
+					Tableau.sort(triRevTableau);
+					eltsrc.style.cursor = "ne-resize";
+				}
+			} else {
+				// tri pour remettre le résultat du dernier tri
+				Tableau.sort(triTableau);
+			}
+		}
+		
+		var i;
+		var nli = Tableau.length;
+		
+		//alert("In tri : Tableau.length=" + Tableau.length + "\nsens=" + sens + "\nkey=" + key);
+		for (i=0; i<nli; i++) ordre[Tableau[i][nChamps]] = i;
+		if (nav == 'ie') {
+			if (headTableau == '')	headTableau = documentEnCours.getElementById('headTableau').innerHTML;
+			var r = '<table class="postes"><thead id="headTableau">' + headTableau + '</thead><tbody id="bodyTableau">' + Tableau.join("") + '</tbody></table>';
+			documentEnCours.getElementById('divTableau').innerHTML =  r;
+		} else {
+			var idTableau = documentEnCours.getElementById('bodyTableau');
+			idTableau.innerHTML = Tableau.join("");
+		}
+	}
+	function triTableau(a, b) {
+		//alert("a[" + KeyActuel+"]="+a[KeyActuel]+" <> "+b[KeyActuel]+"=b[" + KeyActuel + "]");
+		try {
+			if(a[KeyActuel] > b[KeyActuel]) {
+				return 1;
+			} else if(a[KeyActuel] < b[KeyActuel]) {
+				return -1;
+			} else {
+				//alert("a[" + KeyActuel+"]="+a[KeyActuel]+" <> "+b[KeyActuel]+"=b[" + KeyActuel + "]\n" + (typeof ordre[a[nChamps]]) + "\n" + (typeof ordre[b[nChamps]]));
+				if ( (typeof ordre[a[nChamps]]) == 'undefined' ) {
+					return 0;
+				} else {
+					if ( (typeof ordre[b[nChamps]]) == 'undefined' ) {
+						return 0;
+					} else {
+						return ordre[a[nChamps]] - ordre[b[nChamps]] ;
+					}
+				}
+			}
+		} catch(e) {
+			alert("Erreur : triTableau e=" + e + "\n" + e.description);
+		}
+
+	}
+	function triRevTableau(a, b) {
+		try {
+			if(a[KeyActuel] > b[KeyActuel])	return -1;
+			if(a[KeyActuel] < b[KeyActuel])	return 1;
+			return ordre[a[nChamps]] - ordre[b[nChamps]] ;
+		} catch(e) {
+			alert("Erreur : triRevTableau e=" + e + "\n" + e.description);
+		}
+	}
+	function associer(eltsrc, idProfile, idPackage, Associer, redraw) {
+		var http = null; 
+		if(window.nav=='firefox') // Firefox 
+			http = new XMLHttpRequest(); 
+		else if(window.nav=='ie') // Internet Explorer 
+			http = new ActiveXObject("Microsoft.XMLHTTP"); 
+		else { // XMLHttpRequest non supporté par le navigateur 
+			alert("Votre navigateur ne supporte pas les objets XMLHTTPRequest..."); 
+			return false; 
+		} 
+		
+		updateCmdWait ( ++nCmdWait );
+		
+		if ( Associer == "Associer" ) {
+			eltsrc.style.zIndex = 4;
+			eltsrc.style.backgroundColor = "#6699CC";
+		} else {
+			eltsrc.style.zIndex = 3;
+			eltsrc.style.backgroundColor = "#F0F8FF";
+		}
+		eltsrc.style.borderColor = "#FF80A0";
+		with (documentEnCours.getElementById("idBusy").style) {
+			cursor = "wait";
+			zIndex = "10";
+			height = documentEnCours.body.scrollHeight;
+			display = "block";
+		}
+		
+		if (redraw) {
+			//alert("in associer  Appel ChangePageEnCours(" + PageEnCours + ")");
+			with (documentEnCours.getElementById("idBusy").style) {
+				cursor = "default";
+				zIndex = "-1";
+				height = documentEnCours.body.scrollHeight;
+				display = "none";
+			}
+		}
+		//alert("associer(idProfile=" + idProfile + ", idPackage=" + idPackage + ", Associer=" + Associer + ",redraw=" + redraw + "\neltsrc.onclick=" + eltsrc.onclick + ")");
+		
+		try {
+			http.open("GET", "index.php?iCmd=" + iCmd + "&associer=" + Associer + "&idPackage=" + idPackage + "&idProfile=" + idProfile, true); 
+		//	http.setRequestHeader("Content-Type","text/xml");
+			try {
+				http.onreadystatechange = function(Associer, idPackage, idProfile) { 
+					if (http.readyState == 4) {
+						var localRedraw = redraw;
+						var localPageEnCours = PageEnCours;
+						var Appli = idPackage;
+						var Parc = idProfile;
+						var Operation = Associer;
+						var src = eltsrc;
+						var NomPackage = idPackage;
+						if ( http.status == "200" ) {
+							src.style.borderColor = "#8080A0";
+							// Mise à jour du doc Xml
+							updateCmdWait ( --nCmdWait );
+							if (localRedraw && (nCmdWait == 0)) {
+								//alert("in associer  Appel ChangePageEnCours(" + PageEnCours + ")");
+								ChangePageEnCours(localPageEnCours, true);
+							}
+							//alert("Les données ont été sauvegardées!\nhttp.status=" + http.status + "\n" + http.responseText+ "\nAppli=" + Appli + "\nParc=" + Parc+ "\nOperation=" + Operation +"\nnCmdWait=" + nCmdWait); 
+						} else {
+							// Refus de la modif => on remet comme c'était
+							
+							if ( http.status == "403" ) {
+								alert("Vous n'êtes pas autorisé à effectuer cette opération.\n\n" + http.responseText + "\nLa modification demandée a été refusée.\n"); 
+							} else {
+								alert("Erreur : Les données n'ont pas été sauvegardées!\nhttp.status=" + http.status + "\n" + http.responseText); 
+							}
+							//alert("typeof CePackage = " + (typeof CePackage) + "\nsrc.style.zIndex = " + src.style.zIndex + "\nsrc.style.zIndex=" + src.style.zIndex + "\nAppli=" + Appli + "\nParc=" + Parc+ "\nOperation=" + Operation);
+							// Rafraichissement de la page
+							ChangePageEnCours(localPageEnCours, true);
+							updateCmdWait ( --nCmdWait );
+						}
+						with (documentEnCours.getElementById("idBusy").style) {
+							cursor = "default";
+							zIndex = "-1";
+							//height = documentEnCours.body.scrollHeight;
+							height = 1;
+							display = "none";
+							//height = "0px";
+						}
+					} else {
+						//alert( "http.readyState=" + http.readyState);
+					} 
+				}
+				
+				try {
+					http.send("");
+				
+				} catch (e) {
+					alert("http.send('')\n" + e);
+					return e;
+				}
+			} catch (e) {
+				alert("http.onreadystatechange = function()\n" + e);
+				return e;
+			}
+		} catch (e) {
+			alert("http.open('POST', 'index.php?....', true)\n" + e);
+			return e;
+		}
+		return		
+	}
+	function cursorBusy(busy) {
+		//alert("busy=" + busy);
+		if ( busy > 0 ) {
+			//documentEnCours.body.style.cursor = "wait";
+			with (documentEnCours.getElementById("idBusy").style) {
+				cursor = "wait";
+				zIndex = "10";
+				height = documentEnCours.body.scrollHeight;
+				//display = "none";
+				//height = "0px";
+			}
+		} else {
+			//documentEnCours.body.style.cursor = "default";
+			//documentEnCours.getElementById("idBusy").style.display = "none";
+			with (documentEnCours.getElementById("idBusy").style) {
+				cursor = "pointer";
+				zIndex = "-10";
+				height = documentEnCours.body.scrollHeight;
+				display = "block";
+				//height = "0px";
+			}
+		}
+	}
+	function updateCmdWait (nCmdWait) {
+		// Indique si les données du serveur sont à jour
+		if (nCmdWait == 0 ) {
+			documentEnCours.getElementById("Etat").src = "img/etat_ok.gif";
+			//ChangePageEnCours(PageEnCours, false);
+		} else {
+			documentEnCours.getElementById("Etat").src = "img/etat_transfert.gif";
+		}
+		//documentEnCours.getElementById("nCmdWait").innerHTML = nCmdWait;
+	}
+
+	function ChangePageEnCours(destPage, forceReload) {
+		var url="AffichePage.php?page=" + destPage;
+		//alert("In ChangePageEnCours(destPage=" + destPage + ", forceReload=" + forceReload);
+	//busy++ ;
+		//documentEnCours.body.style.cursor = "wait";
+		//documentEnCours.getElementById("transform").innerHTML = "Construction de la page en cours ...";
+		documentEnCours.getElementById("ImgBusy").style.display = "block";
+		if (typeof forceReload == "undefined") forceReload = false;
+		if ( typeof destPage == "undefined" ) destPage = PageEnCours;
+		PageDestination = destPage;
+		
+		var http = null; 
+		if(window.nav=='firefox') { // Firefox 
+			http = new XMLHttpRequest(); 
+			url += "&Navigateur=firefox" + "&stamp=" + Math.round(100000*Math.random( ));
+		} else if(window.nav=='ie') { // Internet Explorer 
+			http = new ActiveXObject("Microsoft.XMLHTTP");
+			url += "&Navigateur=ie" + "&stamp=" + Math.round(100000*Math.random( ));			
+		} else { // XMLHttpRequest non supporté par le navigateur 
+			alert("Votre navigateur ne supporte pas les objets XMLHTTPRequest..."); 
+			return false; 
+		}
+		
+		switch (destPage) {
+			case "WindowsUpdate" :
+				
+				break;
+			case "PackagesProfiles" :
+				url += "&sortPackages=" + sortPackages + "&sortProfiles=" + sortProfiles;
+				break;
+			case "AjoutPackage" : 
+				url += "&urlWawadebMD5=" + urlWawadebMD5 + "&urlWawadeb=" + urlWawadeb + "&MAJPackages=" + MAJPackages;
+				MAJPackages=0;
+				break;
+			case "AfficheProfile" : 
+				url += "&idProfile=" + ProfileEnCours;
+				break;
+			case "AffichePackage" : 
+				url += "&idPackage=" + PackageEnCours + "&idProfile=" + ProfileEnCours;
+				break;
+			case "AfficheHost" : 
+				url += "&idHost=" + HostEnCours;
+				break;
+		}
+		
+		if (destPage != PageEnCours) ordre = undefined;
+		headTableau='';
+		window.inChangePageEnCours = true;
+		with (documentEnCours.getElementById(PageEnCours)) {
+			src = "img/" + PageEnCours + "0.gif";
+			with (parentNode) {
+				style.zIndex = 1;
+			}
+		}
+		// Requete en mode asynchrone
+		//alert("In ChangePageEnCours url=" + url); 
+		http.open("GET", url , true); 
+		http.onreadystatechange = function() { 
+			if (http.readyState == 4) {
+				if ( http.status != "200" ) {
+					alert("http.status = " + http.status + "\n" + http.responseText); 
+				} else {
+					// alert("http.status = " + http.status + "\n" + http.responseText); 
+					documentEnCours.getElementById("transform").innerHTML = http.responseText;
+					with (documentEnCours.getElementById(destPage)) {
+						src = "img/" + destPage + ".gif";
+						with (parentNode) {
+							style.zIndex = 2;
+						}
+					}
+					PageEnCours = destPage;
+					updateTableau();
+					window.inChangePageEnCours = false;
+					documentEnCours.getElementById("ImgBusy").style.display = "none";
+					with (documentEnCours.getElementById("idBusy").style) {
+						cursor = "default";
+						zIndex = "-1";
+						height = documentEnCours.body.scrollHeight;
+						display = "none";
+					}
+					if ( PageEnCours == 'AfficheHost' ) {
+						//alert("typeof initConsoleWpkg = " + typeof initConsoleWpkg + "\nipHost=" + ipHost);
+						var idinitConsoleWpkg = document.getElementById('initConsoleWpkg');
+						if ( idinitConsoleWpkg != null ) {
+							var initConsoleWpkg = idinitConsoleWpkg.innerHTML;
+							// initialise la console
+							//alert("initConsoleWpkg = " + initConsoleWpkg);
+							eval(initConsoleWpkg);
+						}
+					}
+				}
+			}
+		}
+		http.send(null); 
+	}
+	function onclickSelectMajAppli(appliIsChk, numero, forumEnCours, autreforumExiste) {
+		// Mise à jour des checkboxes du tableau pour actualisation OK si un tri est demandé
+		//alert("appliIsChk=" + appliIsChk + ", numero=" + numero + "\nTableau[numero][0]=" + Tableau[numero][0] + "\n" + Tableau[numero][1]);
+		//alert("appliIsChk=" + appliIsChk + ", numero=" + numero + "\nforumEnCours=" + forumEnCours + "\nautreforumExiste=" + autreforumExiste);
+		if (appliIsChk) {
+			if ( autreforumExiste == 'test' || autreforumExiste == 'stable') {
+				alert("Attention : cette application est également disponible en version '" + autreforumExiste + "'\nSoyez sûr que la version que vous installez est bien celle que vous souhaitez");
+			}
+			Tableau[numero][0] = Tableau[numero][0].replace('<input ', '<input checked="true" ');
+			Tableau[numero][1] = true;
+		} else {
+			Tableau[numero][0] = Tableau[numero][0].replace('<input checked="true" ', '<input ');
+			Tableau[numero][1] = false;
+		}
+	}
+	function ChangePageEnCoursFromMenu(destPage) {
+		//alert("in ChangePageEnCoursFromMenu=" + typeof parent.frames["main"].document);
+		documentEnCours = parent.frames["main"].document;
+		with (parent.frames["main"] ) {
+			ChangePageEnCours(destPage);
+		}
+	}
+	function aurevoir (event) {
+
+		if ( ! nCmdWait == 0 ) {
+			return "Les données saisies n'ont pas été complètement sauvegardées !\n" +
+					"\nVoulez-vous quand même quitter cette page ?\n" ;
+		}
+	}
+	window.onunload = quitter;
+	window.onresize = scroll;
+	function quitter (event) {
+		var TagA, t;
+		var i, j , k;
+		//alert("in quitter : typeof parent.frames['menu']=" + typeof parent.frames["menu"]);
+		if ( (typeof parent.frames["menu"]) != 'undefined' ) {
+			//remet les liens d'origine dans le menu
+			TagA = parent.frames["menu"].document.getElementsByTagName("a");
+			//alert("in quitter : " + typeof(TagA) + " length=" + TagA.length);
+			for (i = 0; i< TagA.length; i++) {
+				t = TagA[i];
+				lien = t.getAttribute("href");
+				j = lien.indexOf("ChangePageEnCoursFromMenu");
+				//alert("typeof lien=" +  typeof lien + ", lien=" + lien);
+				if ( j >= 0 ) {
+					k = lien.indexOf("');");
+					//alert("in quitter, Nouveau lien=\n" + "/wpkg/admin.html?PageEnCours=" + lien.substring(27+j, k) + "\nj=" + j + ", k=" + k);
+					if (k > 0) {
+						t.setAttribute("href", "/wpkg/admin.html?PageEnCours=" + lien.substring(27+j, k));
+					} else {
+						alert("quitter : Error lien non conforme :\nlien=" + lien);
+					}
+				}
+			}
+		}
+	}
+
+	
+	function scroll() {
+		//alert("document.readyState=" + document.readyState);
+		if ( PageEnCours == 'PackagesProfiles' ) {
+			var idOnglets = documentEnCours.getElementById("Onglets");
+				
+			with (documentEnCours.body) {
+				H = (clientHeight)?clientHeight:documentEnCours.documentElement.clientHeight;
+				L = (clientWidth)?clientWidth:documentEnCours.documentElement.clientWidth;
+				X = (scrollLeft)?scrollLeft:documentEnCours.documentElement.scrollLeft;
+				Y = (scrollTop)?scrollTop:documentEnCours.documentElement.scrollTop;
+			}
+			var refX = idOnglets.offsetLeft;
+			var refY = idOnglets.offsetTop + 50;
+			decalX = X - refX;
+			decalY = Y - refY;
+			
+			
+			var PosX = documentEnCours.getElementById("PosX");
+			var PosY = documentEnCours.getElementById("PosY");
+			var PosXY = documentEnCours.getElementById("PosXY");
+			var ClipX = documentEnCours.getElementById("ClipX");
+			var ClipY = documentEnCours.getElementById("ClipY");
+			var ClipXY = documentEnCours.getElementById("ClipXY");
+			var ScrollX = documentEnCours.getElementById("ScrollX");
+			var ScrollY = documentEnCours.getElementById("ScrollY");
+			var ScrollXY = documentEnCours.getElementById("ScrollXY");
+			
+			if ( ScrollY == null ) {
+				//alert("setTimeout(scroll();, 500)");
+				setTimeout("scroll();", 500);
+				return false;
+			}
+			
+			// scroll vertical
+			if (decalY < 0) decalY = 0;
+			
+			Vscroll = ScrollY.offsetHeight;
+			//alert("Vscroll=" + Vscroll);
+/*			alert("In scroll Avant : refX=" + refX + ", refY=" + refY + "\nX=" + X + ", Y=" + Y + ", H=" + H + ",  L=" + L + 
+				"\nTdecalY=" + decalY + "\nPosY.style.top=" + PosY.style.top + ", PosX.style.top=" + PosX.style.top + ", ScrollY.style.top=" + ScrollY.style.top);
+*/			PosY.style.top = (decalY -10) + 'px';
+			PosX.style.top = (decalY +122)+ 'px';
+			PosXY.style.top = decalY + 'px';
+			ScrollY.style.top = -decalY + 'px';
+			ScrollXY.style.top = -decalY + 'px';
+			if (Vscroll > decalY) {
+				ClipY.style.height = (Vscroll - decalY) +'px';
+				ClipXY.style.height = (Vscroll - decalY) +'px';
+			}
+	/*
+			alert("In scroll : refX=" + refX + ", refY=" + refY + "\nX=" + X + ", Y=" + Y + ", H=" + H + ",  L=" + L + 
+			"\nTdecalY=" + decalY + "\nPosY.style.top=" + PosY.style.top + ", ScrollY.style.top=" + ScrollY.style.top +
+			"\nPosXY.style.top=" + PosXY.style.top + ", ScrollXY.style.top=" + ScrollXY.style.top );
+	*/
+			// scroll horizontal
+			if (decalX < 0) decalX = 0;
+		
+			Hscroll = ScrollX.offsetWidth;
+			//alert("Hscroll=" + Hscroll);
+			PosX.style.left = decalX + 'px';
+			PosY.style.left = (decalX + 124) + 'px';
+			PosXY.style.left = decalX + 'px';
+			ScrollX.style.left = -decalX + 'px';
+			ScrollXY.style.left = -decalX + 'px';
+			if (Hscroll > decalX) {
+				ClipX.style.width = (Hscroll - decalX ) +'px';
+				ClipXY.style.width = (Hscroll - decalX ) +'px';
+			}
+	/*
+			alert("In scroll : refX=" + refX + ", refY=" + refY + "\nX=" + X + ", Y=" + Y + ", H=" + H + ",  L=" + L + 
+			"\nTdecalX=" + decalX + "\nPosX.style.left=" + PosX.style.left + ", ScrollX.style.left=" + ScrollX.style.left +
+			"\nPosXY.style.left=" + PosXY.style.left + ", ScrollXY.style.left=" + ScrollXY.style.left );
+	*/
+		return true;
+		}
+	}
+</script>
+</head>
+<body onload="javascript:FirstLoad(event);" onbeforeunload="return aurevoir(event);" onunload="return quitter(event);" onscroll="scroll();">
+<h3 align="right" id="bonjour" style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#6699cc;font-weight:bold;letter-spacing:4px;">Bonjour </H3>
+<div id="idBusy" onclick="javascript:alert('debug : In idBusy');return false;" class="busy" ></div>
+<div id="idDivDebug" style="background-color:#FFA07A;display:none;">
+	<table>
+		<tr>
+			<td><font size="1">Ce bandeau sera supprimé.<br>quand tout sera au point... </font></td>
+			<td > &nbsp; </td>
+			<td >Options : </td>
+			<td>
+				<input id="idDebug" name="chkboxDebug"  type="checkbox" value="1" onclick="modeDebug();">Debug 
+				<input id="idText" type="checkbox" value="1" onclick="ChangePageEnCours('PackagesProfiles');">Debug Texte (IE seulemt)
+			</td>
+		</tr>
+	</table>
+	<hr>
+</div>
+<div id="liensUpdateParcs" style="display:none;">
+	<a style="font-size:xx-small;" title="A virer dès que la mise à jour sera effectuée dans l'interface de gestion des parcs" href="index.php?updateProfiles=1">Mettre à jour les fichiers hosts.xml et profiles.xml pour prendre en compte les modifications des parcs</a><br>
+	<a style="font-size:xx-small;" title="A virer dès que la mise à jour sera effectuée dans l'interface de gestion des parcs" href="index.php?updateDroits=1">Mettre à jour le fichier droits.xml pour prendre en compte les modifications de délégation de parcs</a>
+</div>
+<h1 align="center">Déploiement d'applications <font size="3">( sur Win2000 et WinXP )</font></h1>
+<div id="Onglets" style="border-bottom:3px solid black;height:37px;width:100%;">
+	<script type = "text/javascript">
+		if ( (typeof(lsusInstalled) != "undefined") && lsusInstalled ) {
+			document.write("<div style='position:absolute;left:690px;z-index:1;cursor:pointer;' onclick='ChangePageEnCours(&#34;WindowsUpdate&#34;);'><img id='WindowsUpdate' alt='Mises à jour Microsoft' src='img/WindowsUpdate0.gif'></div>");
+		}
+	</script>
+	<div style="position:absolute;left:568px;z-index:1;cursor:pointer;" onclick="ChangePageEnCours('AfficheHost');"><img id="AfficheHost" alt="Afficher les données d'un poste" src="img/AfficheHost0.gif"></div>
+	<div style="position:absolute;left:446px;z-index:1;cursor:pointer;" onclick="ChangePageEnCours('AffichePackage');"><img id="AffichePackage" alt="Afficher les données d'une application" src="img/AffichePackage0.gif"></div>
+	<div style="position:absolute;left:324px;z-index:1;cursor:pointer;" onclick="ChangePageEnCours('AfficheProfile');"><img id="AfficheProfile" alt="Afficher les données d'un parc" src="img/AfficheProfile0.gif"></div>
+	<div style="position:absolute;left:202px;z-index:1;cursor:pointer;" onclick="ChangePageEnCours('AjoutPackage');"><img id="AjoutPackage" alt="Ajouter une application" src="img/AjoutPackage0.gif"></div>
+	<div style="position:absolute;left:80px;z-index:2;cursor:pointer;" onclick="ChangePageEnCours('PackagesProfiles');"><img id="PackagesProfiles" alt="Associer les Applications aux Parcs" src="img/PackagesProfiles.gif"></div>
+	
+	<div style="position:absolute;width:35px;left:68px;font-size:xx-small;padding-top:8px;z-index:9;" title="Etat de synchronisation des données sur le serveur">
+		<img id="Etat" src="img/etat_ok.gif"></img><span> </span><span title="Nombre de requêtes en attente" id="nCmdWait"></span>
+	</div>
+	<div id="ImgBusy" style="display:none;position:absolute;width:35px;left:62px;font-size:xx-small;padding-top:2px;z-index:10;" title="Calcul en cours...">
+		<img src="img/busy.gif"></img>
+	</div>
+	<div align="right" id="Debian" style="position:relative;width:100%;height:12px;font-size:xx-small;padding-top:24px;z-index:0;">Version deb</div>
+</div>
+<br>
+<div id="transform" align="left">
+</div>
+</body>
+</html>

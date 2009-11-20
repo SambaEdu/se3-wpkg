@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- System profile database.
+
+     Lists profiles available to the systems. A profile represents a certain
+     selection of packages from the packages database. Profiles can depend on
+     other profiles, the end result being the sum of all required packages.
+     
+     THIS IS A SAMPLE FILE
+     
+     For more info, see http://wpkg.org/index.php/Category:Documentation
+
+-->
+
+<profiles>
+
+    <profile id="default">
+        <package package-id="firefox" />
+        <package package-id="thunderbird" />
+    </profile>
+  
+    <profile id="custom">
+        <depends profile-id="default" />
+        <package package-id="openoffice" />
+    </profile>
+
+    <profile id="administration">
+        <depends profile-id="default" />
+        <package package-id="openoffice" />
+        <package package-id="acrobat7" />
+    </profile>
+
+    <profile id="other">
+        <depends profile-id="default" />
+        <package package-id="openoffice" />
+    </profile>
+
+
+</profiles>
