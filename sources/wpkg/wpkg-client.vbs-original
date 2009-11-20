@@ -1,0 +1,926 @@
+'Option Explicit
+
+' Client wpkg - Etablit la connexion au serveur en attendant que les services réseau aient démarrés
+'             - Lance l'exécution de wpkg-se3.js
+'             - Gère les remontées des rapports
+'
+' ## $Id: wpkg-client.vbs.orig 3585 2009-03-08 15:12:47Z jlebail $ ##
+'
+' Syntaxe :  cscript wpkg-client.vbs[ /noTempo][ /cpuLoad xx]
+'                  /noTempo    : pour avoir des tempo réduites (utile pour un lancement en ligne de commande sans avoir à attendre...)
+'                  /cpuLoad xx : Attend (charge cpu en %) < xx  avant de démarrer (10% par defaut).
+'                  /Tempo nn   : Attend nn sec avant de démarrer (30 par defaut).
+'                  /debug      : Affiche en temps réel les msg lors de l'exécution de wpkg-se3.js.
+
+On Error Resume Next
+
+Const ForReading=1, ForWriting=2, ForAppending=8
+
+' ----------------------------------------------------------------------------------
+'
+' Vous pouvez personnaliser ici le paramétrage du client wpkg.
+'
+Dim LogMode        : LogMode = 2         ' Type de log. 0=Pas de log, 2=Log dernière execution, 8=Log avec conservation de l'historique
+Dim secBeforeStart : secBeforeStart = 30 ' Nombre de secondes à attendre avant démarrer
+Dim secAfterRun    : secAfterRun = 5     ' Nombre de secondes à attendre pour RemoveNetworkDrive
+Dim maxCpuLoad     : maxCpuLoad = 10     ' % Charge CPU maxi autorisée pour démarrer
+Dim ServeurWpkg    : ServeurWpkg = "$SE3"  ' Serveur utilisé par les clients wpkg
+'  Par défaut, le serveur $SE3 est utilisé pour déployer les applications.
+'  Vous pouvez cependant préférer utiliser un autre serveur (par ex. si $SE3 est très chargé).
+'  Pour utiliser le serveur 'NomDuServeur' à la place de '$SE3', il faut :
+'     - créer un partage nommé 'install' sur le serveur 'NomDuServeur'
+'     - créer sur ce serveur un utilisateur 'adminse3' ayant le mot de passe indiqué dans \\$SE3\Progs\install\installdll\confse3.ini (password_admin_local)
+'     - permettre à adminse3 d'écrire dans \\NomDuServeur\install\wpkg\rapports
+'          (un accès en lecture suffit pour les autres dossiers et fichiers de ce partage)
+'     - définir ci-dessus   ServeurWpkg = "NomDuServeur"   et enregistrer ce fichier (\\$SE3\install\wpkg\wpkg-client.vbs) ,
+'     - recopier le contenu de \\$SE3\install dans \\NomDuServeur\install
+'
+'  De plus, pour que la gestion de la configuration des applis continue à se faire par l'interface web de $SE3,
+'    Définir sur MonServeur un compte WWWSE3 mot de passe PassWWWSE3 ayant un acces rw sur le partage \\NomDuServeur\install
+'    puis sur le $SE3 :
+'      cp -p /var/se3/unattended/install /var/se3/unattended/install.bak
+'      rm -R /var/se3/unattended/install/*
+'      mount -t smbfs -o username=WWWSE3,password=PassWWWSE3 //NomDuServeur/install /var/se3/unattended/install
+'           ou  ( USER=NomDuServeur/WWWSE3%PassWWWSE3
+'                 smbmount //NomDuServeur/install /var/se3/unattended/install  )
+'    Rmq. Le nom d'utilisateur WWWSE3 et le mot de passe PassWWWSE3 doivent bien sûr être adapté selon votre imagination...
+'
+'  Au prochain démarrage des postes, le client wpkg sera mis à jour avec son nouveau paramétrage.
+'
+'------------------------------------------------------------------------------------
+
+Dim printOutput : printOutput = True
+Dim watchDog : watchDog = 18000 ' Temps maxi en secondes pour l'exécution de wpkg-se3.js
+Dim CodeSortie : CodeSortie = 0
+
+Dim UNC : UNC = "\\" & ServeurWpkg & "\install" 'Chemin du partage install
+Dim Z : Z="z:" 'unité à mapper
+Dim RunningStatus
+Dim oNet, User, ComputerName, UserDomain
+Dim oShell, WinDir, ComSpec
+Dim fso, f, tf, fLog, iLog : iLog=0
+Set fLog = Nothing
+Dim i
+Dim MAC, addmac, mac2
+Dim TypeWin
+
+Dim objArgs : Set objArgs = WScript.Arguments
+Dim arg
+Dim Tempo : Tempo = True
+Dim debugVbs : debugVbs = False
+Dim FinExec
+
+Set oShell = WScript.CreateObject("WScript.Shell")
+Set fso = CreateObject("Scripting.FileSystemObject")
+If fso.FileExists(oShell.ExpandEnvironmentStrings("%SystemDrive%") & "\netinst\wpkg-notempo.txt") Then
+   Tempo = False
+End If
+
+WinDir = oShell.ExpandEnvironmentStrings("%WinDir%")
+ComSpec = oShell.ExpandEnvironmentStrings("%ComSpec%")
+
+Dim ageLastLog, ageLastTxt
+dateLastLog
+
+If Not fso.FolderExists(oShell.ExpandEnvironmentStrings("%SystemDrive%") & "\netinst\logs") Then
+   If Not fso.FolderExists(oShell.ExpandEnvironmentStrings("%SystemDrive%") & "\netinst") Then
+      fso.CreateFolder(oShell.ExpandEnvironmentStrings("%SystemDrive%") & "\netinst")
+   End If
+   fso.CreateFolder(oShell.ExpandEnvironmentStrings("%SystemDrive%") & "\netinst\logs")
+End If
+
+' Conversion OEM -> ANSI
+Dim oem
+InitOEM
+
+Dim debug : debug=true ' Permet d'avoir des logs plus détaillés.
+Dim logdebug : logdebug=false ' Pour avoir des logs en temps réel sur le serveur.
+Dim force : force=false ' Pour tester la présence ou l'absence effective de chaque appli sur le poste.
+Dim forceinstall : forceinstall=false ' Pour installer ou désinstaller les applications même si les tests 'check' sont vérifiés.
+Dim nonotify : nonotify=false ' Pour ne pas avertir l'utilisateur logué des opérations de wpkg (si false, le service messenger doit être activé).
+Dim norunningstate : norunningstate=false ' Pour que wpkg n'écrive pas running : norunningstate=false ' Pour que wpkg n'écrive pas running=true dans la base de registre lorsqu'il s'exécute.
+Dim dryrun : dryrun=false ' Pour que wpkg simule une exécution mais n'installe ou ne désinstalle rien.
+Dim nowpkg : nowpkg=false ' Pour ne pas exécuter wpkg sur le poste.
+Dim nozombie : nozombie=false ' Pour ne pas retirer les zombies de la base de donnée locale.
+
+ParseArguments
+
+Dim Ligne1
+Ligne1 = TimeStamp() & " wpkg-client.vbs : Debut"
+AttendUnPeu
+
+Dim oWMIService
+If Not WaitWMIService() Then WScript.Quit 15
+
+Dim MsgErrNoRun : MsgErrNoRun=""
+Dim cProc
+Dim oProc, cpuLoadOK, cpuLoad
+If Not TestCpuLoad() Then
+   MsgErrNoRun = "La charge cpu est trop élevée. Pas d'exécution de wpkg."
+   nowpkg=true
+   CodeSortie = 14
+   ' WScript.Quit 14
+End If
+
+If Not SetComputerName() Then   ' Défini ComputerName, User et UserDomain
+   MsgErrNoRun = "Erreur lors de la détermination de ComputerName, User et UserDomain. Pas d'execution de wpkg."
+   nowpkg=true
+   CodeSortie = 13
+   WScript.Quit 13
+End If
+
+Z=MapZ()
+If Z = "" Then WScript.Quit 12
+Dim WPKGSE3JS : WPKGSE3JS= Z & "\wpkg\wpkg-se3.js"
+If Not fso.FileExists(WPKGSE3JS) Then
+   print "Erreur: script '" & WPKGSE3JS & "' absent !"
+   WScript.Quit 13
+Else
+   print "Script '" & WPKGSE3JS & "' présent."
+End If
+
+fso.DeleteFile oShell.ExpandEnvironmentStrings("%TEMP%\wpkgcmd*.bat"), true
+fso.DeleteFile oShell.ExpandEnvironmentStrings("%TEMP%\wpkgex*.log"), true
+wpkgAuBoot 'execute s'il existe %Windir%\wpkgAuBoot.bat
+
+If Not TestRunningStatus() Then 
+   print "Erreur RunningStatus."
+   MsgErrNoRun = "Erreur RunningStatus."
+   WScript.Quit 1
+End If
+'WScript.Echo "dbg: Après TestRunningStatus"
+
+Dim cmd, sStd, sStdOut, CodeRetour, oExec
+Dim NoPrint : NoPrint = False
+
+' ---------------- Exécution wpkg-se3.js  --------------------
+dim fNameLog : fNameLog = Z & "\wpkg\rapports\" & ComputerName & ".log"
+dim fLocalLog : fLocalLog = WinDir & "\wpkg.log"
+dim fLocalTxt : fLocalTxt = WinDir & "\wpkg.txt"
+dim fLocal : fLocal = fLocalLog ' Puis devient fLocalTxt pour sauvegarder l'etat
+dim lenLog ' Taille du fichier fLocalLog déjà lu
+dim bufferLog : bufferLog = ""
+dim timerLog : timerLog = Timer
+
+InitLogFile
+
+If MiseAJourClient() Then WScript.Quit ' Teste si un nouveau client est dispo sur le serveur
+
+If Not nowpkg Then ExecIni ' Exécution du vbs ini\%ComputerName%.ini  pour initialiser le paramétrage
+
+' Décommenter Si les paramètres de la ligne de commande sont prioritaires devant la conf ini
+'ParseArguments
+
+Dim NoWpkgTxt : NoWpkgTxt=oShell.ExpandEnvironmentStrings("%SystemDrive%") & "\netinst\nowpkg.txt"
+If fso.FileExists(NoWpkgTxt) Then
+   nowpkg = True
+   dump "Le fichier '" & NoWpkgTxt & "' existe." & vbCrLf & _
+      "  Pas de synchro des applis pour cette fois."  & vbCrLf & _
+      "  Suppression du fichier pour qu'à la prochaine exécution du client la synchro ait lieu."
+   fso.DeleteFile(NoWpkgTxt)
+End If
+
+dim WPKG_OPTIONS : WPKG_OPTIONS = "/synchronize"
+
+Dim oSysEnv
+
+WpkgSynchronize 'Exécute wpkg-se3.js pour synchroniser les applications
+EtatPoste  ' Détermine l'état des applis sur le poste et remonte l'info sur le serveur
+
+
+' ---------------- Déconnexion $SE3 --------------------
+RemoveNetwork
+print "Fin"
+
+WScript.Quit CodeRetour
+
+Function EtatPoste() 
+   Dim f, tf, Retour
+   fLocal = fLocalTxt
+   sStd = InfoPoste()
+   Set f = fso.OpenTextFile(fLocal, 2, True) 'ForWriting
+   f.Write sStd
+   f.Close
+
+   cmd = "%ComSpec% /C cscript //NoLogo " & WPKGSE3JS & " /query:a"  & " >>" & fLocal & " 2>&1"
+   print "Remontée des applis installées sur le poste ..."
+   PrintOutput = False
+   Retour = RunCmd(Cmd)
+   PrintOutput = True
+   If Retour > 0 Then print "Code de Retour=" & Retour
+
+   Set tf = fso.GetFile(fLocal)
+   If Err.Number > 0 Then 
+      dump "Erreur ouverture fichier " & fLocal
+      Err.Clear
+   Else
+      tf.Copy Z & "\wpkg\rapports\" & ComputerName & ".txt", True
+      If Err.Number > 0 Then 
+        dump "Erreur ouverture fichier " & Z & "\wpkg\rapports\" & ComputerName & ".txt"
+        Err.Clear
+      End If
+   End If
+   End Function
+Function RemoveNetwork()
+   Dim i
+   i = secAfterRun
+   Do While i>0
+      If Tempo Then 
+         Wscript.Sleep 1000
+      Else
+         Wscript.Sleep 100
+      End If
+      i = i - 1
+   Loop
+   Set oDrives = oNet.EnumNetworkDrives
+   For i = 0 to oDrives.Count - 1 Step 2
+      'print "Lecteur " & oDrives.Item(i) & " = " & oDrives.Item(i+1)
+      print "RemoveNetworkDrive " & oDrives.Item(i)
+      oNet.RemoveNetworkDrive oDrives.Item(i), True
+      If Err.Number > 0 Then 
+         print "Erreur RemoveNetworkDrive " & oDrives.Item(i) & " = " & oDrives.Item(i+1)
+      End If
+   Next
+   ' print "RemoveNetworkDrive IPC$"
+   ' oNet.RemoveNetworkDrive "\\" & ServeurWpkg & "\IPC$", True
+   ' If Err.Number > 0 Then print "Erreur RemoveNetworkDrive \\" & ServeurWpkg & "\IPC$"
+   End Function
+Function WpkgSynchronize() 'Exécute wpkg-se3.js pour synchroniser les applications
+   On Error Resume Next
+   SetEnvironnement
+   oSysEnv("WPKG_OPTIONS") = WPKG_OPTIONS
+
+   cmd = "%ComSpec% /C cscript.exe //NoLogo //T:" & watchDog & " " & WPKGSE3JS & " " & WPKG_OPTIONS & " 1>>" & fLocal &" 2>&1"
+
+   ' Execution de wpkg-se3.js
+   If nowpkg = False Then 
+      dump cmd & vbCrLf
+      CodeRetour = RunCmd(Cmd)
+      'If logDebug Then NoPrint=True
+      'dump sStd
+      'NoPrint = False
+      
+      If codeRetour = -10 Then 
+         dump "---- " & TimeStamp() & " Erreur : Arrêt du script au bout de " & watchDog & " secondes. ----"
+         If Err.Number > 0 Then Err.Clear
+         oShell.RegDelete "HKEY_LOCAL_MACHINE\SOFTWARE\WPKG\running"
+         If Err.Number > 0 Then
+            Err.Clear
+         Else
+            dump "La clé HKEY_LOCAL_MACHINE\SOFTWARE\WPKG\running a été supprimée."
+         End If
+      Else
+         dump "---- " & TimeStamp() & " CodeRetour=" & CodeRetour & " ----"
+      End If
+   Else
+      dump "noWpkg=true : Pas d'exécution de Wpkg."
+   End If
+   
+   'If Not debugVbs Then print "sStd=" & vbCrLf & sStd
+   'Recopie de wpkg.log local vers le serveur
+   If fso.FileExists( fLocal ) Then
+      fso.CopyFile fLocal, Z & "\wpkg\rapports\" & ComputerName & ".log", true
+   End If
+   End Function
+Function SetComputerName()
+   SetComputerName = True
+   i = 60 ' 60sec maxi
+   Set oNet = CreateObject("WScript.Network")
+   User = oNet.UserName
+   Do While ((Err.Number > 0) Or (User = "")) And (i>0)
+      print "oNet.UserName=" & oNet.UserName
+      If Tempo Then 
+         Wscript.Sleep 1000
+      Else
+         Wscript.Sleep 10
+      End If
+      i = i - 1   
+      Set oNet = CreateObject("WScript.Network")
+      User = oNet.UserName
+   Loop
+   If i<=0 Then 
+      SetComputerName = False
+   Else
+      ComputerName = LCase(oNet.ComputerName)
+      UserDomain = oNet.UserDomain
+      print "User=" & User & ", ComputerName=" & ComputerName &", UserDomain=" & UserDomain
+   End If
+   End Function
+Function WaitWMIService()
+   Dim i
+   i = 60 ' 60sec maxi
+   Set oWMIService = GetObject( "winmgmts:" )
+   Do While (Err.Number > 0) And (i>0)
+      print "GetObject('winmgmts:')"
+      If Tempo Then 
+         Wscript.Sleep 1000
+      Else
+         Wscript.Sleep 10
+      End If
+      i = i - 1
+      Set oWMIService = GetObject( "winmgmts:" )
+   Loop
+   If i<=0 Then 
+      print "Erreur : Pas de service WMI. FIN."
+      
+      WaitWMIService = False
+   Else
+      print "oWMIService : OK"
+      WaitWMIService = True
+   End If
+   End Function
+Function AttendUnPeu()
+   Dim i
+   If Tempo Then 
+      Ligne1 = Ligne1 & " Tempo " & secBeforeStart & " sec."
+      print "Debut Tempo " & secBeforeStart & " sec."
+      ' Attente avant début
+      i = secBeforeStart
+      Do While (i > 0) And Tempo
+         Wscript.Sleep 1000 ' secBeforeStart x 1 seconde d'attente 
+         i = i - 1
+      Loop
+      print "Fin Tempo Start"
+   End If
+   End Function
+Function ParseArguments()
+   Dim i
+   For i = 0 to objArgs.Count - 1
+      arg = Ucase( objArgs(i))
+      Select Case  arg
+         case "/DEBUG"
+            debugVbs = True
+         case "/NOWPKG"
+            nowpkg = True
+         case "/NOTEMPO"
+            Tempo = False
+         case "/APPENDLOG"
+            ' Pour ajouter le log au log précédent
+            LogMode = 8
+         case "/CPULOAD"
+            i = i + 1
+            If IsNumeric(objArgs(i)) Then
+               maxCpuLoad = 0 + objArgs(i)
+            Else
+               print "Syntaxe : /cpuLoad xx  ou xx est  le %cpu maxi autorisé pour démarrer"
+            End If
+         case "/TEMPO"
+            i = i + 1
+            If IsNumeric(objArgs(i)) Then
+               secBeforeStart = 0 + objArgs(i)
+            Else
+               print "Syntaxe : /Tempo nn  ou nn est le nbre de sec à attendre avant de démarrer"
+            End If
+      End Select
+   Next
+   End Function
+Function TestCpuLoad()
+   Dim i, j
+   i = 15 * 60 ' 15 mn maxi
+   Do
+      j = 60 ' 60sec maxi
+      Set cProc = oWMIService.ExecQuery( "Select * from Win32_Processor" )
+      Do While (Err.Number > 0) And (j>0)
+         print "oWMIService.ExecQuery( 'Select * from Win32_Processor' )"
+         If Tempo Then 
+            Wscript.Sleep 1000
+         Else
+            Wscript.Sleep 10
+         End If
+         j = j - 1   
+         Set cProc = oWMIService.ExecQuery( "Select * from Win32_Processor" )
+      Loop
+      cpuLoadOK = 0
+      If j>0 Then
+         For Each oProc In cProc
+            cpuLoad = oProc.LoadPercentage
+            If cpuLoad > maxCpuLoad Then 
+               print "cpuLoad = " & cpuLoad & "% > " & maxCpuLoad & "%"
+            Else
+               cpuLoadOK = 1
+               print "cpuLoad = " & cpuLoad & "%"
+               Exit Do
+            End If
+         Next
+         print ""
+      End If
+      i = i -1
+   Loop While (i>0) And (cpuLoadOK = 0)
+   If i<=0 Then 
+      print "Durée maxi d'attente écoulée. Le PC est trop chargé."
+      TestCpuLoad = False
+   Else
+      print "cpuLoad : OK ( " & cpuLoad & "% <= " & maxCpuLoad & "% )"
+      TestCpuLoad = True
+   End If
+   End Function
+Function wpkgAuBoot()
+   ' Execute s'il existe %WinDir%\wpkgAuBoot.bat
+   Dim cmd
+   wpkgAuBootBat = WinDir & "\wpkgAuBoot.bat"
+   If Not WScript.Interactive Then ' Uniquement si le client a été lancé avec //B  (tâche planifiée au boot)
+      If fso.FileExists( wpkgAuBootBat ) Then
+         print "Exécution de " & WinDir & "\wpkgAuBoot.bat"
+         oShell.Run wpkgAuBootBat, 0, False
+      End If
+   End If
+   End Function
+Function dateLastLog()
+   If fso.FileExists(fLocalLog) Then
+      Set f = fso.GetFile(fLocalLog)
+      ageLastLog = ( Now - f.DateLastModified) * 24 * 60 ' Ancienneté du dernier log wpkg en mn
+   Else
+      ageLastLog = -1
+   End If
+   If fso.FileExists(fLocalTxt) Then
+      Set f = fso.GetFile(fLocalTxt)
+      ageLastTxt = ( Now - f.DateLastModified) * 24 * 60' Ancienneté du dernier txt wpkg en mn
+   Else
+      ageLastTxt = -1
+   End If
+   End Function
+Function TestRunningStatus()
+   'print "Dbg: In TestRunningStatus"
+   RunningStatus = LireRegistre("HKEY_LOCAL_MACHINE\SOFTWARE\WPKG\running")
+   dump "RunningStatus = " & RunningStatus & ". LastLog = " & ageLastLog & " mn. LastTxt = " & ageLastTxt & " mn."
+   TestRunningStatus = True
+   If RunningStatus = "true" Then
+      If Not WScript.Interactive Then
+         ' Ce script a été lancé par la tâche planifiée au boot
+         ' Il y a un un problème 
+         dump "Ce n'est pas normal !"
+         oShell.RegDelete "HKEY_LOCAL_MACHINE\SOFTWARE\WPKG\running"
+         dump "La clé HKEY_LOCAL_MACHINE\SOFTWARE\WPKG\running a été supprimée."
+      Else
+         ' Lancement manuel de wpkg
+         If ageLastLog > 60 Then ' Plus de 60mn depuis le dernier lancement
+            ' Suppression de l'entrée registre
+            print "RunningStatus = " & RunningStatus & ". Wpkg est indiqué en exécution depuis plus de 1h. C'est sûrement une erreur."
+            oShell.RegDelete "HKEY_LOCAL_MACHINE\SOFTWARE\WPKG\running"
+            print "La clé HKEY_LOCAL_MACHINE\SOFTWARE\WPKG\running a été supprimée."
+         Else
+            If ageLastLog < 0 Then ' wpkg.log absent
+               ' Suppression de l'entrée registre
+               print "RunningStatus = " & RunningStatus & ". Wpkg est indiqué en exécution mais wpkg.log est absent."
+               oShell.RegDelete "HKEY_LOCAL_MACHINE\SOFTWARE\WPKG\running"
+               print "La clé HKEY_LOCAL_MACHINE\SOFTWARE\WPKG\running a été supprimée."
+            Else
+               'Moins de 60mn depuis le dernier rapport
+               print "RunningStatus = " & RunningStatus & ". Wpkg est déjà indiqué en cours d'exécution. FIN."
+               TestRunningStatus = False
+            End If
+         End If
+      End If
+   End If
+   'print "Dbg: Sortie TestRunningStatus RunningStatus="  & RunningStatus
+   End Function
+Function MiseAJourClient()
+   Dim argCh, oExec, i
+   MiseAJourClient = False
+   If UpdateFile(Z & "\wpkg\wpkg-client.vbs", Windir & "\wpkg-client.vbs") = 1 Then
+      dump TimeStamp() & " Mise à jour du client."
+      ' Redémarrage avec le nouveau client
+      argCh = ""
+      For i = 0 to objArgs.Count - 1
+         argCh = argCh & " " & objArgs(i)
+      Next
+      Set oDrives = oNet.EnumNetworkDrives
+      For i = 0 to oDrives.Count - 1 Step 2
+         'print "Lecteur " & oDrives.Item(i) & " = " & oDrives.Item(i+1)
+         print "RemoveNetworkDrive " & oDrives.Item(i)
+         oNet.RemoveNetworkDrive oDrives.Item(i), True
+         If Err.Number > 0 Then 
+            print "Erreur RemoveNetworkDrive " & oDrives.Item(i) & " = " & oDrives.Item(i+1)
+            Err.Clear
+         End If
+      Next
+      dump TimeStamp() & " Redémarrage avec le nouveau client."
+      Set oExec = oShell.Exec("%ComSpec% /C cscript.exe //NoLogo " & WScript.ScriptFullName & argCh & " 2>&1")
+      Do While oExec.Status = 0
+         ' WScript.Sleep 300
+         WScript.StdOut.Write oExec.StdOut.Read(1)
+      Loop
+      dump TimeStamp() & " Fin d'exécution du client d'origine. oExec.ExitCode=" & oExec.ExitCode
+      WScript.Quit oExec.ExitCode
+      'WScript.Run "cscript.exe //NoLogo " & WScript.ScriptFullName & argCh & " 2>&1"
+      MiseAJourClient = True
+   End If
+   End Function
+Function SetEnvironnement()
+   Set oSysEnv = oShell.Environment("PROCESS")
+   oSysEnv("TypeWin") = GetTypeWin()
+   oSysEnv("ServeurWpkg") = ServeurWpkg
+   oSysEnv("Z") = Z
+   oSysEnv("WPKGROOT") = Z & "\wpkg"
+   oSysEnv("SOFTWARE") = Z & "\packages"
+   oSysEnv("DRIVERS")  = Z & "\drivers"
+   oSysEnv("PRINTERS") = Z & "\printers"
+   oSysEnv("WINLANG")  = "fra"
+
+   If debug Then WPKG_OPTIONS = WPKG_OPTIONS & " /debug"
+   If logdebug Then WPKG_OPTIONS = WPKG_OPTIONS & " /logdebug"
+   If force Then WPKG_OPTIONS = WPKG_OPTIONS & " /force"
+   If forceinstall Then WPKG_OPTIONS = WPKG_OPTIONS & " /forceinstall"
+   If nonotify Then WPKG_OPTIONS = WPKG_OPTIONS & " /nonotify"
+   If norunningstate Then WPKG_OPTIONS = WPKG_OPTIONS & " /norunningstate"
+   If dryrun Then WPKG_OPTIONS = WPKG_OPTIONS & " /dryrun"
+   If nozombie Then WPKG_OPTIONS = WPKG_OPTIONS & " /nozombie"
+   End Function
+Function ExecIni
+   ' Exécution du vbs ini\%ComputerName%.ini  pour initialiser le paramétrage
+   dim iniFile, iniData
+   iniFile = Z & "\wpkg\ini\" & ComputerName & ".ini"
+   If fso.FileExists( iniFile) Then
+      Set f = fso.OpenTextFile(iniFile, 1)
+      iniData = f.ReadAll
+      f.Close
+      If Len(iniData) > 0 Then
+         dump "Fichier d'initialisation trouvé " & iniFile & " (" & Len(iniData) & " octets)."
+         Execute iniData
+		 dump "logdebug=" & logdebug
+      Else
+         dump "Fichier " & iniFile & " vide !"
+      End If
+   End If
+   End Function
+Function InitLogFile()
+   Dim tf
+   On Error Resume Next
+   If LogMode > 0 Then
+      Set tf = fso.OpenTextFile(fLocalLog, LogMode, true)
+      If Err.Number > 0 Then 
+         print "Erreur ouverture fichier " & fLocalLog
+         Err.Clear
+      Else
+         If WScript.Interactive Then
+            tf.WriteLine "-----" + TimeStamp() & " Démarrage de wpkg sur " & ComputerName & " (Mode interactif) -----"
+         Else
+            tf.WriteLine "-----" + TimeStamp() & " Démarrage de wpkg sur " & ComputerName & " -----"
+         End If
+         If MsgErrNoRun <> "" Then
+            tf.WriteLine MsgErrNoRun
+         End If
+         tf.Close
+      End If
+      If logdebug Then
+         Set tf = fso.OpenTextFile(fNameLog, LogMode, true)
+         If Err.Number > 0 Then 
+            print "Erreur ouverture fichier " & fNameLog
+            Err.Clear
+         Else
+            tf.WriteLine "-----" + TimeStamp() & " Démarrage de wpkg sur " & ComputerName & " -----"
+            If MsgErrNoRun <> "" Then
+               tf.WriteLine MsgErrNoRun
+            End If
+            tf.Close
+         End If
+      End If
+   End If
+   If Err.Number > 0 Then Err.Clear
+   End Function
+Function dump(msg)
+   ' Ecrit sur le terminal
+   Dim tf, ErreurEnCours
+   ErreurEnCours = 0
+   
+   If Err.Number > 0 Then 
+      ErreurEnCours=Err.Number
+      Err.Clear
+      If Not NoPrint Then print msg
+   Else
+      If Not NoPrint Then print msg
+   End If
+   On Error Resume Next
+  
+   'WScript.Echo "Set tf = fso.OpenTextFile(" & fLocal & ", 8, true)"
+   'Set tf = fso.OpenTextFile(fLocal, 8, true)
+   'If Err.Number > 0 Then 
+   '   print "Erreur d'ouverture fichier " & fLocal
+   '   Err.Clear
+   'Else
+   '   If ErreurEnCours > 0 Then
+   '      tf.Write "Erreur " & ErreurEnCours & vbCrLf
+   '   End If
+   '   tf.Write msg & vbCrLf
+   '   tf.Close
+   'End If
+   End Function
+Function MapZ  
+   On Error Resume Next
+   Dim Z0, i, oDrives
+   Dim MapZok : MapZok=True
+   i = 6 ' 60sec maxi (6 * 10)
+   Z0=Z
+   Do
+      print "Map " & Z0 & " " & UNC
+      oNet.MapNetworkDrive Z0, UNC
+      If Err.Number > 0 Then
+         MapZok = False
+         print " MapNetworkDrive Err."
+         If Tempo Then 
+            Wscript.Sleep 1000
+         Else
+            Wscript.Sleep 10
+         End If
+         oNet.MapNetworkDrive Z0, UNC
+         If Err.Number > 0 Then
+            Set oDrives = oNet.EnumNetworkDrives
+            For i = 0 to oDrives.Count - 1 Step 2
+               print "Lecteur " & oDrives.Item(i) & " = " & oDrives.Item(i+1)
+            Next
+            print " MapNetworkDrive2 Err "
+            'Essai avec une autre unité après 2 échecs
+            If Z0="x:" Then Z0="w:"
+            If Z0="y:" Then Z0="x:"
+            If Z0="z:" Then Z0="y:"
+         Else
+            MapZok=True
+            print "Map " & Z0 & " " & UNC & " : OK"
+         End If
+      Else
+         MapZok=True
+         print "Map " & Z0 & " " & UNC & " : OK"
+      End If
+      i = i - 1
+   Loop Until MapZok Or (i<=0)
+   If i<=0 Then 
+      MapZ=""
+   Else
+      MapZ=Z0
+   End If
+   End Function
+Function InfoPoste()
+   Set MAC = CreateObject("Scripting.Dictionary") 'Contient Mac et ips associées
+   Dim i, s, ip
+   s = Now & " " & ComputerName
+   getMacIp
+   For Each addmac in MAC.keys
+      s = s & " " & addmac & " ("
+      For each ip in MAC(addmac).keys
+         If MAC(addmac)(ip) = 1 Then
+            If Right(s, 1) <> "(" Then s = s & " "
+            s = s & ip
+         End If
+         If MAC(addmac)(ip) = 2 Then
+            ' Masque de sous-reseau
+            s = s & "/" & ip
+         End If
+      Next
+      s = s & ")"
+   Next
+   InfoPoste = s & " " & GetTypeWin()
+   End Function
+Function RunCmd(Cmd)
+   Dim nTest, T0, finOK
+   T0 = Timer
+   sStdOut=""
+   FinExec = False
+   
+   If fso.FileExists(fLocal) Then
+      lenLog = fso.GetFile(fLocal).size
+   Else
+      lenLog = 0
+   End If
+   Set oExec = oShell.Exec(cmd)
+   nTest = 0
+   finOK = False
+   Do While (Timer < (T0 + watchDog)) And (Not FinExec)
+      If Not ReadOutput() Then
+         If nTest > 5 And oExec.Status = 1 Then
+            '5 sec après la fin d'exécution, s'il n'y a plus rien a lire, on quitte
+            finOK = True
+            FinExec = True
+            Exit Do
+         End If
+         nTest = nTest + 1
+         If Tempo Then 
+            Wscript.Sleep 500
+         End If
+      Else
+         nTest = 0
+      End If
+      Wscript.Sleep 100
+   Loop
+   If finOK Then
+      RunCmd = oExec.ExitCode
+   Else
+      If Timer < (T0 + watchDog) Then
+         RunCmd = -1
+      Else
+         ' Fin par TimeOut
+         RunCmd = -10
+      End If
+   End If
+   End Function
+Function ReadOutput()
+   Dim s, t, f, fichier
+   ReadOutput = False
+   'WScript.Echo "dbg: In ReadOutput, lenLog= " & lenLog
+   If lenLog > 0 Then
+      Set fichier = fso.GetFile(fLocal)
+      fichier.Copy "NUL" ' flush
+      s = fichier.size
+      If s > lenLog Then
+         'Lecture des nouveaux octets arrivés dans le fichier pour les afficher
+         Set f = fichier.OpenAsTextStream(1) ' ForReading
+         f.Skip lenLog
+         t = f.Read( s - lenLog)
+         f.Close
+         sStd = sStd & t
+         If PrintOutput Then WScript.StdOut.Write t
+         lenLog = s
+         ReadOutput = True
+      End If
+   End If
+   End Function
+Function ReadOutputBAK()
+   Dim poub, s, printNextLigne
+   printNextLine = True
+   ReadOutput = False
+   Do Until oExec.StdOut.AtEndOfStream And (Not FinExec)
+      s = oExec.StdOut.Read(1)
+      If s <> vbCr Then
+         sStdOut = sStdOut & s
+         If oExec.StdOut.AtEndOfLine Then
+            
+            'If Left(sStdOut, 1) = vbLf Then sStdOut = Mid(sStdOut, 2)
+            'sStdOut = oem2ansi(sStdOut)
+            sStd = sStd & sStdOut
+            If printOutput Then
+               If (sStdOut = vbCrLf) And Not printNextLine Then 
+                  printNextLine = True
+               Else
+                  If Left(sStdOut, 2) = vbCrLf Then sStdOut = Mid(sStdOut, 3)
+                  WScript.Echo sStdOut
+                  printNextLine = False
+               End IF
+            End If
+            If  sStdOut = "L'exécution du script a pris fin." Then
+               FinExec = True
+            End If
+            sStdOut = ""
+         End If
+      Else
+         sStdOut = sStdOut & s
+      End If
+      ReadOutput = True
+   Loop
+   'WScript.Echo "Dbg: oExec.Status=" & oExec.Status & ", oExec.StdErr.AtEndOfStream=" & oExec.StdErr.AtEndOfStream
+   End Function
+Function UpdateFile(src, dst)
+   ' Met à jour le fichier dst à partir de src et retourne 
+   '  0 si dst est plus récent (pas de maj)
+   '  1 si src a été copié en dst
+   ' -1 si src absent ou err copie
+   On Error Resume Next
+   Dim retour : retour=0
+   Dim  fSrc, fDst
+   Dim  doCopy : doCopy=false
+   Dim dateSrc, dateDst
+   
+   If Not fso.FileExists(src) Then
+      UpdateFile = -1
+   Else 
+      Set fSrc = fso.GetFile(src)
+      dateSrc = fSrc.DateLastModified
+      If Not fso.FileExists(dst) Then
+         doCopy=true
+      Else
+         Set fDst = fso.GetFile( dst )
+         dateDst = fDst.DateLastModified
+         ' print "dateSrc=" & dateSrc & ", dateDst=" & dateDst & ", dateDst>=dateSrc = " & (dateDst >= dateSrc)
+         If dateDst >= dateSrc Then
+            ' Dst est à jour 
+            UpdateFile = 0
+         Else
+            doCopy=true
+         End If
+      End If
+      If doCopy Then
+         ' copie de src dans dst
+         fso.CopyFile src, dst, true ' Copie avec éventuellemnet écrasement
+         If Err.Number > 0 Then 
+            UpdateFile = -1
+            Err.Clear
+         Else
+            UpdateFile = 1
+         End If
+      End If
+   End If
+   End Function
+Function InitOEM
+   Dim i
+   oem=array( &HC7, &HFC, &HE9, &HE2, &HE4, &HE0, &HE5, &HE7, &HEA, &HEB, &HE8, &HEF, &HEE, &HEC, &HC4, &HC5, &HC9, &HE6, &HC6, &HF4, &HF6, &HF2, &HFB, &HF9, &HFF, &HD6, &HDC, &HF8, &HA3, &HD8, &HD7, &H83, &HE1, &HED, &HF3, &HFA, &HF1, &HD1, &HAA, &HBA, &HBF, &HAE, &HAC, &HBD, &HBC, &HA1, &HAB, &HBB, &HA6, &HA6, &HA6, &HA6, &HA6, &HC1, &HC2, &HC0, &HA9, &HA6, &HA6, &H2B, &H2B, &HA2, &HA5, &H2B, &H2B, &H2D, &H2D, &H2B, &H2D, &H2B, &HE3, &HC3, &H2B, &H2B, &H2D, &H2D, &HA6, &H2D, &H2B, &HA4, &HF0, &HD0, &HCA, &HCB, &HC8, &H69, &HCD, &HCE, &HCF, &H2B, &H2B, &HA6, &H5F, &HA6, &HCC, &HAF, &HD3, &HDF, &HD4, &HD2, &HF5, &HD5, &HB5, &HFE, &HDE, &HDA, &HDB, &HD9, &HFD, &HDD, &HAF, &HB4, &HAD, &HB1, &H3D, &HBE, &HB6, &HA7, &HF7, &HB8, &HB0, &HA8, &HB7, &HB9, &HB3, &HB2, &HA6, &HA0)
+   For i = 128 To 255
+      oem(i - 128) = Chr(oem(i-128))
+   Next
+   End Function
+Function oem2ansi(Texte) 'Conversion OEM -> ANSI
+   dim i, s(), l, c, a
+   L = Len(Texte)
+   Redim s(L)
+   For i = 1 To L
+      c = Mid(Texte, i, 1)
+      a = asc(Mid(Texte, i, 1)) - 128
+      If a > 0 Then
+         s(i) = oem(a)
+      Else
+         s(i) = c
+      End If
+   Next
+   oem2ansi = Join(s, "")
+   End Function
+Function print (a)
+   Dim li
+   li = TimeStamp() & " " & a
+   If (Err.Number > 0) Then
+      li = li & vbCrLf & "  Err " & Err.Number & " " & Err.Description & " (" & Err.Source & ")" & vbCrLf
+      Err.Clear
+   End If
+   WScript.Echo li
+   End Function
+Function TimeStamp() ' Retourne la date formattée pour le fichier de Log ou XML (format : '2006-09-25 16:58:37' )
+   Dim n
+   n = Now
+   TimeStamp = Year(n) & "-" & Right("00"&Month(n), 2) & "-" & Right("00"&Day(n), 2) & " " & Right("00"&Hour(n), 2) & ":" & Right("00"&Minute(n), 2) & ":" & Right("00"&Second(n), 2)
+   End Function
+Function DumpError
+   print "Err=" & Err.Number & " " & Err.description
+   Err.Clear
+   On Error Resume Next
+   End Function
+Function getMacIp()
+   Dim strIPAddress, strIPSubnet
+   Dim objWMI : Set objWMI = GetObject("winmgmts:")
+   Dim objNetworkAdapters : Set objNetworkAdapters = objWMI.ExecQuery("select * from Win32_NetworkAdapterConfiguration where IPEnabled = 1")
+   Dim addmac, ip
+   Dim objAdapter
+   For Each objAdapter In objNetworkAdapters
+      addmac = objAdapter.MacAddress
+      Set MAC(addmac) = CreateObject("Scripting.Dictionary")
+      For Each strIPAddress in objAdapter.IPAddress
+         MAC(addmac).Add strIPAddress, 1
+      Next
+      For Each strIPSubnet in objAdapter.IPSubnet
+        MAC(addmac)(strIPSubnet) = 2
+      Next
+   Next
+   If MAC.Count >=1 Then
+      getMacIp = 1
+   Else
+      getMacIp = 0
+   End If
+   Set objWMI = Nothing
+   Set objAdapter = Nothing
+   Set objNetworkAdapters = Nothing
+   End Function
+Function LireRegistre(cle)
+   Dim WshShell : Set WshShell = CreateObject("WScript.Shell")
+   Dim bKey
+   On Error resume Next
+   bKey = WshShell.RegRead(cle)
+   If Err.Number <> 0 Then 
+      LireRegistre = ""
+      Err.Clear
+   Else
+      LireRegistre = bKey
+   End If
+   'On Error Goto 0
+   End Function
+Function GetTypeWin()
+   Dim TypeWin
+   Dim ProductName, CurrentVersion, ServicePack, CurrentBuildNumber
+   ProductName = LireRegistre("HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProductName")
+   CurrentVersion = LireRegistre("HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\CurrentVersion")
+   ServicePack = LireRegistre("HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\CSDVersion")
+   CurrentBuildNumber = LireRegistre("HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\CurrentBuildNumber")
+   If InStr(ProductName, "Windows XP") > 0 Then
+      TypeWin = "winxp"
+      If InStr(ServicePack, "Pack 3") Then 
+         TypeWin = TypeWin & "sp3"
+      End If
+      If InStr(ServicePack, "Pack 2") Then 
+         TypeWin = TypeWin & "sp2"
+      End If
+      If InStr(ServicePack, "Pack 1") Then 
+         TypeWin = TypeWin & "sp1"
+      End If
+   End If
+   If InStr(ProductName, "Windows 2000") > 0 Then
+      TypeWin = "win2k"
+      If InStr(ServicePack, "Pack 4") Then 
+         TypeWin = TypeWin & "sp4"
+      End If
+      If InStr(ServicePack, "Pack 3") Then 
+         TypeWin = TypeWin & "sp3"
+      End If
+      If InStr(ServicePack, "Pack 2") Then 
+         TypeWin = TypeWin & "sp2"
+      End If
+      If InStr(ServicePack, "Pack 1") Then 
+         TypeWin = TypeWin & "sp1"
+      End If
+   End If
+   GetTypeWin = TypeWin
+   End Function
+

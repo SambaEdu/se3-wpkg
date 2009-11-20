@@ -1,0 +1,16 @@
+http://ftp.fr.debian.org/debian/tools/md5sum-w32.zip
+
+This utility computes MD5 checksums of files, ignoring end-of-line
+conventions unless the -b (binary) flag is set. 
+
+usage: md5sum [-bv] [-c [file]] | [file...]
+Generates or checks MD5 Message Digests
+    -c  check message digests (default is generate)
+    -v  verbose, print file names when checking
+    -b  read files in binary mode
+The input for -c should be the list of message digests and file names
+that is printed on stdout by this program when it generates digests.
+
+So, if you want to generate a MD5 sum for a certian file cdimage.iso,
+open a command console (Start/Run and enter "command"), and issue the
+command "md5sum -b cdimage.iso".

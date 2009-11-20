@@ -1,0 +1,8 @@
+/var/cache/se3_install/
+/usr/share/se3/scripts/
+/var/se3/unattended/install/wpkg
+/var/se3/unattended/install/wpkg/tools
+/var/se3/unattended/install/wpkg/tools/UnxUtils
+/var/www/se3/wpkg
+/var/www/se3/includes/menu.d/
+/var/www/se3/Progs/install/
