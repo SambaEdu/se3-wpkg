@@ -1428,8 +1428,8 @@ mv -f $RUNWPKGJOB /var/se3/Progs/ro/
 chown admin:admins /var/se3/Progs/ro/$RUNWPKGJOB
 
 # creation du raccourci sur le bureau d'admin (ou admins)
-[ -e "/home/templates/admins/Bureau/Applications\ Wpkg.lnk" ] && echo "Suppression du raccourci du template admins" && rm "/home/templates/admins/Bureau/Applications\ Wpkg.lnk"
-[ -e "/home/templates/admin/Bureau/Applications\ Wpkg.lnk" ] && echo "Suppression du raccourci du template admin" && rm "/home/templates/admin/Bureau/Applications\ Wpkg.lnk"
+#[ -e "/home/templates/admins/Bureau/Applications\ Wpkg.lnk" ] && echo "Suppression du raccourci du template admins" && rm "/home/templates/admins/Bureau/Applications\ Wpkg.lnk"
+#[ -e "/home/templates/admin/Bureau/Applications\ Wpkg.lnk" ] && echo "Suppression du raccourci du template admin" && rm "/home/templates/admin/Bureau/Applications\ Wpkg.lnk"
 [ -e "/home/admin/profil/Bureau/Applications\ Wpkg.lnk" ] && echo "Suppression du raccourci du Bureau d'admin" && rm "/home/admin/profil/Bureau/Applications\ Wpkg.lnk"
 
 #env WINEDEBUG=-all wine $WPKGDIR/tools/nircmdc.exe shortcut $CPAU ".\\" "Applications Wpkg" "-dec -lwp -cwd c:\\ -file $RUNWPKGJOB" %%windir%%\\system32\\setup.exe
