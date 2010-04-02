@@ -1430,7 +1430,7 @@ chown admin:admins /var/se3/Progs/ro/$RUNWPKGJOB
 # creation du raccourci sur le bureau d'admin (ou admins)
 #[ -e "/home/templates/admins/Bureau/Applications\ Wpkg.lnk" ] && echo "Suppression du raccourci du template admins" && rm "/home/templates/admins/Bureau/Applications\ Wpkg.lnk"
 #[ -e "/home/templates/admin/Bureau/Applications\ Wpkg.lnk" ] && echo "Suppression du raccourci du template admin" && rm "/home/templates/admin/Bureau/Applications\ Wpkg.lnk"
-[ -e "/home/admin/profil/Bureau/Applications\ Wpkg.lnk" ] && echo "Suppression du raccourci du Bureau d'admin" && rm "/home/admin/profil/Bureau/Applications\ Wpkg.lnk"
+[ -e "/home/admin/profil/Bureau/Applications Wpkg.lnk" ] && echo "Suppression du raccourci invalide (ancienne generation wpkg) du Bureau d'admin" && rm "/home/admin/profil/Bureau/Applications Wpkg.lnk"
 
 #env WINEDEBUG=-all wine $WPKGDIR/tools/nircmdc.exe shortcut $CPAU ".\\" "Applications Wpkg" "-dec -lwp -cwd c:\\ -file $RUNWPKGJOB" %%windir%%\\system32\\setup.exe
 
@@ -1444,8 +1444,9 @@ else
 	echo "Creation du raccourci Applications WPKG sur le bureau d'admin"
 fi
 
-FINDCMD="@if not exist \"%LOGONSERVER%\\\\admhomes\\\\templates\\\\$TEMPLATE\\\\Bureau\\\\Applications Wpkg.lnk\" \\\\\\\\$SE3\\\\install\\\\wpkg\\\\tools\\\\nircmdc.exe shortcut \\\\\\\\$SE3\\\\netlogon\\\\CPAU.exe \"\\\\\\\\$SE3\\\\admhomes\\\\templates\\\\$TEMPLATE\\\\Bureau\" \"Applications Wpkg\" \"-dec -lwp -cwd c:\\\\ -file \\\\\\\\$SE3\\\\Progs\\\\ro\\\\$RUNWPKGJOB\" %windir%\\\\system32\\\\setup.exe"
-CMDINSTALL="@if not exist \"%LOGONSERVER%\\admhomes\\templates\\$TEMPLATE\\Bureau\\Applications Wpkg.lnk\" \\\\$SE3\\install\\wpkg\\tools\\nircmdc.exe shortcut $CPAU \"\\\\$SE3\\admhomes\\templates\\$TEMPLATE\\Bureau\" \"Applications Wpkg\" \"-dec -lwp -cwd c:\\ -file \\\\$SE3\\Progs\\ro\\$RUNWPKGJOB\" %windir%\\system32\\setup.exe"
+FINDCMD="@if not exist \"%LOGONSERVER%\\\\admhomes\\\\templates\\\\$TEMPLATE\\\\Bureau\\\\Applications Wpkg.lnk\" (\\\\\\\\$SE3\\\\install\\\\wpkg\\\\tools\\\\nircmdc.exe shortcut \\\\\\\\$SE3\\\\netlogon\\\\CPAU.exe \"\\\\\\\\$SE3\\\\admhomes\\\\templates\\\\$TEMPLATE\\\\Bureau\" \"Applications Wpkg\" \"-dec -lwp -cwd c:\\\\ -file \\\\\\\\$SE3\\\\Progs\\\\ro\\\\$RUNWPKGJOB\" %windir%\\\\system32\\\\setup.exe"
+CMDINSTALL="@if not exist \"%LOGONSERVER%\\admhomes\\templates\\$TEMPLATE\\Bureau\\Applications Wpkg.lnk\" (\\\\$SE3\\install\\wpkg\\tools\\nircmdc.exe shortcut $CPAU \"\\\\$SE3\\admhomes\\templates\\$TEMPLATE\\Bureau\" \"Applications Wpkg\" \"-dec -lwp -cwd c:\\ -file \\\\$SE3\\Progs\\ro\\$RUNWPKGJOB\" %windir%\\system32\\setup.exe & copy /Y \"\\\\$SE3\\admhomes\\templates\\$TEMPLATE\\Bureau\\Applications Wpkg.lnk\" \"\\\\$SE3\\admin\\profil\\Bureau\\Applications  Wpkg.lnk\") ELSE (if exist \"\\\\$SE3\\admin\\profil\\Bureau\\Applications  Wpkg.lnk\" del /F /Q \"\\\\$SE3\\admin\\profil\\Bureau\\Applications  Wpkg.lnk\")"
+
 
 LOGONSCRIPT="/home/templates/$TEMPLATE/logon.bat"
 TEST=""
