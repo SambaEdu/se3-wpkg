@@ -1430,7 +1430,6 @@ chown admin:admins /var/se3/Progs/ro/$RUNWPKGJOB
 # creation du raccourci sur le bureau d'admin (ou admins)
 #[ -e "/home/templates/admins/Bureau/Applications\ Wpkg.lnk" ] && echo "Suppression du raccourci du template admins" && rm "/home/templates/admins/Bureau/Applications\ Wpkg.lnk"
 #[ -e "/home/templates/admin/Bureau/Applications\ Wpkg.lnk" ] && echo "Suppression du raccourci du template admin" && rm "/home/templates/admin/Bureau/Applications\ Wpkg.lnk"
-[ -e "/home/admin/profil/Bureau/Applications Wpkg.lnk" ] && echo "Suppression du raccourci invalide (ancienne generation wpkg) du Bureau d'admin" && rm "/home/admin/profil/Bureau/Applications Wpkg.lnk"
 
 #env WINEDEBUG=-all wine $WPKGDIR/tools/nircmdc.exe shortcut $CPAU ".\\" "Applications Wpkg" "-dec -lwp -cwd c:\\ -file $RUNWPKGJOB" %%windir%%\\system32\\setup.exe
 
@@ -1457,7 +1456,8 @@ if [ ! "$TEST" = "" ]; then
     echo "La commande de creation du racourci Applications WPKG est deja presente."
 else
     echo "Commande de creation du raccourci Applications WPKG ajoutee a $LOGONSCRIPT."
-    echo "$CMDINSTALL" >> $LOGONSCRIPT
+	[ -e "/home/admin/profil/Bureau/Applications Wpkg.lnk" ] && echo "Suppression du raccourci invalide (ancienne generation wpkg) du Bureau d'admin" && rm "/home/admin/profil/Bureau/Applications Wpkg.lnk"
+	echo "$CMDINSTALL" >> $LOGONSCRIPT
     #recode $script_charset..CP850 $LOGONSCRIPT
     unix2dos $LOGONSCRIPT
     chown admin:admins $LOGONSCRIPT
