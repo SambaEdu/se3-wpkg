@@ -4,7 +4,8 @@ if ""=="%Z%" set Z=Y:\unattended\install
 
 :: regeneration locale de la correspondance ID du package<-> Category
 pushd %Z%\wpkg
-cscript %Z%\wpkg\AnalyseCategory.js 1>NUL
+echo Analyse des Category dans packages.xml
+cscript %Z%\wpkg\AnalyseCategory.js
 Set raccprogstoclass=%systemdrive%\netinst\PackagesCategory.txt
 
 SET PACKAGE=%1
@@ -17,7 +18,7 @@ if "%ALLUSERSPROFILE%"=="" Set ALLUSERSPROFILE="C:\Documents and Settings\All Us
 CHCP 1252 > NUL
 	for /F "tokens=2* delims=	" %%a in (c:\tmp.txt) do (
 	CHCP 850 > NUL
-	@rem if exist "%%b" set MenuDemarrer=%%b&& echo Le menu demarrer de AllUsers est dans %%b
+	if exist "%%b" set MenuDemarrer=%%b&& echo Le menu demarrer de AllUsers est dans %%b
 )
 
 IF "%3"=="remove" goto remove
@@ -29,7 +30,6 @@ IF "%3"=="remove" goto remove
 ::	echo %PACKAGE%
 ::)
 ::echo "Package : %PACKAGE%"
-
 
 echo Rangement de %DOSSIERLNK% par categories dans AllUsers
 for /F "tokens=1,2 delims=;" %%a in (%raccprogstoclass%) do (
@@ -49,10 +49,12 @@ for /F "tokens=1,2 delims=;" %%a in (%raccprogstoclass%) do (
 						echo Suppression du dossier %%b\%DOSSIERLNK%
 						rd /S /Q "%MenuDemarrer%\%%b\%DOSSIERLNK%"
 					)
-					echo Rangement du fichier-dossier %DOSSIERLNK% de l'appli %%a vers la categorie %%b
-					move /Y "%MenuDemarrer%\%DOSSIERLNK%" "%MenuDemarrer%\%%b\"
 				)
+				echo Rangement du fichier-dossier %DOSSIERLNK% de l'appli %%a vers la categorie %%b
+				move /Y "%MenuDemarrer%\%DOSSIERLNK%" "%MenuDemarrer%\%%b\"
 			)
+		) ELSE (
+			echo "%MenuDemarrer%\%DOSSIERLNK%" n existe pas. Bizarre.
 		)
 	)
 )
@@ -75,8 +77,8 @@ for /F "tokens=1,2 delims=;" %%a in (%raccprogstoclass%) do (
 					echo Suppression du dossier obsolete %%b\%DOSSIERLNK%
 					rd /S /Q "%MenuDemarrer%\%%b\%DOSSIERLNK%"
 				)
-				echo Suppression de la categorie %%b si vide.
-				dir /B "%MenuDemarrer%\%%b" | find /V "" >NULL || rd /S /Q "%MenuDemarrer%\%%b"
+				echo Suppression de la categorie "%MenuDemarrer%\%%b" si vide.
+				dir /B "%MenuDemarrer%\%%b" | find /V "" >NUL || rd /S /Q "%MenuDemarrer%\%%b"
 			)
 		)
 	)
