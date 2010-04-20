@@ -1,3 +1,22 @@
+se3-wpkg (0.1-23) stable; urgency=low
+
+  * classement automatique en fonction des categories dans le menu
+    demarrer de All Users
+
+ -- root <root@localhost.localdomain>  Mon, 12 Apr 2010 22:09:50 +0200
+
+se3-wpkg (0.1-22) stable; urgency=low
+
+  * supression wpkg-config.bat
+
+ -- root <root@localhost.localdomain>  Mon,  5 Apr 2010 23:40:11 +0200
+
+se3-wpkg (0.1-21) stable; urgency=low
+
+  * conformitese3 1.50
+
+ -- root <root@localhost.localdomain>  Thu, 18 Feb 2010 01:42:13 +0100
+
 se3-wpkg (0.1-20) stable; urgency=low
 
   * Correctif bat

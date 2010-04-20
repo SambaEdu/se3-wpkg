@@ -2,8 +2,8 @@
 # $Id$
 DISTRIB=$1
 BRANCHE=$2
-[ "$BRANCHE" == "" -o "$BRANCHE" == "XP" ] && OPT="XP"
 
+[ "$BRANCHE" != "stable" ] && OPT="XP"
 if [ "$BRANCHE" == "" -o "$DISTRIB" == "" ]; then
 echo "usage :  $0 distrib branche
 distrib : sarge ou etch
@@ -13,7 +13,7 @@ fi
 
 SE3MODULE="se3-wpkg"
 PATH_SVN_LOCAL="/digloo/deb/se3/"
-PATH_SE3MODULE="${PATH_SVN_LOCAL}${SE3MODULE}"
+PATH_SE3MODULE="$(pwd)"
 
 
 SOURCE_DIR="sources"
