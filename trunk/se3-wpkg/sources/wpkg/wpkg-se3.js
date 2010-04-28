@@ -1531,6 +1531,21 @@ function executeOnce(packageNode) {
        settings.removeChild(nodeOld);
     }
     
+	// Modification pour SE3 et prise en compte des Category
+	var packageID = packageNode.getAttribute("id");
+	var lnkDir = packageNode.getAttribute("lnk");
+	var category = packageNode.getAttribute("category");
+	if (lnkDir != null) {
+			if (category != null) {
+				info("Deplacement automatique des raccourcis de id=" + packageID + " depuis %Programfiles%\\" + lnkDir + " dans la Category " + category + ".");
+				exec("call %Z%\\wpkg\\AnalyseCategory.bat \"" + packageID + "\" \"" + lnkDir + "\"", timeout, workdir);
+			} else {
+				info("Pas de deplacement automatique des raccourcis car 'category' est absent.");
+			}
+	} else {
+			info("Pas de deplacement automatique des raccourcis car 'lnk' est absent.");
+	}
+	
     // append new node to local xml
     settings.appendChild(packageNode);
     saveXml(settings, settings_file);
@@ -1652,12 +1667,26 @@ function installPackage(packageNode) {
         if (!checkInstalled(packageNode)) {
             throw new Error("'" + packageName + "' n'est pas installé, d'après le test (check)\r\n");
         }
-
-    
+		
+		// Modification pour SE3 et prise en compte des Category
+		var packageID = packageNode.getAttribute("id");
+		var lnkDir = packageNode.getAttribute("lnk");
+		var category = packageNode.getAttribute("category");
+		if (lnkDir != null) {
+			if (category != null) {
+				info("Deplacement automatique des raccourcis de id=" + packageID + " depuis %Programfiles%\\" + lnkDir + " dans la Category " + category + ".");
+				exec("call %Z%\\wpkg\\AnalyseCategory.bat \"" + packageID + "\" \"" + lnkDir + "\"", timeout, workdir);
+			} else {
+				info("Pas de deplacement automatique des raccourcis car 'category' est absent.");
+			}
+		} else {
+			info("Pas de deplacement automatique des raccourcis car 'lnk' est absent.");
+		}
+		
         // append new node to local xml
         settings.appendChild(packageNode);
         saveXml(settings, settings_file);
-    
+		
         // reboot the system if this package is suppose to
         if (packageNode.getAttribute("reboot") == "true") {
             info("Installation de '" + packageName + "' réussie, le poste redémarre.");
@@ -1738,6 +1767,21 @@ function upgradePackage(oldPackageNode, newPackageNode) {
     }
 
 
+	// Modification pour SE3 et prise en compte des Category
+		var packageID = packageNode.getAttribute("id");
+		var lnkDir = packageNode.getAttribute("lnk");
+		var category = packageNode.getAttribute("category");
+		if (lnkDir != null) {
+			if (category != null) {
+				info("Deplacement automatique des raccourcis de id=" + packageID + " depuis %Programfiles%\\" + lnkDir + " dans la Category " + category + ".");
+				exec("call %Z%\\wpkg\\AnalyseCategory.bat \"" + packageID + "\" \"" + lnkDir + "\"", timeout, workdir);
+			} else {
+				info("Pas de deplacement automatique des raccourcis car 'category' est absent.");
+			}
+		} else {
+			info("Pas de deplacement automatique des raccourcis car 'lnk' est absent.");
+		}
+
     if (!checkInstalled(newPackageNode)) {
 
         if (!checkInstalled(oldPackageNode)) {
@@ -1752,8 +1796,7 @@ function upgradePackage(oldPackageNode, newPackageNode) {
         settings.appendChild(newPackageNode);
         saveXml(settings, settings_file);
     }
-
-
+		
     info("Mise à jour de " + newPackageNode.getAttribute("name") + " version "+ newPackageNode.getAttribute("revision") + " réussie.");
     
     // reboot the system if this package is suppose to
@@ -1792,7 +1835,7 @@ function removePackage(packageNode) {
 
             var result = exec(cmd, timeout, workdir);
             //dinfo("Code de retour: " + result);
-            
+			
             // if exit code is 0, return successfully
             if (result == 0) {
                 continue;
@@ -1836,7 +1879,21 @@ function removePackage(packageNode) {
         }
     }
     
-
+	// Modification pour SE3 et prise en compte des Category
+	var packageID = packageNode.getAttribute("id");
+	var lnkDir = packageNode.getAttribute("lnk");
+	var category = packageNode.getAttribute("category");
+	if (lnkDir != null) {
+			if (category != null) {
+					info("Suppression des raccourcis de id=" + packageID + " depuis %Programfiles%\\" + category + "\\" + lnkDir);
+					exec("call %Z%\\wpkg\\AnalyseCategory.bat \"" + packageID + "\" \"" + lnkDir + "\" remove", timeout, workdir);
+			} else {
+					info("Pas de suppression automatique des raccourcis car 'category' est absent.");
+			}
+	} else {
+			info("Pas de suppression automatique des raccourcis car 'lnk' est absent.");
+	}
+	
     if (!checkInstalled(packageNode)) {
         // remove package node from local xml
         settings.removeChild(packageNode);
