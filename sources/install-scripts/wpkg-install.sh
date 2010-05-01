@@ -118,17 +118,17 @@ if [ ! -d /var/se3/unattended/install/packages/windows ] ; then
 fi
 cd /var/se3/unattended/install/packages/windows
 
-# WindowsXP-Windows2000-Script56
-if [ ! -e WindowsXP-Windows2000-Script56-KB917344-x86-fra.exe ] ; then
-   echo "Telechargement de WindowsScript56 (http://download.microsoft.com/download/e/a/9/ea9b9bab-0acf-47c4-8c48-75133f499e4d/WindowsXP-Windows2000-Script56-KB917344-x86-fra.exe)."
-   if ( ! wget 'http://download.microsoft.com/download/e/a/9/ea9b9bab-0acf-47c4-8c48-75133f499e4d/WindowsXP-Windows2000-Script56-KB917344-x86-fra.exe' ) ; then
-      echo "Erreur de telechargement de WindowsScript56."
+# WindowsXP-Windows2000-Script57
+if [ ! -e scripten.exe ] ; then
+   echo "Telechargement de WindowsScript57 (http://download.microsoft.com/download/4/4/d/44de8a9e-630d-4c10-9f17-b9b34d3f6417/scripten.exe)."
+   if ( ! wget 'http://download.microsoft.com/download/4/4/d/44de8a9e-630d-4c10-9f17-b9b34d3f6417/scripten.exe' ) ; then
+      echo "Erreur de telechargement de WindowsScript57."
       echo "  Vous pourrez le telecharger plus tard à partir de l'adresse :"
-      echo "  http://www.microsoft.com/downloads/details.aspx?FamilyID=c717d943-7e4b-4622-86eb-95a22b832caa&DisplayLang=fr"
-      echo "  et placer WindowsXP-Windows2000-Script56-KB917344-x86-fra.exe"
+      echo "  http://www.microsoft.com/downloads/details.aspx?FamilyID=47809025-D896-482E-A0D6-524E7E844D81&displaylang=en"
+      echo "  et placer scripten.exe"
       echo "  dans \\\\$SE3\\install\\packages\\windows\\ ."
-      if [ -e WindowsXP-Windows2000-Script56-KB917344-x86-fra.exe ] ; then
-         rm WindowsXP-Windows2000-Script56-KB917344-x86-fra.exe
+      if [ -e scripten.exe ] ; then
+         rm scripten.exe
       fi
    fi
 fi
@@ -477,11 +477,12 @@ echo   installez-le sur le poste a partir de :
 echo   http://www.microsoft.com/downloads/details.aspx?FamilyID=c717d943-7e4b-4622-86eb-95a22b832caa&DisplayLang=fr
 Goto WININSTALLER
 
-echo Mise a jour WindowsScriptHost 5.6.0.8831
+echo Mise a jour WindowsScriptHost 5.7 ou 5.6
+If Exist %WPKGROOT%\\..\\packages\\windows\\scripten.exe Goto SETUP57
 If Exist %WPKGROOT%\\..\\packages\\windows\\WindowsXP-Windows2000-Script56-KB917344-x86-fra.exe Goto SETUP56
-echo Le fichier "WindowsXP-Windows2000-Script56-KB917344-x86-fra.exe" est absent. 
-echo   Telechargez-le depuis l'adresse 
-echo   http://www.microsoft.com/downloads/details.aspx?FamilyID=c717d943-7e4b-4622-86eb-95a22b832caa&DisplayLang=fr
+echo Les fichiers "scripten.exe " et "WindowsXP-Windows2000-Script56-KB917344-x86-fra.exe" sont absents. 
+echo   Telechargez scripten.exe depuis l'adresse 
+echo   http://www.microsoft.com/downloads/details.aspx?FamilyID=47809025-D896-482E-A0D6-524E7E844D81&displaylang=en
 echo   et placez ce fichier dans \\\\$SE3\\install\\packages\\windows\\ 
 Set /A NbErreur=1+%NbErreur%
 Goto WININSTALLER
@@ -494,6 +495,18 @@ Set Erreur=%ErrorLevel%
 If Not "%Erreur%"=="0" If Not "%Erreur%"=="3010" echo Err %Errorlevel% : Mise a jour WindowsScriptHost 
 If Not "%Erreur%"=="0" Set /A NbErreur=1+%NbErreur%
 If "%Erreur%"=="3010" echo WindowsScriptHost56 sera operationnel apres un redemarrage. 
+If "%Erreur%"=="0" echo Mise a jour WindowsScriptHost : OK 
+If Exist "%SystemDrive%\\tmp" RmDir /S /Q "%SystemDrive%\\tmp"
+Goto WININSTALLER
+
+:SETUP57
+:: Installation silentieuse de scriptfr.inf
+%WPKGROOT%\\..\\packages\\windows\\scripten.exe /quiet /passive /norestart /overwriteoem
+::If "%Errorlevel%"=="0" start /wait %WinDir%\\System32\\rundll32.exe setupapi,InstallHinfSection DefaultInstall 128 %SystemDrive%\\tmp\\scriptfr.inf
+Set Erreur=%ErrorLevel%
+If Not "%Erreur%"=="0" If Not "%Erreur%"=="3010" echo Err %Errorlevel% : Mise a jour WindowsScriptHost 
+If Not "%Erreur%"=="0" Set /A NbErreur=1+%NbErreur%
+If "%Erreur%"=="3010" echo WindowsScriptHost57 sera operationnel apres un redemarrage. 
 If "%Erreur%"=="0" echo Mise a jour WindowsScriptHost : OK 
 If Exist "%SystemDrive%\\tmp" RmDir /S /Q "%SystemDrive%\\tmp"
 
@@ -1472,6 +1485,16 @@ env WINEDEBUG=-all wine /home/netlogon/CPAU.exe -u "$adminse3" -wait  -p "$xppas
 mv -f $wpkgRepairJOB /var/se3/Progs/ro/
 chown admin:admins /var/se3/Progs/ro/$wpkgRepairJOB
 
+
+TEST=""
+FINDCMD="\\\\\\\\$SE3\\\\Progs\\\\install\\\\installdll\\\\CPAU.exe"
+[ -e /home/templates/base/logon.bat ] && TEST=$(cat /home/templates/base/logon.bat | grep "$FINDCMD" )
+if [ ! "$TEST" = "" ]; then
+	echo "Correction du lien vers CPAU.exe dans base/logon.bat"
+	sed -i /home/templates/base/logon.bat -e 's!\\\\'$SE3'\\Progs\\install\\installdll\\CPAU.exe!\\\\'$SE3'\\netlogon\\CPAU.exe!'
+fi
+
+
 echo "Modification (si besoin) du script de login de base"
 # Commande à placer dans le script de login des utilisateurs
 CMDINSTALL="@if \"%OS%\"==\"Windows_NT\" if not exist \"%WinDir%\\wpkg-client.vbs\" $CPAU -dec -lwp -hide -cwd %SystemDrive%\\ -file \\\\$SE3\\Progs\\ro\\$INSTTASKJOB 2>NUL >NUL"
@@ -1479,7 +1502,13 @@ FINDCMD="@if \"%OS%\"==\"Windows_NT\" if not exist \"%WinDir%\\\\wpkg-client.vbs
 
 TEST=""
 [ -e /home/templates/base/logon.bat ] && TEST=$(cat /home/templates/base/logon.bat | grep "$FINDCMD" | grep -v "::" | grep -v "rem")
-#echo "TEST :$TEST-FINDCMD=$CMDINSTALL"
+
+# En version 2.0 testing, la ligne d'installation du client a ete creee en double.
+LINENBR=$(echo "$TEST" | wc -l)
+if [ ! "$LINENBR" = "1" ]; then 
+	echo "ATTENTION : Plusieurs lignes d'installation wpkg sont presentes dans templates/base/logon.bat. Effacez les lignes superflues."
+fi
+
 if [ ! "$TEST" = "" ]; then
 	echo "La commande d'installation de wpkg existe dans logon.bat et n'est pas commentee."
 else
@@ -1588,6 +1617,13 @@ PACKAGESXML
     echo "Fichier packages.xml cree."
 else
     echo "Le fichier packages.xml present est conserve."
+fi
+
+# Paquet deploiementimprimantes.xml obsolete : on le rend inactif en supprimant le script qu'il execute.
+# Une maj du xml rendra également ce package inopérant.
+if [ -e /var/se3/unattended/install/packages/windows/printers/ajoutpilotesimprimantes.bat ]; then
+	echo "Suppression du script ajoutpilotesimprimantes.bat devenu obsolete en 2.0."
+	rm -f /var/se3/unattended/install/packages/windows/printers/ajoutpilotesimprimantes.bat
 fi
 
 # Dossier destiné à recevoir les rapports remontés par les postes
