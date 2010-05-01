@@ -1381,8 +1381,8 @@ TASKRUNWPKG='{%{ComSpec}%} /C cscript {%{Windir}%}\\wpkg-client.vbs /debug /note
 # Recopie de reg.exe qui n'est pas disponible sous Win2k alors qu'il fonctionne parfaitement
 ### on cherche un WinXP allumé et on tente un allumage si besoin.
 # a implementer : avec requete ldap + tcpcheck
-IPWINXP=10.211.55.160
-NAMEWINXP=WINXPSE3
+#IPWINXP=10.211.55.160
+#NAMEWINXP=WINXPSE3
 
 if [ -e $WPKGDIR/tools/reg.exe ] ; then
 	echo "Utilitaire reg.exe present sur le serveur."
@@ -1485,13 +1485,18 @@ env WINEDEBUG=-all wine /home/netlogon/CPAU.exe -u "$adminse3" -wait  -p "$xppas
 mv -f $wpkgRepairJOB /var/se3/Progs/ro/
 chown admin:admins /var/se3/Progs/ro/$wpkgRepairJOB
 
-
+# On supprime toute reference a CPAU.exe dans installdll.
+# En cas de presence, on vire aussi toute reference a wpkg-client.vbs : cette methode permet de supprimer une ligne creee en double dans la version testing de 2.0
 TEST=""
 FINDCMD="\\\\\\\\$SE3\\\\Progs\\\\install\\\\installdll\\\\CPAU.exe"
 [ -e /home/templates/base/logon.bat ] && TEST=$(cat /home/templates/base/logon.bat | grep "$FINDCMD" )
 if [ ! "$TEST" = "" ]; then
+	# Suppression de la ligne en double introduite dans la version testing lors des tests de la 2.0
+	sed -i /home/templates/base/logon.bat -e 's/%WinDir%\\wpkg-client.vbs/##### delete me #####/g'
+	sed -i /home/templates/base/logon.bat -e "/##### delete me #####/d"
+	# pour modifier le chemin de job CPAU personnels :
 	echo "Correction du lien vers CPAU.exe dans base/logon.bat"
-	sed -i /home/templates/base/logon.bat -e 's!\\\\'$SE3'\\Progs\\install\\installdll\\CPAU.exe!\\\\'$SE3'\\netlogon\\CPAU.exe!'
+	sed -i /home/templates/base/logon.bat -e 's/\\\\'$SE3'\\Progs\\install\\installdll\\CPAU.exe/\\\\'$SE3'\\netlogon\\CPAU.exe/g'
 fi
 
 
@@ -1502,13 +1507,6 @@ FINDCMD="@if \"%OS%\"==\"Windows_NT\" if not exist \"%WinDir%\\\\wpkg-client.vbs
 
 TEST=""
 [ -e /home/templates/base/logon.bat ] && TEST=$(cat /home/templates/base/logon.bat | grep "$FINDCMD" | grep -v "::" | grep -v "rem")
-
-# En version 2.0 testing, la ligne d'installation du client a ete creee en double.
-LINENBR=$(echo "$TEST" | wc -l)
-if [ ! "$LINENBR" = "1" ]; then 
-	echo "ATTENTION : Plusieurs lignes d'installation wpkg sont presentes dans templates/base/logon.bat. Effacez les lignes superflues."
-fi
-
 if [ ! "$TEST" = "" ]; then
 	echo "La commande d'installation de wpkg existe dans logon.bat et n'est pas commentee."
 else
