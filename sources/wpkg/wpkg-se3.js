@@ -1768,9 +1768,9 @@ function upgradePackage(oldPackageNode, newPackageNode) {
 
 
 	// Modification pour SE3 et prise en compte des Category
-		var packageID = packageNode.getAttribute("id");
-		var lnkDir = packageNode.getAttribute("lnk");
-		var category = packageNode.getAttribute("category");
+		var packageID = newPackageNode.getAttribute("id");
+		var lnkDir = newPackageNode.getAttribute("lnk");
+		var category = newPackageNode.getAttribute("category");
 		if (lnkDir != null) {
 			if (category != null) {
 				info("Deplacement automatique des raccourcis de id=" + packageID + " depuis %Programfiles%\\" + lnkDir + " dans la Category " + category + ".");
