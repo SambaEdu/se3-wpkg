@@ -1590,6 +1590,38 @@ echo "Fichier initvars_se3.bat cree."
 chown www-se3:root /usr/share/se3/scripts/wakeonlan
 chmod +x /usr/share/se3/scripts/wakeonlan
 
+# Initialisation de Touslespostes.xml
+if [ -d "$WPKGDIR/hosts" ]; then
+    mkdir -p "$WPKGDIR/hosts"
+fi
+TOUSLESPOSTESXML=$WPKGDIR/hosts/Touslespostes.xml
+echo "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>" > $TOUSLESPOSTESXML
+echo "<wpkg>" >> $TOUSLESPOSTESXML
+echo "<host name=\".+\" profile-id=\"_TousLesPostes\" />" >> $TOUSLESPOSTESXML
+echo "</wpkg>" >> $TOUSLESPOSTESXML
+recode $script_charset..CP850 $TOUSLESPOSTESXML
+unix2dos $TOUSLESPOSTESXML
+echo "Fichier $TOUSLESPOSTESXML cree."
+
+# on efface le fichier cree inutilement : non fonctionnel
+if [ -e $WPKGDIR/profiles/Touslespostes.xml ]; then
+	rm -f $WPKGDIR/profiles/Touslespostes.xml
+fi
+
+# Initialisation de unattended.xml
+WPKGPROFILEUNATTEND=$WPKGDIR/profiles/unattended.xml
+echo "Creation du fichier $WPKGPROFILEUNATTEND pour les installations unattended."
+if [ -d "$WPKGDIR/profiles" ]; then
+    mkdir -p "$WPKGDIR/profiles"
+fi
+echo -e "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>\r
+<profiles>\r
+<profile id=\"unattended\">\r
+<depends profile-id=\"_TousLesPostes\"/>\r
+</profile>\r
+</profiles>\r" > $WPKGPROFILEUNATTEND
+
+
 # Initialisation de packages.xml
 if [ ! -e "$WPKGDIR/packages.xml" ]; then
     SE3=`gawk -F' *= *' '/netbios name/ {print $2}' /etc/samba/smb.conf`
