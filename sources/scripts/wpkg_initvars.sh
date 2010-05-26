@@ -40,7 +40,7 @@ if ( grep 'Set HashSE3=' $INITVARSSE3BAT >/dev/null 2>&1); then
 fi
 
 # Creation du fichier $INITVARSSE3BAT
-. /etc/se3/config_m.cache.sh
+. /usr/share/se3/includes/config.inc.sh -m
 
 # Nom du serveur SE3
 echo "Set SE3=$netbios_name" > $INITVARSSE3BAT
@@ -57,3 +57,4 @@ fi
 echo "SELECT CONCAT('Set ', name, '=', value) FROM params WHERE name In ($ListVars)" | mysql -h $dbhost $dbname -u $dbuser -p$dbpass -N >> $INITVARSSE3BAT
 
 unix2dos $INITVARSSE3BAT
+
