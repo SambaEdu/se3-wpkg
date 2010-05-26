@@ -131,7 +131,7 @@ if (true) { // variables globales
     var settings;
     var hosts;
 
-    var nonotify = false;
+    var nonotify = true;
     var noreboot = false;
     var exportRunningState = true;    
     var rebootCmd = "standard";
