@@ -5,7 +5,7 @@ header("Cache-Control: max-age=5, s-maxage=5, no-cache, must-revalidate");
 include "inc/wpkg.auth.php";
 
 // version du paquet debian
-$SE3WPKGVERSION='se3-wpkg_0.1-19_i386.deb';
+$SE3WPKGVERSION=exec("dpkg -p se3-wpkg | grep Version");
 
 echo "var Debian = '$SE3WPKGVERSION';\r\n";
 echo "var wpkgAdmin = ".($wpkgAdmin ? 1 : 0) . "; // Est-ce que l'utilisateur est un administrateur\r\n";
