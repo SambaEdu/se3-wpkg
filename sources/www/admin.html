@@ -505,12 +505,16 @@
 		} else {
 			// firefox
 			if ((typeof eltsrc) != "undefined" ) {
-				if (eltsrc.style.cursor == "ne-resize") {
+				if ((typeof eltsrc.style) == "undefined" ) {
 					Tableau.sort(triTableau);
-					eltsrc.style.cursor = "nw-resize";
 				} else {
-					Tableau.sort(triRevTableau);
-					eltsrc.style.cursor = "ne-resize";
+					if (eltsrc.style.cursor == "ne-resize") {
+						Tableau.sort(triTableau);
+						eltsrc.style.cursor = "nw-resize";
+					} else {
+						Tableau.sort(triRevTableau);
+						eltsrc.style.cursor = "ne-resize";
+					}
 				}
 			} else {
 				// tri pour remettre le résultat du dernier tri
