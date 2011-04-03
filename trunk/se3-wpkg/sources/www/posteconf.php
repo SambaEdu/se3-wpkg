@@ -68,7 +68,7 @@ if ( ! $wpkgUser ) {
 				//$ini .= "norunningstate=false ' Pour que wpkg n'écrive pas running=true dans la base de registre lorsqu'il s'exécute.\r\n";
 				$ini .= "dryrun=false ' Pour que wpkg simule une exécution mais n'installe ou ne désinstalle rien.\r\n";
 				$ini .= "nowpkg=false ' Pour ne pas exécuter wpkg sur le poste.\r\n";
-				$ini .= "nozombie=false ' Pour retirer les applis zombie de la base de données du poste.\r\n";
+				$ini .= "noforcedremove=false ' Pour ne pas retirer les applis zombies de la base de données du poste si les commandes de remove échouent.\r\n";
 			}
 			
 			if ( $ini != '') {
