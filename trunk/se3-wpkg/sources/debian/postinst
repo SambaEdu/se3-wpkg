@@ -60,7 +60,26 @@ case "$1" in
 	if [ "X$test_exist" = "X" ]; then # if empty
 		echo "INSERT into params (name,value,srv_id,descr,cat) VALUES (\"wpkg\",\"1\",\"\",\"Activation ou désactivation de wpkg\",6) " | mysql -h $dbhost $dbname -u $dbuser -p$dbpass -N
 	fi
-    ;;
+	
+	###### Ajout des scripts wsusoffline ####
+	if [ ! -e /var/se3/unattended/install/wsusoffline ] ; then
+		echo "Telechargement des scripts wsusoffline"
+		wget http://olivier.lax.free.fr/se3/wpkg/wsusoffline/wsusoffline.zip -O /var/se3/unattended/install/wsusoffline.zip > /dev/null
+		# unzip est present car installe par se3-wpkg
+		if [ -e /var/se3/unattended/install/wsusoffline.zip ]; then
+			if ( ! unzip -o /var/se3/unattended/install/wsusoffline.zip -d /var/se3/unattended/install/ > /dev/null ) ; then
+				echo "Erreur unzip -o /var/se3/unattended/install/wsusoffline.zip"
+			else
+				echo "Reglage des droits sur les fichiers wsusoffline."
+				chmod -R ug+rwx /var/se3/unattended/install/wsusoffline
+				chown -R admin:admins /var/se3/unattended/install/wsusoffline
+			fi
+			rm -f /var/se3/unattended/install/wsusoffline.zip
+		else
+			echo "Fichier wsusoffline.zip absent : le telechargement a echoue."
+		fi
+	fi
+	;;
 
     abort-upgrade|abort-remove|abort-deconfigure)
     ;;
