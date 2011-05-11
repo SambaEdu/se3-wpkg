@@ -511,7 +511,8 @@ var x64 = null;
 
     // Convertion OEM -> ANSI
     var oemchar = Array();
-    var oemStr0 = "€‚ƒ„…†‡‰‹‘’“”•–—™› ΅Ά£¤¥¦§¨©ª«¬­®―°±²³΄µ¶·ΈΉΊ»Ό½ΎΏΐΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡÒΣΤΥΦΧΨΩΪΫάέήίΰαβγδεζηθικλμνξοπρςστυφχψωϊϋόύώÿ";
+    var oemStr0 = "€‚ƒ„
+†‡‰‹‘’“”•–—™› ΅Ά£¤¥¦§¨©ª«¬­®―°±²³΄µ¶·ΈΉΊ»Ό½ΎΏΐΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡÒΣΤΥΦΧΨΩΪΫάέήίΰαβγδεζηθικλμνξοπρςστυφχψωϊϋόύώÿ";
     var oemStr  = "ΗόιβδΰεηκλθοξμΔΕΙζΖτφςϋωÿΦάψ£ΨΧƒανσϊρΡªΊΏ®¬½Ό΅«»¦¦¦¦¦ΑΒΐ©¦¦++Ά¥++--+-+γΓ++--¦-+¤πΠΚΛΘiΝΞΟ++¦_¦Μ―ΣίΤÒυΥµώήΪΫΩύέ―΄­±=Ύ¶§χΈ°¨·Ή³²¦ ";
     for (i=0; i<128; i++) {
         oemchar[oemStr0.charAt(i)] = oemStr.charAt(i);
@@ -3858,7 +3859,8 @@ function queryPackage(packageNode) {
 		message += "    ID:          " + getPackageID(packageNode) + "\n";
 		message += "    Revision:    " + getPackageRevision(packageNode) + "\n";
 		message += "    Reboot:      " + getPackageReboot(packageNode) + "\n";
-		message += "    ExecAttribs: " + getPackageExecute(packageNode) + "\n";
+		//Correctif compatibilite avec interface SE3 actuelle.
+		//message += "    ExecAttribs: " + getPackageExecute(packageNode) + "\n";
 		var settingNode = getSettingNode(getPackageID(packageNode));
 		if (settingNode != null && getPackageID(settingNode) == getPackageID(packageNode)) {
 			message += "    Status:      Installed\n";
@@ -6470,7 +6472,8 @@ function initansi2oem() {
         codesCar += String.fromCharCode(i);
     }
     var oemStr =  codesCar + " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~¦ΗόιβδΰεηκλθοξμΔΕΙζΖτφςϋωÿΦάψ£ΨΧƒανσϊρΡªΊΏ®¬½Ό΅«»¦¦¦¦¦ΑΒΐ©¦¦++Ά¥++--+-+γΓ++--¦-+¤πΠΚΛΘiΝΞΟ++¦_¦Μ―ΣίΤÒυΥµώήΪΫΩύέ―΄­±=Ύ¶§χΈ°¨·Ή³²¦ ";
-    var charTab= (codesCar + " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~€‚ƒ„…†‡‰‹‘’“”•–—™› ΅Ά£¤¥¦§¨©ª«¬­®―°±²³΄µ¶·ΈΉΊ»Ό½ΎΏΐΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡÒΣΤΥΦΧΨΩΪΫάέήίΰαβγδεζηθικλμνξοπρςστυφχψωϊϋόύώÿ").split("");
+    var charTab= (codesCar + " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~€‚ƒ„
+†‡‰‹‘’“”•–—™› ΅Ά£¤¥¦§¨©ª«¬­®―°±²³΄µ¶·ΈΉΊ»Ό½ΎΏΐΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡÒΣΤΥΦΧΨΩΪΫάέήίΰαβγδεζηθικλμνξοπρςστυφχψωϊϋόύώÿ").split("");
 
     for (i=(oemStr.length-1); i>=0; i--) { 
         Oem[oemStr.charCodeAt(i)] = charTab[i];
