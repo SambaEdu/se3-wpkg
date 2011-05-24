@@ -522,7 +522,7 @@ Function SetEnvironnement()
    oSysEnv("WINLANG")  = "fra"
 
    If debug Then WPKG_OPTIONS = WPKG_OPTIONS & " /debug"
-   If logdebug Then WPKG_OPTIONS = WPKG_OPTIONS & " /logdebug"
+   If logdebug Then WPKG_OPTIONS = WPKG_OPTIONS & " /log_file_path:" & Z & "\wpkg\rapports /logfilePattern:" & ComputerName & ".log"
    If force Then WPKG_OPTIONS = WPKG_OPTIONS & " /force"
    If forceinstall Then WPKG_OPTIONS = WPKG_OPTIONS & " /forceinstall"
    If nonotify Then WPKG_OPTIONS = WPKG_OPTIONS & " /nonotify"
