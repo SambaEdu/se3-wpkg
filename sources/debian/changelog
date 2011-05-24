@@ -1,3 +1,59 @@
+se3-wpkg (0.1-32) stable; urgency=low
+
+  * ré-implémentation de l'option /logdebug : logs en temps reels
+    ls
+
+ -- root <root@localhost.localdomain>  Tue, 24 May 2011 23:19:25 +0200
+
+se3-wpkg (0.1-31) stable; urgency=low
+
+  * correction bug affichage applis installees
+
+ -- root <root@localhost.localdomain>  Thu, 12 May 2011 00:02:04 +0200
+
+se3-wpkg (0.1-30) stable; urgency=low
+
+  * nouvelle version wpkg compatible seven by olikin
+
+ -- root <root@localhost.localdomain>  Sat, 23 Apr 2011 00:26:26 +0200
+
+se3-wpkg (0.1-29) stable; urgency=low
+
+  * correctif olikin affichagenumero version
+
+ -- root <root@localhost.localdomain>  Tue, 15 Jun 2010 01:14:39 +0200
+
+se3-wpkg (0.1-28) stable; urgency=low
+
+  * Wpkg : support poste dans aucun parc
+
+ -- root <root@localhost.localdomain>  Sun, 30 May 2010 01:00:54 +0200
+
+se3-wpkg (0.1-27) stable; urgency=low
+
+  * Wpkg : rangement par categories personnalisees possible après la
+    primo installation d'un programme
+
+ -- root <root@localhost.localdomain>  Fri,  7 May 2010 10:33:52 +0200
+
+se3-wpkg (0.1-26) stable; urgency=low
+
+  * maj corrective (olikin T vire ;)
+
+ -- root <root@localhost.localdomain>  Tue,  4 May 2010 00:20:27 +0200
+
+se3-wpkg (0.1-25) stable; urgency=low
+
+  * modif pour maj script windows passage en version 57
+
+ -- root <root@localhost.localdomain>  Sat,  1 May 2010 14:14:20 +0200
+
+se3-wpkg (0.1-24) stable; urgency=low
+
+  * ajout categorisation auto
+
+ -- root <root@localhost.localdomain>  Sat,  1 May 2010 01:43:21 +0200
+
 se3-wpkg (0.1-23) stable; urgency=low
 
   * classement automatique en fonction des categories dans le menu
