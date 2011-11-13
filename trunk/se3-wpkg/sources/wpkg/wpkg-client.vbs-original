@@ -184,7 +184,7 @@ If fso.FileExists(NoWpkgTxt) Then
    fso.DeleteFile(NoWpkgTxt)
 End If
 
-dim WPKG_OPTIONS : WPKG_OPTIONS = "/synchronize"
+dim WPKG_OPTIONS : WPKG_OPTIONS = "/synchronize /noDownload"
 
 Dim oSysEnv
 
