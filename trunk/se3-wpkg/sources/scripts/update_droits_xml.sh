@@ -98,9 +98,7 @@ mysql --host=$dbhost --user=$dbuser --password=$dbpass --skip-column-names --exe
 			}
 			END {
 				for ( USER in DroitParcs ) {
-					if ( DroitParcs[USER] == 2 ) {
-						print "  <droit parc=\"'$TousLesPostes'\" user=\"" USER "\" droit=\"manage\" />";
-					} else if ( DroitParcs[USER] == 1 ) {
+					if ( DroitParcs[USER] == 1 ) {
 						print "  <droit parc=\"'$TousLesPostes'\" user=\"" USER "\" droit=\"view\" />";
 					}
 					
