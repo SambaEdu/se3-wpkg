@@ -1,3 +1,16 @@
+se3-wpkg (0.1-34) stable; urgency=low
+
+  * new version correction de update_droits_xml.sh
+
+ -- root <root@localhost.localdomain>  Sun, 20 Nov 2011 14:37:40 +0100
+
+se3-wpkg (0.1-33) stable; urgency=low
+
+  * new version based on 1.2 official version of wpkg - xp and seven
+    support
+
+ -- root <root@localhost.localdomain>  Sun, 13 Nov 2011 23:40:11 +0100
+
 se3-wpkg (0.1-32) stable; urgency=low
 
   * ré-implémentation de l'option /logdebug : logs en temps reels
