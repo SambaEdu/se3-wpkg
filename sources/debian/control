@@ -1,5 +1,5 @@
 Source: se3-wpkg
-Section: unknown
+Section: net
 Priority: extra
 Maintainer: jean <jean.lebail@etab.ac-caen.fr>
 Build-Depends: debhelper (>= 5)
