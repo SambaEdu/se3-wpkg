@@ -135,7 +135,7 @@ End If
 
 Z=MapZ()
 If Z = "" Then WScript.Quit 12
-Dim WPKGSE3JS : WPKGSE3JS= Z & "\wpkg\wpkg-se3.js"
+Dim WPKGSE3JS : WPKGSE3JS= Z & "\wpkg\wrapper.js"
 If Not fso.FileExists(WPKGSE3JS) Then
    print "Erreur: script '" & WPKGSE3JS & "' absent !"
    WScript.Quit 13
