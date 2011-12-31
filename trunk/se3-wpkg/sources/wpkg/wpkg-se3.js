@@ -4165,8 +4165,8 @@ function installPackage(packageNode) {
 			var category = packageNode.getAttribute("category");
 			if (lnkDir != null) {
 				if (category != null) {
-					info("Deplacement automatique des raccourcis de id=" + packageID + " depuis %Programfiles%\\" + lnkDir + " dans la Category " + category + ".");
-					exec("%ComSpec% call %Z%\\wpkg\\AnalyseCategory.bat \"" + packageID + "\" \"" + lnkDir + "\"", timeout, workdir);
+					info("Deplacement automatique des raccourcis de id=" + packageID + " depuis %AllUsersProfile%\\Menu Démarrer\\Programmes\\" + lnkDir + " dans la Category " + category + ".");
+					exec("%ComSpec% /C call %Z%\\wpkg\\AnalyseCategory.bat \"" + packageID + "\" \"" + lnkDir + "\"", timeout, workdir);
 				} else {
 					info("Pas de deplacement automatique des raccourcis car 'category' est absent.");
 				}
@@ -4976,8 +4976,8 @@ function removePackage(packageNode) {
 					var category = packageNode.getAttribute("category");
 					if (lnkDir != null) {
 						if (category != null) {
-							info("Suppression des raccourcis de id=" + packageID + " depuis %Programfiles%\\" + category + "\\" + lnkDir);
-							exec("%ComSpec% call %Z%\\wpkg\\AnalyseCategory.bat \"" + packageID + "\" \"" + lnkDir + "\" remove", timeout, workdir);
+							info("Suppression des raccourcis de id=" + packageID + " depuis %AllUsersProfile%\\Menu Démarrer\\Programmes\\" + category + "\\" + lnkDir);
+							exec("%ComSpec% /C call %Z%\\wpkg\\AnalyseCategory.bat \"" + packageID + "\" \"" + lnkDir + "\" remove", timeout, workdir);
 						} else {
 							info("Pas de deplacement automatique des raccourcis car 'category' est absent.");
 						}
