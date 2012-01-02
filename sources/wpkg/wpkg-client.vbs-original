@@ -135,7 +135,7 @@ End If
 
 Z=MapZ()
 If Z = "" Then WScript.Quit 12
-Dim WPKGSE3JS : WPKGSE3JS= Z & "\wpkg\wrapper.js"
+Dim WPKGSE3JS : WPKGSE3JS= Z & "\wpkg\wpkg-se3.js"
 If Not fso.FileExists(WPKGSE3JS) Then
    print "Erreur: script '" & WPKGSE3JS & "' absent !"
    WScript.Quit 13
@@ -184,6 +184,7 @@ If fso.FileExists(NoWpkgTxt) Then
    fso.DeleteFile(NoWpkgTxt)
 End If
 
+' on impose /noDownload car les downloads sont geres cote serveur sur SE3. Cela evite de patcher wpkg.js a chaque maj pour ce point.
 dim WPKG_OPTIONS : WPKG_OPTIONS = "/synchronize /noDownload"
 
 Dim oSysEnv
