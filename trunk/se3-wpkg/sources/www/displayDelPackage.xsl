@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <xsl:stylesheet xmlns:xsl = "http://www.w3.org/1999/XSL/Transform" version = "1.0" >
-	<xsl:output method="html" version="1.0" encoding="utf8" indent="yes"/>
+	<xsl:output method="html" version="1.0" encoding="iso-8859-1" indent="yes"/>
 	<!-- ## $Id$ ##
 			S'applique à /var/se3/unattended/install/wpkg/packages.xml
 			et retourne un html pour le div 'Effacer une appli'   -->
