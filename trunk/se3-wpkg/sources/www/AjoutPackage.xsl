@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!-- < ?xml version="1.0" encoding="windows-1252"? > -->
 
-<!--  Affichage de la page d'ajout de package unique ou du tableau des MAJ des xml à partir du forum
-
+<!--  Affichage de la page d'ajout de package unique ou du tableau des MAJ des xml à partir du SVN
 	## $Id$ ##
 -->
 
@@ -21,7 +20,7 @@
 	<!-- url fournissant les packages officiels pour se3 
 			pas besoin d'un serveur sécurisé car le md5sum des fichiers appli.xml 
 			est ensuite controlé sur le serveur se3 avant l'installation -->
-	<xsl:param name="urlWawadeb" select="'http://www.crdp.ac-caen.fr/forum/index.php'" />
+	<xsl:param name="urlWawadeb" select="'http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages'" />
 	<!-- url fournissant le xml des packages du forum (nom de variable à changer!). -->
 	<xsl:param name="urlWawadebMD5" select="'http://www.crdp.ac-caen.fr/forum/se3_wpkglist.php'" />
 
@@ -90,7 +89,7 @@
 										<tr>
 											<th style="cursor:ne-resize;" onclick="tri(1,event);"></th>
 											<th style="cursor:ne-resize;" onclick="tri(2,event);">Fichier xml</th>
-											<th style="cursor:ne-resize;" onclick="tri(3,event);">Info Forum</th>
+											<th style="cursor:ne-resize;" onclick="tri(3,event);">Info SVN</th>
 											<th style="cursor:ne-resize;" onclick="tri(4,event);">Date du fichier officiel</th>
 											<th style="cursor:ne-resize;" onclick="tri(5,event);">Etat</th>
 											<!--
@@ -121,7 +120,7 @@
 											</xsl:when>
 											<xsl:when test="($opXml/@op = 'add')">
 												<!-- appli installée et md5 différents -->
-												<xsl:text>XML du forum </xsl:text><xsl:value-of select="$forumEnCours" /><xsl:text> différent</xsl:text>
+												<xsl:text>XML du SVN </xsl:text><xsl:value-of select="$forumEnCours" /><xsl:text> différent</xsl:text>
 											</xsl:when>
 											<xsl:when test="$PACKAGES/package[@id = $idsXml/@id]">
 												<!-- appli installée avant version se3-wpkg_0.2-0_i386.deb : xml inconnu -->
@@ -196,7 +195,7 @@
 <xsl:text>&lt;td align="center" style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" /><xsl:text>;" &gt;</xsl:text>
 <xsl:choose>
 	<xsl:when test="@topic_id > 0">
-		<xsl:text>&lt;a style="background-color:transparent;" title="Cliquer pour accéder au message du forum" target="_blank" href="http://www.crdp.ac-caen.fr/forum/viewtopic.php?t=</xsl:text><xsl:value-of select="@topic_id" />
+		<xsl:text>&lt;a style="background-color:transparent;" title="Cliquer pour accéder aux commentaires dans le fichier changelog du svn" target="_blank" href="</xsl:text><xsl:value-of select="@svn_link" />
 		<xsl:choose>
 			<xsl:when test="(@forum = 'stable') or (@forum = 'test')">
 				<xsl:text>"  &gt;&lt;img border="0" style="background-color:transparent;" src="img/forum_message.gif" width="12px" height="13px"&gt; </xsl:text><xsl:value-of select="@forum" /><xsl:text> &lt;/a&gt;</xsl:text>
@@ -281,10 +280,10 @@
 						<br/>
 						<!-- xsl:choose>
 							<xsl:when test="$urlWawadebMD5 = 'http://www.crdp.ac-caen.fr/forum/se3_wpkglist.php?branch=testing'">
-								<a href="javascript:void(0);" onclick="urlWawadebMD5='http://www.crdp.ac-caen.fr/forum/se3_wpkglist.php';testUpdatedXml();" >Afficher les applications stables</a> disponibles dans le Forum du CRDP de Basse-Normandie : <a href="http://www.crdp.ac-caen.fr/forum/viewforum.php?f=10" target="_blank">Paquets WPKG Stables</a>.
+								<a href="javascript:void(0);" onclick="urlWawadebMD5='http://www.crdp.ac-caen.fr/forum/se3_wpkglist.php';testUpdatedXml();" >Afficher les applications stables</a> disponibles dans le SVN du CRDP de Basse-Normandie : <a href="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages/stable" target="_blank">Paquets WPKG Stables</a>.
 							</xsl:when>
 							<xsl:otherwise>
-								<a href="javascript:void(0);" onclick="urlWawadebMD5='http://www.crdp.ac-caen.fr/forum/se3_wpkglist.php?branch=testing';testUpdatedXml();" >Afficher les applications à tester</a> disponibles dans le Forum du CRDP de Basse-Normandie : <a href="http://www.crdp.ac-caen.fr/forum/viewforum.php?f=9" target="_blank">Paquets WPKG a tester</a>.
+								<a href="javascript:void(0);" onclick="urlWawadebMD5='http://www.crdp.ac-caen.fr/forum/se3_wpkglist.php?branch=testing';testUpdatedXml();" >Afficher les applications à tester</a> disponibles dans le SVN du CRDP de Basse-Normandie : <a href="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages/testing" target="_blank">Paquets WPKG a tester</a>.
 							</xsl:otherwise>
 						</xsl:choose -->
 					</xsl:otherwise>
@@ -315,15 +314,15 @@
 		<div id="updatedXml">
 			<table>
 				<tr>
-					<td><p>Pour mettre à jour ou installer des paquets WPKG à partir du <a href="http://www.crdp.ac-caen.fr/forum/" target="_blank">forum du CRDP de Caen</a> : </p></td>
+					<td><p>Pour mettre à jour ou installer des paquets WPKG à partir du <a href="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages" target="_blank">SVN du CRDP de Caen</a> : </p></td>
 					<td>
 						<input value="Afficher les applications disponibles" type="button" onclick="MAJPackages=1;urlWawadebMD5='http://www.crdp.ac-caen.fr/forum/se3_wpkglist.php';testUpdatedXml();"></input><br/><br/>
-						<input name="forceRefresh" id="forceRefresh" value="0" type="checkbox" title="Récupérer les données du forum même si elle ne semble pas avoir été modifiées"></input>forçer le rafraîchissement.<br/>
+						<input name="forceRefresh" id="forceRefresh" value="0" type="checkbox" title="Récupérer les données du SVN même si elle ne semble pas avoir été modifiées"></input>forçer le rafraîchissement.<br/>
 						
 					</td>
 				</tr>
 			</table>
-N'oubliez pas, après avoir installé une application de vous rendre sur le forum, pour indiquer si l'application s'installe correctement ou non sur les postes de votre réseau. Vous contribuerez ainsi à améliorer la qualité des applications proposées.
+N'oubliez pas, après avoir installé une application d'indiquer sur la liste de diffusion sambaedu si l'application s'installe correctement ou non sur les postes de votre réseau. Vous contribuerez ainsi à améliorer la qualité des applications proposées.
 		</div>
 	</xsl:template>
 
@@ -334,7 +333,7 @@ N'oubliez pas, après avoir installé une application de vous rendre sur le forum,
 	<xsl:template name="explication">
 		<div>
 			<h3>Information</h3>
-			En dehors du <a href="{$urlWawadeb}" target="_blank">forum</a>,
+			En dehors du <a href="{$urlWawadeb}" target="_blank">SVN</a>,
 			vous pouvez ajouter une application de votre cru ou inspirée d'applications téléchargées sur internet (voir 'Compléments' plus bas).<br></br>
 			<dir>
 				<li >Télécharger ou créer un fichier (*.xml) de définition d'application.</li>
