@@ -211,6 +211,39 @@
 		<param name='caseSensitivity'  value='true' />
 	-->
 
+		<!--
+		****************************************************************************
+		* True : Match multiple host entries to a single host. 
+		* False: Only match one host entry to the executing host. If a matching host
+		*        entry is found the algorithm stops looking for further matches.
+		*        This way only one profile is assigned to a host.
+		*
+		* Default value      : false
+		* Command-line switch: /applymultiple
+		****************************************************************************
+	-->
+
+	<!-- applyMultiple=true est INDISPENSABLE au fonctionnement avec l'interface Sambaedu3 : plusieurs profiles s'appliquent à un même poste -->
+		<param name='applyMultiple' value='true' />
+
+	<!--
+		****************************************************************************
+		* True : Disable all downloads. In this mode all download instructions
+		*        will be simply ignored. Exactly the same way as if they were not
+		*        specified in the XML at all. Use this option with caution as your
+		*        install commands might require the files downloaded in download
+		*        specifications.
+		*        This switch/setting might be used on hosts which get the packages
+		*        synchronized to the download target so the download files already
+		*        exist before WPKG execution.
+		* False: Default behavior. All downloads are executed as specified within
+		*        the XML files.
+		*
+		* Default value      : false
+		* Command-line switch: /noDownload
+		****************************************************************************
+	-->
+		<param name='noDownload' value='true' />
 
 	<!--
 		****************************************************************************
