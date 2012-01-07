@@ -7,6 +7,8 @@ AutoItSetOption("TrayIconHide", 0)
 
 $file=EnvGet("windir")&"\wpkg-msg.txt"
 
+; on conserve la dernière ligne affichée pour ne pas ouvrir de nouveau un tooltip qui aurait été fermé par l'user.
+$oldline=""
 
 While 1
 	If FileExists($file) Then
@@ -30,9 +32,13 @@ While 1
 			Sleep(5000)
 			Exit(0)
 		Else
-			; affiche la dernière ligne de $file à côté de l'horloge en supprimant le son (+16)
-			TrayTip("Information : ", $line, Default, 0 + 16)
+			; si la dernière ligne lue il y a 3 secondes est la même que celle lue à l'instant, on n'affiche rien.
+			If $line <> $oldline Or $line == "" Then
+				; affiche la dernière ligne de $file à côté de l'horloge en supprimant le son (+16)
+				TrayTip("Information : ", $line, Default, 0 + 16)
+			EndIf
 		EndIf
+		$oldline = $line
 		FileClose($read)
 	;Else
 	;	MsgBox(4096,"", $file & " n'existe pas.")
