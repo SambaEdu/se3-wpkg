@@ -38,6 +38,7 @@ While 1
 	;	MsgBox(4096,"", $file & " n'existe pas.")
 	;	Exit
 	EndIf
-	; actualisation de l'affichage toutes les 5 secondes
-	Sleep(5000)
+	; actualisation de l'affichage toutes les 3 secondes
+	; ne pas mettre plus sans modifier wpkg-client.vbs qui fait une pause de 5 secondes dans la fonction TooltipEnd
+	Sleep(3000)
 WEnd

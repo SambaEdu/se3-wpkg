@@ -8954,6 +8954,9 @@ function getLogLevel() {
  */
 function info(message) {
 	log(4, message);
+	// PATCH SE3 : on a modifié notify pour utiliser les tooltips déployés : on informe l'user de ce que fait wpkg-se3.js
+	notify(message);
+	// PATCH SE3
 }
 
 /**
@@ -9059,7 +9062,9 @@ function logStatus(message) {
  */
 function notify(message) {
 	if (!isNoNotify()) {
-		var msgPath = "%SystemRoot%\\System32\\msg.exe";
+		// PATCH SE3 pour utilisation du msg.exe des tooltips.
+		var msgPath = "%SystemRoot%\\wpkg-msg.exe";
+		// FIN PATCH
 		var netPath = "%SystemRoot%\\System32\\net.exe";
 		var cmd = "";
 		// check if msg.exe exists

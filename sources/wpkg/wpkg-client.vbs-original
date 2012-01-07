@@ -97,7 +97,7 @@ Dim debug : debug=false ' Permet d'avoir des logs plus détaillés.
 Dim logdebug : logdebug=false ' Pour avoir des logs en temps réel sur le serveur.
 Dim force : force=false ' Pour tester la présence ou l'absence effective de chaque appli sur le poste.
 Dim forceinstall : forceinstall=false ' Pour installer ou désinstaller les applications même si les tests 'check' sont vérifiés.
-Dim nonotify : nonotify=true ' Pour ne pas avertir l'utilisateur logué des opérations de wpkg (si false, le service messenger doit être activé).
+Dim nonotify : nonotify=false ' Pour ne pas avertir l'utilisateur logué des opérations de wpkg (si false, le service messenger doit être activé).
 Dim norunningstate : norunningstate=false ' Pour que wpkg n'écrive pas running : norunningstate=false ' Pour que wpkg n'écrive pas running=true dans la base de registre lorsqu'il s'exécute.
 Dim dryrun : dryrun=false ' Pour que wpkg simule une exécution mais n'installe ou ne désinstalle rien.
 Dim nowpkg : nowpkg=false ' Pour ne pas exécuter wpkg sur le poste.
@@ -168,6 +168,23 @@ dim timerLog : timerLog = Timer
 
 InitLogFile
 
+' Initialisation variables pour les tooltip
+Dim MSGfile : MSGfile = WinDir & "\wpkg-msg.exe"
+Dim MSGlog   : MSGlog = WinDir & "\wpkg-msg.txt"
+Dim Dest
+' sur windows 7, le dossier Démarrage de AllUsers est différent.
+' C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Startup
+If GetTypeWin = "Windows XP" Or GetTypeWin =  "Windows 2000" Then
+	' on est sur windows XP ou 2000
+	Dest=oShell.ExpandEnvironmentStrings("%AllUsersProfile%") & "\Menu Démarrer\Programmes\Démarrage\"
+Else
+	'on est sur windows 7 ou vista ou sucesseur.
+	Dest=oShell.ExpandEnvironmentStrings("%AllUsersProfile%") & "\Microsoft\Windows\Start Menu\Programs\Startup\"
+End If
+Dim TOOLTIPfile  : TOOLTIPfile = Dest & "tooltip.exe"
+	
+TooltipInit 'initialisation de la configuration du poste, si besoin.
+
 If MiseAJourClient() Then WScript.Quit ' Teste si un nouveau client est dispo sur le serveur
 
 If Not nowpkg Then ExecIni ' Exécution du vbs ini\%ComputerName%.ini  pour initialiser le paramétrage
@@ -193,6 +210,7 @@ Dim oSysEnv
 WpkgSynchronize 'Exécute wpkg-se3.js pour synchroniser les applications
 EtatPoste  ' Détermine l'état des applis sur le poste et remonte l'info sur le serveur
 
+TooltipEnd ' ajout de FIN WPKG dans le fichier MSGfile.
 
 ' ---------------- Déconnexion se3 --------------------
 RemoveNetwork
@@ -932,5 +950,43 @@ Function GetTypeWin()
       End If
    End If
    GetTypeWin = TypeWin
-   End Function
+End Function
 
+Function TooltipInit()
+	' Mise en place des tooltips avec les actions suivantes:
+	'0. Efface le fichier de log au début de l'exécution de wpkg pour éviter que celui-ci ne soit trop important à terme.
+	'1. copie du fichier wpkg-msg.exe dans %Z%\wpkg\tools\tooltip\wpkg-msg.exe vers %windir%
+	'2. copie en local de %Z%\wpkg\tools\tooltip\tooltip.exe vers %allusersprofile%\Menu Démarrer\Programmes\Démarrage
+	' Des tests doivent permettre une exécution instantanée de cette fonction en dehors de la mise en place initiale.
+	'Dim oFSO
+	'Set oFSO = CreateObject("Scripting.FileSystemObject")
+
+	If fso.FileExists(MSGlog) Then
+		fso.DeleteFile MSGlog,True
+	End If
+	
+	If Not fso.FileExists(MSGfile) Then
+		' on copie le wpkg-msg.exe vers %windir%
+		'MsgBox("copie de " & Z & "\wpkg\tools\tooltip\wpkg-msg.exe vers " & WinDir)
+		fso.CopyFile Z & "\wpkg\tools\tooltip\wpkg-msg.exe", WinDir & "\", True
+	End If
+	
+	If Not fso.FileExists(TOOLTIPfile) Then
+		'MsgBox(TOOLTIPfile & "absent")
+		fso.CopyFile Z & "\wpkg\tools\tooltip\tooltip.exe", Dest , True
+	End If
+End Function  
+
+Function TooltipEnd()
+	' Ajoute "FIN WPKG" au fichier de log MSGlog => met fin à l'exécution de tooltip.exe dans la session de l'utilisateur logué.
+	Const ForAppend = 8
+	Dim f
+	'Msgbox("MSGlog," & ForAppend & " , True")
+	Set f = fso.OpenTextFile(MSGlog, ForAppend, True)
+	f.WriteLine("FIN WPKG")
+	' on fait une pause de 5 secondes pour permettre à tooltip.exe d'avoir le temps de lire "FIN WPKG"
+	Wscript.Sleep 5000
+	' on écrit une autre ligne à la fin de wpkg-msg.txt afin d'éviter le problème "un user ouvre la session avant que wpkg ne soit lancé" qui provoquerait immédiatement l'arrêt de tooltip.exe
+	f.WriteLine("")
+	f.Close
+End Function 

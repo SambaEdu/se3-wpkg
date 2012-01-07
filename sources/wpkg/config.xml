@@ -590,9 +590,9 @@
 
 		<!-- french LCIDs -->
 		<language lcid="40c,80c,2c0c,c0c,240c,300c,3c0c,140c,340c,180c,380c,e40c,200c,280c,100c,1c0c">
-			<string id="notifyUserStart">WPKG, l'utilitaire d'installation automatique des programmes a appliqué ou applique en ce moment des mises à jour à votre système. Veuillez consulter l'heure au début de ce message afin de vérifier que cette information ne soit pas obsolète. Veuillez sauvegarder tous vos documents ouverts, car un redémarrage peut être nécessaire et, dans ce cas, le système redémarrera sans avertissement à la fin de l'installation ou de la mise à jour. Merci.</string>
+			<string id="notifyUserStart">WPKG, l'utilitaire d'installation automatique des programmes applique en ce moment des mises à jour à votre système. Veuillez sauvegarder tous vos documents régulièrement. Merci.</string>
 			<string id="notifyUserStop">WPKG, l'utilitaire d'installation automatique de logiciels a terminé l'installation ou l'actualisation des logiciels sur votre système. Aucun redémarrage n'était requis. Toutes les mises à jour sont achevées.</string>
-			<string id="notifyUserFail">L'installation des logiciels est échoué.</string>
+			<string id="notifyUserFail">L'installation des logiciels a échoué.</string>
 			<string id="notifyUserReboot">Un rédémarrage est nécessaire pour compléter l'installation ou la mise à jour. Veuillez noter que les programmes nouveaux/actualisées peuvent ne pas fonctionner avant redémarrage du système.</string>
 		</language>
 
