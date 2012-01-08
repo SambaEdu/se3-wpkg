@@ -984,8 +984,8 @@ Function TooltipEnd()
 	'Msgbox("MSGlog," & ForAppend & " , True")
 	Set f = fso.OpenTextFile(MSGlog, ForAppend, True)
 	f.WriteLine("FIN WPKG")
-	' on fait une pause de 5 secondes pour permettre à tooltip.exe d'avoir le temps de lire "FIN WPKG"
-	Wscript.Sleep 5000
+	' on fait une pause de 2 secondes pour permettre à tooltip.exe d'avoir le temps de lire "FIN WPKG", puisqu'il lit le fichier toutes les secondes.
+	Wscript.Sleep 2000
 	' on écrit une autre ligne à la fin de wpkg-msg.txt afin d'éviter le problème "un user ouvre la session avant que wpkg ne soit lancé" qui provoquerait immédiatement l'arrêt de tooltip.exe
 	f.WriteLine("")
 	f.Close
