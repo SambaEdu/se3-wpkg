@@ -5685,7 +5685,7 @@ function installPackage(packageNode) {
 			} else {
 				info("Pas de deplacement automatique des raccourcis car 'lnk' est absent.");
 			}
-			info("==============================================================="); // saut ligne entre les paquets à installer
+			log(4,"==============================================================="); // saut ligne entre les paquets à installer
 			// FIN PATCH SE3
 
 			// restore old environment
@@ -6773,7 +6773,7 @@ function removePackage(packageNode) {
 					}
 				}
 			}
-            info("==============================================================="); // saut ligne entre les paquets à installer
+            log(4,"==============================================================="); // saut ligne entre les paquets à installer
 		}
 	}
 
