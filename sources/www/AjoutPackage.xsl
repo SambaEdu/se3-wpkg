@@ -22,7 +22,7 @@
 			est ensuite controlé sur le serveur se3 avant l'installation -->
 	<xsl:param name="urlWawadeb" select="'http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages'" />
 	<!-- url fournissant le xml des packages du forum (nom de variable à changer!). -->
-	<xsl:param name="urlWawadebMD5" select="'http://www.crdp.ac-caen.fr/forum/se3_wpkglist.php'" />
+	<xsl:param name="urlWawadebMD5" select="'http://olivier.lax.free.fr/se3/se3_wpkglist.php'" />
 
 	<xsl:param name="Local" select="false()" />
 	<xsl:variable name="WPKGROOT" select="'/var/se3/unattended/install/wpkg'" />
@@ -30,7 +30,7 @@
 	<xsl:variable name="PACKAGES" select="/wpkg/packages" />
 	<!-- xsl:variable name="DocWPKGList">
 		<xsl:choose>
-			<xsl:when test="$urlWawadebMD5 = 'http://www.crdp.ac-caen.fr/forum/se3_wpkglist.php?branch=testing'">
+			<xsl:when test="$urlWawadebMD5 = 'http://olivier.lax.free.fr/se3/se3_wpkglist.php?branch=testing'">
 				<xsl:value-of select="'/var/www/se3/wpkg/se3_wpkglist.php?branch=testing'" />
 			</xsl:when>
 			<xsl:otherwise>
@@ -49,7 +49,7 @@
 		<xsl:choose>
 			<xsl:when test="$MAJPackages = '1'" >
 				<!-- xsl:choose>
-					<xsl:when test="$urlWawadebMD5 = 'http://www.crdp.ac-caen.fr/forum/se3_wpkglist.php?branch=testing'">
+					<xsl:when test="$urlWawadebMD5 = 'http://olivier.lax.free.fr/se3/se3_wpkglist.php?branch=testing'">
 						<h2 style="color:#FF7F50;">Mise à jour des applications - Paquets WPKG a tester</h2>
 					</xsl:when>
 					<xsl:otherwise -->
@@ -62,14 +62,14 @@
 					</xsl:when>
 					<xsl:otherwise>
 						<!-- xsl:choose>
-							<xsl:when test="$urlWawadebMD5 = 'http://www.crdp.ac-caen.fr/forum/se3_wpkglist.php?branch=testing'">
-								Les mises à jour proposées ici sont celles des <a href="http://www.crdp.ac-caen.fr/forum/viewforum.php?f=9" target="_blank">Paquets WPKG a tester</a> du Forum du CRDP de Basse-Normandie.
+							<xsl:when test="$urlWawadebMD5 = 'http://olivier.lax.free.fr/se3/se3_wpkglist.php?branch=testing'">
+								Les mises à jour proposées ici sont celles des <a href="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages/testing" target="_blank">Paquets WPKG a tester</a> du SVN du CRDP de Basse-Normandie.
 							</xsl:when>
 							<xsl:otherwise>
-								Les mises à jour proposées ici sont celles des <a href="http://www.crdp.ac-caen.fr/forum/viewforum.php?f=10" target="_blank">Paquets WPKG Stables</a> du Forum du CRDP de Basse-Normandie.
+								Les mises à jour proposées ici sont celles des <a href="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages/stable" target="_blank">Paquets WPKG Stables</a> du SVN du CRDP de Basse-Normandie.
 							</xsl:otherwise>
 						</xsl:choose -->
-						Les mises à jour proposées ici sont celles des paquets WPKG du <a href="http://www.crdp.ac-caen.fr/forum/" target="_blank">Forum du CRDP de Basse-Normandie</a>.
+						Les mises à jour proposées ici sont celles des paquets WPKG du <a href="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages" target="_blank">SVN du CRDP de Basse-Normandie</a>.
 						
 						<form name="formUpdateXml" method="post" action="index.php?UpdateApplis=1" enctype="multipart/form-data">
 							<table align="center">
@@ -193,8 +193,8 @@
 <xsl:text>onclick="onclickSelectMajAppli(this.checked, </xsl:text><xsl:value-of select="position() - 1" /><xsl:text>,' + "'</xsl:text><xsl:value-of select="$forumEnCours" /><xsl:text>', " + "'</xsl:text><xsl:value-of select="$autreforumExiste" /><xsl:text>');" + '" name="chk[]" value="</xsl:text><xsl:value-of select="concat(@forum, ':', $xmlRef, ':', @url)" /><xsl:text>" type="checkbox"&gt;&lt;/input&gt;&lt;/td&gt;</xsl:text>
 <xsl:text>&lt;td align="center" style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" /><xsl:text>;"&gt;&lt;a class="postes" style="background-color:transparent;font-weight:bolder;" title="Cliquer pour voir le contenu du xml" href="</xsl:text><xsl:value-of select="@url" /><xsl:text>" target="_blank"&gt;</xsl:text><xsl:value-of select="$xmlRef" /><xsl:text>&lt;/a&gt;&lt;/td&gt;</xsl:text>
 <xsl:text>&lt;td align="center" style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" /><xsl:text>;" &gt;</xsl:text>
-<xsl:choose>
-	<xsl:when test="@topic_id > 0">
+<!-- <xsl:choose>
+	<xsl:when test="@topic_id = 0 "> -->
 		<xsl:text>&lt;a style="background-color:transparent;" title="Cliquer pour accéder aux commentaires dans le fichier changelog du svn" target="_blank" href="</xsl:text><xsl:value-of select="@svn_link" />
 		<xsl:choose>
 			<xsl:when test="(@forum = 'stable') or (@forum = 'test')">
@@ -204,11 +204,11 @@
 				<xsl:text>"  &gt;&lt;img border="0" style="background-color:transparent;" src="img/forum_message.gif" width="12px" height="13px"&gt;&lt;/a&gt;</xsl:text>
 			</xsl:otherwise>
 		</xsl:choose>
-	</xsl:when>
+	<!-- </xsl:when>
 	<xsl:otherwise>
 		<xsl:text> </xsl:text>
 	</xsl:otherwise>
-</xsl:choose>
+</xsl:choose> -->
 <xsl:text>&lt;/td&gt;</xsl:text>
 <xsl:text>&lt;td style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" /><xsl:text>;" &gt;' + dateFromIso8601('</xsl:text><xsl:value-of select="@date" /><xsl:text>') + '&lt;/td&gt;</xsl:text>
 <xsl:text>&lt;td style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" /><xsl:text>;" &gt;</xsl:text><xsl:value-of select="$etat" /><xsl:text>&lt;/td&gt;</xsl:text>
@@ -279,11 +279,11 @@
 						</form>
 						<br/>
 						<!-- xsl:choose>
-							<xsl:when test="$urlWawadebMD5 = 'http://www.crdp.ac-caen.fr/forum/se3_wpkglist.php?branch=testing'">
-								<a href="javascript:void(0);" onclick="urlWawadebMD5='http://www.crdp.ac-caen.fr/forum/se3_wpkglist.php';testUpdatedXml();" >Afficher les applications stables</a> disponibles dans le SVN du CRDP de Basse-Normandie : <a href="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages/stable" target="_blank">Paquets WPKG Stables</a>.
+							<xsl:when test="$urlWawadebMD5 = 'http://olivier.lax.free.fr/se3/se3_wpkglist.php?branch=testing'">
+								<a href="javascript:void(0);" onclick="urlWawadebMD5='http://olivier.lax.free.fr/se3/se3_wpkglist.php';testUpdatedXml();" >Afficher les applications stables</a> disponibles dans le SVN du CRDP de Basse-Normandie : <a href="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages/stable" target="_blank">Paquets WPKG Stables</a>.
 							</xsl:when>
 							<xsl:otherwise>
-								<a href="javascript:void(0);" onclick="urlWawadebMD5='http://www.crdp.ac-caen.fr/forum/se3_wpkglist.php?branch=testing';testUpdatedXml();" >Afficher les applications à tester</a> disponibles dans le SVN du CRDP de Basse-Normandie : <a href="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages/testing" target="_blank">Paquets WPKG a tester</a>.
+								<a href="javascript:void(0);" onclick="urlWawadebMD5='http://olivier.lax.free.fr/se3/se3_wpkglist.php?branch=testing';testUpdatedXml();" >Afficher les applications à tester</a> disponibles dans le SVN du CRDP de Basse-Normandie : <a href="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages/testing" target="_blank">Paquets WPKG a tester</a>.
 							</xsl:otherwise>
 						</xsl:choose -->
 					</xsl:otherwise>
@@ -316,7 +316,7 @@
 				<tr>
 					<td><p>Pour mettre à jour ou installer des paquets WPKG à partir du <a href="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages" target="_blank">SVN du CRDP de Caen</a> : </p></td>
 					<td>
-						<input value="Afficher les applications disponibles" type="button" onclick="MAJPackages=1;urlWawadebMD5='http://www.crdp.ac-caen.fr/forum/se3_wpkglist.php';testUpdatedXml();"></input><br/><br/>
+						<input value="Afficher les applications disponibles" type="button" onclick="MAJPackages=1;urlWawadebMD5='http://olivier.lax.free.fr/se3/se3_wpkglist.php';testUpdatedXml();"></input><br/><br/>
 						<input name="forceRefresh" id="forceRefresh" value="0" type="checkbox" title="Récupérer les données du SVN même si elle ne semble pas avoir été modifiées"></input>forçer le rafraîchissement.<br/>
 						
 					</td>
