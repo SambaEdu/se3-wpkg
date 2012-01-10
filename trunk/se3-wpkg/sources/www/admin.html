@@ -22,10 +22,10 @@
 
 	// url de la page fournissant les packages officiels SambaEdu
 	//var urlWawadeb="http://www.etab.ac-caen.fr/serveurmalherbe/se3/wpkg/packages/packages.html"
-	var urlWawadeb="http://www.crdp.ac-caen.fr/forum/index.php";
+	var urlWawadeb="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages";
 	// url du fichier md5sum sur le secure serveur
 	//var urlWawadebMD5="http://www.etab.ac-caen.fr/serveurmalherbe/se3/wpkg/packages/packages.md5";
-	var urlWawadebMD5="http://www.crdp.ac-caen.fr/forum/se3_wpkglist.php";
+	var urlWawadebMD5="http://olivier.lax.free.fr/se3/se3_wpkglist.php";
 	var se3urlWawadeb;
 
 	var UpdateEnCours="";
@@ -141,7 +141,7 @@
 		MAJPackages = 1;
 		//alert("In testUpdatedXml() MAJPackages=" + MAJPackages + ", forceRefresh=" + forceRefresh);
 		var target = documentEnCours.getElementById("transform");
-		target.innerHTML = "Accès au serveur www.crdp.ac-caen.fr. Veuillez patienter ...";
+		target.innerHTML = "Accès au serveur svn.tice.ac-caen.fr. Veuillez patienter ...";
 		// Mise à jour des applis du forum
 		var http = null; 
 		if(window.nav=='firefox') // Firefox 
