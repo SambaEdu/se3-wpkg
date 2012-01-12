@@ -336,7 +336,8 @@ N'oubliez pas, après avoir installé une application d'indiquer sur la liste de d
 			En dehors du <a href="{$urlWawadeb}" target="_blank">SVN</a>,
 			vous pouvez ajouter une application de votre cru ou inspirée d'applications téléchargées sur internet (voir 'Compléments' plus bas).<br></br>
 			<dir>
-				<li >Télécharger ou créer un fichier (*.xml) de définition d'application.</li>
+				<li >Créer un fichier (*.xml) en vous documentant avec la <a href="http://wwdeb.crdp.ac-caen.fr/mediase3/index.php/FaqWpkg#Comment_fabriquer_un_xml_destin.C3.A9_.C3.A0_devenir_officiellement_d.C3.A9ploy.C3.A9.3F" target="_blank">documentation officielle SE3</a> et en vous inspirant de ceux disponibles depuis les liens ci-dessous.</li>
+				<li >Télécharger le fichier (*.xml) de définition d'application :</li>
 				<dir>
 					<li >Indiquer, dans le formulaire ci-dessous, l'emplacement de ce fichier xml.</li>
 					<li >Cliquer sur 'ajouter cette application'.</li>
@@ -389,12 +390,13 @@ N'oubliez pas, après avoir installé une application d'indiquer sur la liste de d
 		</form>
 
 		<h3>Compléments</h3>
-		D'autres fichiers xml de définition d'applications sont disponibles sur internet.<br></br>
+		Des fichiers xml de définition d'applications sont disponibles sur internet.<br></br>
 		Le plus souvent, ces fichiers devront d'être adaptés pour fonctionner sur votre réseau.<br></br>
 		Voici quelques liens :<br></br>
-		<a href="http://wpkg.linuxkidd.com/live/packages_list.php">http://wpkg.linuxkidd.com/live/packages_list.php</a><br></br>
-		<a href="http://wpkg.org/index.php/Category:Silent_Installers">http://wpkg.org/index.php/Category:Silent_Installers</a><br></br>
-		<a href="http://www.sp.phy.cam.ac.uk/%7Erl201/wpkg/licences.php?action=listsoftware">http://www.sp.phy.cam.ac.uk/~rl201/wpkg/licences.php?action=listsoftware</a>
+		<!-- obsolete <a href="http://wpkg.linuxkidd.com/live/packages_list.php">http://wpkg.linuxkidd.com/live/packages_list.php</a><br></br> -->
+		<a href="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages/stable" target="_blank">L'ensemble des XML prévus pour SambaEdu3 : http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages/stable</a><br></br>
+		<a href="http://wpkg.org/index.php/Category:Silent_Installers" target="_blank">XML prévus pour wpkg dont les chemins doivent être adaptés : http://wpkg.org/index.php/Category:Silent_Installers</a><br></br>
+		<!-- inutile ? <a href="http://www.sp.phy.cam.ac.uk/%7Erl201/wpkg/licences.php?action=listsoftware">http://www.sp.phy.cam.ac.uk/~rl201/wpkg/licences.php?action=listsoftware</a> -->
 		
 		 <br></br><br></br>
 	</xsl:template>
