@@ -12,20 +12,22 @@ if ( $_GET['refresh'] == "1" ) {
 	}
 }
 $ErreurWget=false;
-$url='http://olivier.lax.free.fr/se3/se3_wpkglist.php';
-$urlTest='http://olivier.lax.free.fr/se3/se3_wpkglist.php?branch=testing';
-exec ( "cd $wpkgwebdir;wget -N --timeout=15 --tries=3 '$url' 2>&1", $output, $return_value);
+$url='http://127.0.0.1/se3_wpkglist.php';
+$urlTest='http://127.0.0.1/se3_wpkglist.php?branch=testing';
+// Adaptation pour mise a jour depuis le svn
+// exec ( "cd $wpkgwebdir;wget -N --timeout=15 --tries=3 '$url' 2>&1", $output, $return_value);
+exec ( $wpkgwebdir/bin/updatesvn.sh 2>&1, $output, $return_value);
+
 if ( $return_value != 0 ) {
 	$ErreurWget=true;
 } else {
-	exec ( "cd $wpkgwebdir;wget -N --timeout=15 --tries=3 '$urlTest' 2>&1", $output, $return_value);
-	if ( $return_value != 0 ) {
-		$ErreurWget=true;
-	} else {
+	// exec ( "cd $wpkgwebdir;wget -N --timeout=15 --tries=3 '$urlTest' 2>&1", $output, $return_value);
+	//if ( $return_value != 0 ) {
+	//	$ErreurWget=true;
+	//} else {
 		// Concatenation des deux fichiers
 		exec ( "xsltproc -o $wpkgwebdir/forum.xml $wpkgwebdir/bin/mergeForum.xsl $wpkgwebdir/se3_wpkglist.php", $output, $return_value);
-	}
-
+	//}
 } 
 if ( $ErreurWget ) {
 	header("HTTP/1.1 404 Not found");
