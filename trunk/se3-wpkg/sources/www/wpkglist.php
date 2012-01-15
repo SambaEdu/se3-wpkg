@@ -12,8 +12,8 @@ if ( $_GET['refresh'] == "1" ) {
 	}
 }
 $ErreurWget=false;
-$url='http://127.0.0.1/se3_wpkglist.php';
-$urlTest='http://127.0.0.1/se3_wpkglist.php?branch=testing';
+$url='http://wawadeb.crdp.ac-caen.fr/unattended/se3_wpkglist.php';
+$urlTest='http://wawadeb.crdp.ac-caen.fr/unattended/se3_wpkglist.php?branch=testing';
 // Adaptation pour mise a jour depuis le svn
 // exec ( "cd $wpkgwebdir;wget -N --timeout=15 --tries=3 '$url' 2>&1", $output, $return_value);
 exec ( $wpkgwebdir/bin/updatesvn.sh 2>&1, $output, $return_value);

@@ -2,7 +2,7 @@
 // ## $Id$ ##
 include "inc/wpkg.auth.php";
 
-$url='http://127.0.0.1/se3_wpkglist.php?branch=testing';
+$url='http://wawadeb.crdp.ac-caen.fr/unattended/se3_wpkglist.php?branch=testing';
 exec ( "cd $wpkgwebdir;wget -N --timeout=15 --tries=3 '$url' 2>&1 && touch 'se3_wpkglist.php?branch=testing'", $output, $return_value);
 if ( $return_value == 0 ) {
 	get_xml('../../../../www/se3/wpkg/se3_wpkglist.php?branch=testing');
