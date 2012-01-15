@@ -22,7 +22,7 @@
 			est ensuite controlé sur le serveur se3 avant l'installation -->
 	<xsl:param name="urlWawadeb" select="'http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages'" />
 	<!-- url fournissant le xml des packages du forum (nom de variable à changer!). -->
-	<xsl:param name="urlWawadebMD5" select="'http://127.0.0.1/se3_wpkglist.php'" />
+	<xsl:param name="urlWawadebMD5" select="'http://wawadeb.crdp.ac-caen.fr/unattended/se3_wpkglist.php'" />
 
 	<xsl:param name="Local" select="false()" />
 	<xsl:variable name="WPKGROOT" select="'/var/se3/unattended/install/wpkg'" />
@@ -30,7 +30,7 @@
 	<xsl:variable name="PACKAGES" select="/wpkg/packages" />
 	<!-- xsl:variable name="DocWPKGList">
 		<xsl:choose>
-			<xsl:when test="$urlWawadebMD5 = 'http://127.0.0.1/se3_wpkglist.php?branch=testing'">
+			<xsl:when test="$urlWawadebMD5 = 'http://wawadeb.crdp.ac-caen.fr/unattended/se3_wpkglist.php?branch=testing'">
 				<xsl:value-of select="'/var/www/se3/wpkg/se3_wpkglist.php?branch=testing'" />
 			</xsl:when>
 			<xsl:otherwise>
@@ -49,7 +49,7 @@
 		<xsl:choose>
 			<xsl:when test="$MAJPackages = '1'" >
 				<!-- xsl:choose>
-					<xsl:when test="$urlWawadebMD5 = 'http://127.0.0.1/se3_wpkglist.php?branch=testing'">
+					<xsl:when test="$urlWawadebMD5 = 'http://wawadeb.crdp.ac-caen.fr/unattended/se3_wpkglist.php?branch=testing'">
 						<h2 style="color:#FF7F50;">Mise à jour des applications - Paquets WPKG a tester</h2>
 					</xsl:when>
 					<xsl:otherwise -->
@@ -62,7 +62,7 @@
 					</xsl:when>
 					<xsl:otherwise>
 						<!-- xsl:choose>
-							<xsl:when test="$urlWawadebMD5 = 'http://127.0.0.1/se3_wpkglist.php?branch=testing'">
+							<xsl:when test="$urlWawadebMD5 = 'http://wawadeb.crdp.ac-caen.fr/unattended/se3_wpkglist.php?branch=testing'">
 								Les mises à jour proposées ici sont celles des <a href="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages/testing" target="_blank">Paquets WPKG a tester</a> du SVN du CRDP de Basse-Normandie.
 							</xsl:when>
 							<xsl:otherwise>
@@ -279,11 +279,11 @@
 						</form>
 						<br/>
 						<!-- xsl:choose>
-							<xsl:when test="$urlWawadebMD5 = 'http://127.0.0.1/se3_wpkglist.php?branch=testing'">
-								<a href="javascript:void(0);" onclick="urlWawadebMD5='http://127.0.0.1/se3_wpkglist.php';testUpdatedXml();" >Afficher les applications stables</a> disponibles dans le SVN du CRDP de Basse-Normandie : <a href="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages/stable" target="_blank">Paquets WPKG Stables</a>.
+							<xsl:when test="$urlWawadebMD5 = 'http://wawadeb.crdp.ac-caen.fr/unattended/se3_wpkglist.php?branch=testing'">
+								<a href="javascript:void(0);" onclick="urlWawadebMD5='http://wawadeb.crdp.ac-caen.fr/unattended/se3_wpkglist.php';testUpdatedXml();" >Afficher les applications stables</a> disponibles dans le SVN du CRDP de Basse-Normandie : <a href="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages/stable" target="_blank">Paquets WPKG Stables</a>.
 							</xsl:when>
 							<xsl:otherwise>
-								<a href="javascript:void(0);" onclick="urlWawadebMD5='http://127.0.0.1/se3_wpkglist.php?branch=testing';testUpdatedXml();" >Afficher les applications à tester</a> disponibles dans le SVN du CRDP de Basse-Normandie : <a href="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages/testing" target="_blank">Paquets WPKG a tester</a>.
+								<a href="javascript:void(0);" onclick="urlWawadebMD5='http://wawadeb.crdp.ac-caen.fr/unattended/se3_wpkglist.php?branch=testing';testUpdatedXml();" >Afficher les applications à tester</a> disponibles dans le SVN du CRDP de Basse-Normandie : <a href="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages/testing" target="_blank">Paquets WPKG a tester</a>.
 							</xsl:otherwise>
 						</xsl:choose -->
 					</xsl:otherwise>
@@ -316,7 +316,7 @@
 				<tr>
 					<td><p>Pour mettre à jour ou installer des paquets WPKG à partir du <a href="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages" target="_blank">SVN du CRDP de Caen</a> : </p></td>
 					<td>
-						<input value="Afficher les applications disponibles" type="button" onclick="MAJPackages=1;urlWawadebMD5='http://127.0.0.1/se3_wpkglist.php';testUpdatedXml();"></input><br/><br/>
+						<input value="Afficher les applications disponibles" type="button" onclick="MAJPackages=1;urlWawadebMD5='http://wawadeb.crdp.ac-caen.fr/unattended/se3_wpkglist.php';testUpdatedXml();"></input><br/><br/>
 						<input name="forceRefresh" id="forceRefresh" value="0" type="checkbox" title="Récupérer les données du SVN même si elle ne semble pas avoir été modifiées"></input>forçer le rafraîchissement.<br/>
 						
 					</td>
