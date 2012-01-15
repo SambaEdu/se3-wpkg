@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!-- < ?xml version="1.0" encoding="windows-1252"? > -->
 
-<!--  Affichage de la page d'ajout de package unique ou du tableau des MAJ des xml à partir du SVN
+<!--  Affichage de la page d'ajout de package unique ou du tableau des MAJ des xml à partir du forum
+
 	## $Id$ ##
 -->
 
@@ -20,7 +21,7 @@
 	<!-- url fournissant les packages officiels pour se3 
 			pas besoin d'un serveur sécurisé car le md5sum des fichiers appli.xml 
 			est ensuite controlé sur le serveur se3 avant l'installation -->
-	<xsl:param name="urlWawadeb" select="'http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages'" />
+	<xsl:param name="urlWawadeb" select="'http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages/stable'" />
 	<!-- url fournissant le xml des packages du forum (nom de variable à changer!). -->
 	<xsl:param name="urlWawadebMD5" select="'http://wawadeb.crdp.ac-caen.fr/unattended/se3_wpkglist.php'" />
 
@@ -69,7 +70,7 @@
 								Les mises à jour proposées ici sont celles des <a href="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages/stable" target="_blank">Paquets WPKG Stables</a> du SVN du CRDP de Basse-Normandie.
 							</xsl:otherwise>
 						</xsl:choose -->
-						Les mises à jour proposées ici sont celles des paquets WPKG du <a href="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages" target="_blank">SVN du CRDP de Basse-Normandie</a>.
+						Les mises à jour proposées ici sont celles des paquets WPKG du <a href="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages/stable" target="_blank">SVN du CRDP de Basse-Normandie</a>.
 						
 						<form name="formUpdateXml" method="post" action="index.php?UpdateApplis=1" enctype="multipart/form-data">
 							<table align="center">
@@ -194,8 +195,8 @@
 <xsl:text>&lt;td align="center" style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" /><xsl:text>;"&gt;&lt;a class="postes" style="background-color:transparent;font-weight:bolder;" title="Cliquer pour voir le contenu du xml" href="</xsl:text><xsl:value-of select="@url" /><xsl:text>" target="_blank"&gt;</xsl:text><xsl:value-of select="$xmlRef" /><xsl:text>&lt;/a&gt;&lt;/td&gt;</xsl:text>
 <xsl:text>&lt;td align="center" style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" /><xsl:text>;" &gt;</xsl:text>
 <!-- <xsl:choose>
-	<xsl:when test="@topic_id = 0 "> -->
-		<xsl:text>&lt;a style="background-color:transparent;" title="Cliquer pour accéder aux commentaires dans le fichier changelog du svn" target="_blank" href="</xsl:text><xsl:value-of select="@svn_link" />
+	<xsl:when test="@topic_id > 0"> -->
+		<xsl:text>&lt;a style="background-color:transparent;" title="Cliquer pour accéder au fichier journal du svn" target="_blank" href="</xsl:text><xsl:value-of select="@svn_link" />
 		<xsl:choose>
 			<xsl:when test="(@forum = 'stable') or (@forum = 'test')">
 				<xsl:text>"  &gt;&lt;img border="0" style="background-color:transparent;" src="img/forum_message.gif" width="12px" height="13px"&gt; </xsl:text><xsl:value-of select="@forum" /><xsl:text> &lt;/a&gt;</xsl:text>
@@ -314,7 +315,7 @@
 		<div id="updatedXml">
 			<table>
 				<tr>
-					<td><p>Pour mettre à jour ou installer des paquets WPKG à partir du <a href="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages" target="_blank">SVN du CRDP de Caen</a> : </p></td>
+					<td><p>Pour mettre à jour ou installer des paquets WPKG à partir du <a href="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages/stable" target="_blank">SVN du CRDP de Caen</a> : </p></td>
 					<td>
 						<input value="Afficher les applications disponibles" type="button" onclick="MAJPackages=1;urlWawadebMD5='http://wawadeb.crdp.ac-caen.fr/unattended/se3_wpkglist.php';testUpdatedXml();"></input><br/><br/>
 						<input name="forceRefresh" id="forceRefresh" value="0" type="checkbox" title="Récupérer les données du SVN même si elle ne semble pas avoir été modifiées"></input>forçer le rafraîchissement.<br/>
@@ -322,7 +323,7 @@
 					</td>
 				</tr>
 			</table>
-N'oubliez pas, après avoir installé une application d'indiquer sur la liste de diffusion sambaedu si l'application s'installe correctement ou non sur les postes de votre réseau. Vous contribuerez ainsi à améliorer la qualité des applications proposées.
+N'oubliez pas, après avoir installé une application d'écrire sur la liste de diffusion sambaedu, pour indiquer si l'application s'installe correctement ou non sur les postes de votre réseau. Vous contribuerez ainsi à améliorer la qualité des applications proposées.
 		</div>
 	</xsl:template>
 
@@ -336,7 +337,7 @@ N'oubliez pas, après avoir installé une application d'indiquer sur la liste de d
 			En dehors du <a href="{$urlWawadeb}" target="_blank">SVN</a>,
 			vous pouvez ajouter une application de votre cru ou inspirée d'applications téléchargées sur internet (voir 'Compléments' plus bas).<br></br>
 			<dir>
-				<li >Créer un fichier (*.xml) en vous documentant avec la <a href="http://wwdeb.crdp.ac-caen.fr/mediase3/index.php/FaqWpkg#Comment_fabriquer_un_xml_destin.C3.A9_.C3.A0_devenir_officiellement_d.C3.A9ploy.C3.A9.3F" target="_blank">documentation officielle SE3</a> et en vous inspirant de ceux disponibles depuis les liens ci-dessous.</li>
+				<li >Créer un fichier (*.xml) en vous aidant de la <a href="http://wwdeb.crdp.ac-caen.fr/mediase3/index.php/FaqWpkg#Comment_fabriquer_un_xml_destin.C3.A9_.C3.A0_devenir_officiellement_d.C3.A9ploy.C3.A9.3F" target="_blank">documentation officielle SE3</a> et en vous inspirant de ceux disponibles depuis les liens ci-dessous.</li>
 				<li >Télécharger le fichier (*.xml) de définition d'application :</li>
 				<dir>
 					<li >Indiquer, dans le formulaire ci-dessous, l'emplacement de ce fichier xml.</li>

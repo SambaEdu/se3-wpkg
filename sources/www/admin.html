@@ -22,7 +22,7 @@
 
 	// url de la page fournissant les packages officiels SambaEdu
 	//var urlWawadeb="http://www.etab.ac-caen.fr/serveurmalherbe/se3/wpkg/packages/packages.html"
-	var urlWawadeb="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages";
+	var urlWawadeb="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages/stable";
 	// url du fichier md5sum sur le secure serveur
 	//var urlWawadebMD5="http://www.etab.ac-caen.fr/serveurmalherbe/se3/wpkg/packages/packages.md5";
 	var urlWawadebMD5="http://wawadeb.crdp.ac-caen.fr/unattended/se3_wpkglist.php";
@@ -141,7 +141,7 @@
 		MAJPackages = 1;
 		//alert("In testUpdatedXml() MAJPackages=" + MAJPackages + ", forceRefresh=" + forceRefresh);
 		var target = documentEnCours.getElementById("transform");
-		target.innerHTML = "Accès au serveur svn.tice.ac-caen.fr. Veuillez patienter ...";
+		target.innerHTML = "Accès au serveur www.crdp.ac-caen.fr. Veuillez patienter ...";
 		// Mise à jour des applis du forum
 		var http = null; 
 		if(window.nav=='firefox') // Firefox 
@@ -158,7 +158,7 @@
 		if ( forceRefresh ) {
 			url += "?refresh=1";
 		}
-		//if (urlWawadebMD5 == "http://www.crdp.ac-caen.fr/forum/se3_wpkglist.php" ) {
+		//if (urlWawadebMD5 == "http://wawadeb.crdp.ac-caen.fr/unattended/se3_wpkglist.php" ) {
 		//	url = "wpkglist.php";
 		//}
 		http.open("GET", url , true); 
@@ -505,16 +505,12 @@
 		} else {
 			// firefox
 			if ((typeof eltsrc) != "undefined" ) {
-				if ((typeof eltsrc.style) == "undefined" ) {
+				if (eltsrc.style.cursor == "ne-resize") {
 					Tableau.sort(triTableau);
+					eltsrc.style.cursor = "nw-resize";
 				} else {
-					if (eltsrc.style.cursor == "ne-resize") {
-						Tableau.sort(triTableau);
-						eltsrc.style.cursor = "nw-resize";
-					} else {
-						Tableau.sort(triRevTableau);
-						eltsrc.style.cursor = "ne-resize";
-					}
+					Tableau.sort(triRevTableau);
+					eltsrc.style.cursor = "ne-resize";
 				}
 			} else {
 				// tri pour remettre le résultat du dernier tri
@@ -959,7 +955,7 @@
 	<a style="font-size:xx-small;" title="A virer dès que la mise à jour sera effectuée dans l'interface de gestion des parcs" href="index.php?updateProfiles=1">Mettre à jour les fichiers hosts.xml et profiles.xml pour prendre en compte les modifications des parcs</a><br>
 	<a style="font-size:xx-small;" title="A virer dès que la mise à jour sera effectuée dans l'interface de gestion des parcs" href="index.php?updateDroits=1">Mettre à jour le fichier droits.xml pour prendre en compte les modifications de délégation de parcs</a>
 </div>
-<h1 align="center">Déploiement d'applications <font size="3">( sur Win2000, WinXP, Vista, Win7 )</font></h1>
+<h1 align="center">Déploiement d'applications <font size="3">( sur Win2000, WinXP, Vista et Win7 )</font></h1>
 <div id="Onglets" style="border-bottom:3px solid black;height:37px;width:100%;">
 	<script type = "text/javascript">
 		if ( (typeof(lsusInstalled) != "undefined") && lsusInstalled ) {
