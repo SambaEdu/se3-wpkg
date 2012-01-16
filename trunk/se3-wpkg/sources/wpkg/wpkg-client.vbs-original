@@ -174,7 +174,7 @@ Dim MSGlog   : MSGlog = WinDir & "\wpkg-msg.txt"
 Dim Dest
 ' sur windows 7, le dossier Démarrage de AllUsers est différent.
 ' C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Startup
-If GetTypeWin = "Windows XP" Or GetTypeWin =  "Windows 2000" Then
+If InStr(GetTypeWin, "winxp") > 0 Or InStr(GetTypeWin, "win2k") > 0 Then
 	' on est sur windows XP ou 2000
 	Dest=oShell.ExpandEnvironmentStrings("%AllUsersProfile%") & "\Menu Démarrer\Programmes\Démarrage\"
 Else
