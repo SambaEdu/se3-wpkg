@@ -5680,10 +5680,10 @@ function installPackage(packageNode) {
 					info("Deplacement automatique des raccourcis de id=" + packageID + " depuis %AllUsersProfile%\\Menu Démarrer\\Programmes\\" + lnkDir + " dans la Category " + category + ".");
 					exec("%ComSpec% /C call %Z%\\wpkg\\AnalyseCategory.bat \"" + packageID + "\" \"" + lnkDir + "\"", timeout, workdir);
 				} else {
-					info("Pas de deplacement automatique des raccourcis car 'category' est absent.");
+					info("Pas de deplacement automatique des raccourcis car 'category' est absent dans " + packageID + ".");
 				}
 			} else {
-				info("Pas de deplacement automatique des raccourcis car 'lnk' est absent.");
+				info("Pas de deplacement automatique des raccourcis car 'lnk' est absent dans " + packageID + ".");
 			}
 			log(4,"==============================================================="); // saut ligne entre les paquets à installer
 			// FIN PATCH SE3
@@ -6698,10 +6698,10 @@ function removePackage(packageNode) {
 							info("Suppression des raccourcis de id=" + packageID + " depuis %AllUsersProfile%\\Menu Démarrer\\Programmes\\" + category + "\\" + lnkDir);
 							exec("%ComSpec% /C call %Z%\\wpkg\\AnalyseCategory.bat \"" + packageID + "\" \"" + lnkDir + "\" remove", timeout, workdir);
 						} else {
-							info("Pas de suppression automatique des raccourcis car 'category' est absent.");
+							info("Pas de suppression automatique des raccourcis car 'category' est absent dans " + packageID + ".");
 						}
 					} else {
-						info("Pas de suppression automatique des raccourcis car 'lnk' est absent.");
+						info("Pas de suppression automatique des raccourcis car 'lnk' est absent dans " + packageID + ".");
 					}
 					// FIN PATCH SE3
 
@@ -9090,8 +9090,10 @@ function notify(message) {
 				error(errorMessage);
 			}
 		}
-	} else {
-		info("User notification suppressed. Message: " + message);
+	// PATCH SE3 : saturation dans le cas /nonotify.
+	//} else {
+	//	info("User notification suppressed. Message: " + message);
+	// FIN PATCH SE3
 	}
 }
 
