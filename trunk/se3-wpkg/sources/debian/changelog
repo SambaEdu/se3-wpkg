@@ -1,3 +1,9 @@
+se3-wpkg (0.1-38) stable; urgency=low
+
+  * correctif nonotify=true qui plantait l'install - maj cosmetique
+
+ -- root <root@localhost.localdomain>  Sun, 22 Jan 2012 18:57:44 +0100
+
 se3-wpkg (0.1-37) stable; urgency=low
 
   * tooltip correction
