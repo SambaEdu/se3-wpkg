@@ -32,10 +32,11 @@ function alertConfigWpkg () {
         }
 ?>
 	if ( ! wpkgInstalljob ) {
-		alert("Wpkg n'a pas été configuré par l'admin.\n" +
+		alert("Wpkg n'a pas été correctement installé.\n" +
 		"Le fichier 'L:\\ro\\wpkgInstall.job' est absent.\n\n" +
-		"Pour configurer wpkg pour votre réseau, exécutez :\n" +
-		"L:\\install\\wpkg-config.bat\n" +
+		"Pour terminer l'installation de wpkg, exécutez en root :\n" +
+		"apt-get install -f\n" +
+		"apt-get install se3-wpkg --reinstall\n" +
 		"\nVous pourrez ensuite revenir à cette page...");
 	}
 }
