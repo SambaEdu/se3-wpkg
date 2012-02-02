@@ -488,14 +488,13 @@
 <xsl:choose>
 	<xsl:when test="$CePoste">
 		<!-- Clé de tri2 Etat appli -->
-		<xsl:value-of select="$status" /><xsl:text>',</xsl:text>
+		<xsl:value-of select="$status" /><xsl:text>','</xsl:text>
 		<!-- Clé de tri3 Revision (numérique) -->
 		<xsl:choose>
 			<xsl:when test="$CePackageDuPoste/@revision">
 				<xsl:value-of select="$CePackageDuPoste/@revision" />
 			</xsl:when>
-			<xsl:otherwise>''</xsl:otherwise>
-		</xsl:choose><xsl:text>,'</xsl:text>
+		</xsl:choose><xsl:text>','</xsl:text>
 		<!-- Clé de tri4 reboot -->
 		<xsl:value-of select="$CePackageDuPoste/@reboot" /><xsl:text>','</xsl:text>
 		<!-- Clé de tri5 DateRapport -->
