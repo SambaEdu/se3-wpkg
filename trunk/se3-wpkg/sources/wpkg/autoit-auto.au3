@@ -7,8 +7,8 @@
 ;  Rque : le fait de renommer le fichier ini évite qu'il soit écrasé lors d'une prochaine mise à jour du prog.xml
 
 ; Fonctionnement côté développement :
-; 1. le xml de l'application doit appeler <install cmd='%z%\wpkg\autoit-auto.exe prog' /> où prog est le dossier contenant l'appli : /var/se3/install/packages/prog
-; 2.  Dans ce dossier, il faut créer un fichier prog.ini qui contient les sections et fenêtres à fermer.
+; 1. le xml de l'application doit appeler <install cmd='%z%\wpkg\autoit-auto.exe %z%\packages\prog\prog.ini' />
+; 2.  Dans ce dossier %Z%\packages\prog, il faut créer un fichier prog.ini qui contient les sections et fenêtres à fermer.
 
 ; Structure du fichier prog.ini
 ; [section1]
@@ -26,15 +26,14 @@ EndIf
 Opt("WinWaitDelay",2000)
 Opt("WinTitleMatchMode",4)
 Opt("WinDetectHiddenText",1)
-Opt("RunErrorsFatal",0)
+;Opt("RunErrorsFatal",0)
 
 If $CmdLine[0] <> 0 Then
 	$file_ini = $CmdLine[1]
 Else
 	; pour mes tests en VM sans argument
-	$prog = "test"
-	$dossier = "test"
-	$file_ini = EnvGet("Z") & "\packages\" & $dossier & "\" & $prog & ".ini"
+	;$file_ini = "Y:\SambaEdu3\wpkg-packages\files\generis\generis-remove.ini"
+	$file_ini = "Y:\SambaEdu3\wpkg-packages\files\generis\generis.ini"
 EndIf
 
 IniReadSectionNames($file_ini)
@@ -164,7 +163,7 @@ Else
 		
 		; A IMPLEMENTER
 		; si $nokey=0
-		; Alors on teste si dans $licence_ini , une section $sectionsliste[$i] existe
+		; Alors on teste si, dans $licence_ini , une section $sectionsliste[$i] existe
 		; 	si oui, on lit la clé key et on met sa valeur dans $actionkey
 		; 	si non , on passe à la suite.
 		
@@ -234,20 +233,22 @@ Func _ActionLanceur()
 	If $actionrun <> "" Then
 		; problème avec l'antislash compris dans EnvGet("Z") qui est interprété : il faut donc le doubler.
 		$cheminZ=StringRegExpReplace(EnvGet("Z") ,"\\", "\\\\" )
+		$cheminProgramFiles=StringRegExpReplace(EnvGet("ProgramFiles") ,"\\", "\\\\" )
+		$Commande=StringRegExpReplace(StringRegExpReplace($actionrun,"%Z%", $cheminZ ),"%ProgramFiles%", $cheminProgramFiles )
 		If $debug = "1" Then
-			_Message("Action run : " & $actionrun & "." & @CRLF & "interprété : " & StringRegExpReplace($actionrun,"%Z%", $cheminZ ) )
+			_Message("Action run : " & $actionrun & "." & @CRLF & "interprété : " & $Commande )
 		EndIf
-		$pid = Run( StringRegExpReplace($actionrun ,"%Z%", $cheminZ ) , EnvGet("SystemRoot"))
+		$pid = Run($Commande, EnvGet("SystemRoot"))
 	EndIf
 	
 	; action saisie clé de licence
-	If 1 = 0 Then
+	If $actionkey <> "" Then
 	If $actiontitre <> "" And $actionkey <> "" Then
 		If $debug = "1" Then
 			_Message("Action clé de licence perso :" & $actionkey & " dans la fenêtre : " & $actiontitre )
 		EndIf
 		; A VERIFIER : non testé 
-		If WinExists($titre,$texte) Then
+		If WinExists($actiontitre,$actiontexte) Then
 			; on clique sur le champ de saisie désiré
 			ControlClick($actiontitre, $actiontexte, $actionbouton)
 			If $actionkeymultizone = 1 Then
@@ -270,6 +271,10 @@ Func _ActionLanceur()
 			_Message("La clé key est fournie mais le titre de la fenêtre n'est pas fourni dans la section : " & $sectionsliste[$i] & ". Il est nécessaire de définir les deux pour que la clé de licence soit saisie")
 		EndIf
 	EndIf
+	;Else
+		;If $debug = "1" Then
+		;	_Message("pas de key fournie dans la section : " & $sectionsliste[$i] & ".")
+		;EndIf
 	EndIf
 	
 	; action clic sur un bouton
