@@ -680,6 +680,12 @@ try {
 function main() {
 	// Do not open pop-up window while initializing.
 	setQuiet(true);
+	
+	// PATCH SE3 : oubli dans le script officiel.
+	if (!isNoRunningState()) {
+		setRunningState("true");
+	}
+	// FIN PATCH SE3.
 
 	// Initialize WPKG internals.
 	initialize();
