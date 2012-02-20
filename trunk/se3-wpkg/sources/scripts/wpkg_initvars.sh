@@ -56,5 +56,5 @@ fi
 # params
 echo "SELECT CONCAT('Set ', name, '=', value) FROM params WHERE name In ($ListVars)" | mysql -h $dbhost $dbname -u $dbuser -p$dbpass -N >> $INITVARSSE3BAT
 
-unix2dos $INITVARSSE3BAT
+todos $INITVARSSE3BAT
 
