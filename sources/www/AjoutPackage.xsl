@@ -317,13 +317,15 @@
 				<tr>
 					<td><p>Pour mettre à jour ou installer des paquets WPKG à partir du <a href="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages/stable" target="_blank">SVN du CRDP de Caen</a> : </p></td>
 					<td>
-						<input value="Afficher les applications disponibles" type="button" onclick="MAJPackages=1;urlWawadebMD5='http://wawadeb.crdp.ac-caen.fr/unattended/se3_wpkglist.php';testUpdatedXml();"></input><br/><br/>
+						<input value="Afficher les applications disponibles" type="button" onclick="MAJPackages=1;urlWawadebMD5='http://wawadeb.crdp.ac-caen.fr/unattended/se3_wpkglist.php';testUpdatedXml();"></input>
+						<!-- Devenu inutile puisque la nouvelle page listant les applis du svn est regénérée systématiquement
+						<br/><br/> 
 						<input name="forceRefresh" id="forceRefresh" value="0" type="checkbox" title="Récupérer les données du SVN même si elle ne semble pas avoir été modifiées"></input>forçer le rafraîchissement.<br/>
-						
+						-->
 					</td>
 				</tr>
 			</table>
-N'oubliez pas, après avoir installé une application d'écrire sur la liste de diffusion sambaedu, pour indiquer si l'application s'installe correctement ou non sur les postes de votre réseau. Vous contribuerez ainsi à améliorer la qualité des applications proposées.
+N'oubliez pas, après avoir installé une application de "test", d'écrire sur la liste de diffusion sambaedu, pour indiquer si l'application s'installe correctement ou non sur les postes de votre réseau. Vous contribuerez ainsi à améliorer la qualité des applications proposées.
 		</div>
 	</xsl:template>
 
