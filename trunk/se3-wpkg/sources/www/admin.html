@@ -136,7 +136,7 @@
 		
 	}
 	function testUpdatedXml() {
-		var forceRefresh = documentEnCours.getElementById("forceRefresh").checked;
+		//var forceRefresh = documentEnCours.getElementById("forceRefresh").checked;
 		// Appelé à partir de AjoutPackage.xsl
 		MAJPackages = 1;
 		//alert("In testUpdatedXml() MAJPackages=" + MAJPackages + ", forceRefresh=" + forceRefresh);
@@ -155,9 +155,9 @@
 		// Requete en mode asynchrone
 		//var url = "wpkgtesting.php";
 		var url = "wpkglist.php";
-		if ( forceRefresh ) {
-			url += "?refresh=1";
-		}
+		//if ( forceRefresh ) {
+		//	url += "?refresh=1";
+		//}
 		//if (urlWawadebMD5 == "http://wawadeb.crdp.ac-caen.fr/unattended/se3_wpkglist.php" ) {
 		//	url = "wpkglist.php";
 		//}
