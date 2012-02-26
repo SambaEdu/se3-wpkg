@@ -13,12 +13,11 @@
 ; Structure du fichier prog.ini
 ; [section1]
 ; titre=titre de la fenetre
-; 
 
 ; mode debug = 0 par defaut.
 $debug = 1
 
-If EnvGet("Z") = "" Then 
+If EnvGet("Z") = "" Then
 	EnvSet( "Z", "\\se3\install")
 EndIf
 
@@ -37,7 +36,7 @@ Else
 EndIf
 
 IniReadSectionNames($file_ini)
-If @error Then  
+If @error Then
 	_Message("Fichier passé en argument 1 absent : " & $file_ini & ".")
 	Exit(1)
 Else
@@ -68,19 +67,19 @@ If $CmdLine[0] < 2 Then
 		; fichier commun à toutes les applis : la section doit porter le nom de la section correspondante dans prog.ini et comporter une clé "key"
 		$licence_ini = EnvGet("Z") & "\site\wpkg_apps.ini"
 		IniReadSectionNames($licence_ini)
-		If @error Then 
-			If $debug > 1 Then 
+		If @error Then
+			If $debug > 1 Then
 				_Message("Fichier avec suffixe -key absent et " & @CRLF & $licence_ini & " absent.")
 			EndIf
 			$nokey=1
 			; tous les progs n'ont pas besoin d'une clé : on mémorise qu'il n'y a pas de fichier de clé fournie
 		Else
-			If $debug = "1" Then 
+			If $debug = "1" Then
 				_Message("Installation en cours à partir du fichier de licence : " & $licence_ini)
 			EndIf
 		EndIf
 	Else
-		If $debug = "1" Then 
+		If $debug = "1" Then
 			_Message("Installation en cours à partir du fichier de licence : " & $licence_ini)
 		EndIf
 	EndIf
@@ -94,14 +93,14 @@ Else
 		_Message("Fichier passé en argument 2 absent : " & $licence_ini)
 		Exit(1)
 	Else
-		If $debug > 1 Then 
+		If $debug > 1 Then
 			_Message("Installation en cours à partir du fichier de licence : " & $licence_ini)
 		EndIf
 	EndIf
 EndIf
 
 IniReadSectionNames($licence_ini)
-If @error Then 
+If @error Then
 	If $debug = "1" Then
 		_Message("Fichier " & $licence_ini & " absent.")
 	EndIf
@@ -115,11 +114,11 @@ EndIf
 ; A IMPLEMENTER : il faut chercher la section quand on en a besoin dans action_programmee()
 ;$section = "test"
 ;IniReadSection($licence_ini, $section)
-;If @error Then 
+;If @error Then
 	;$licence_ini = EnvGet("Z") & "\packages\" & $prog & "\" & $prog & "-key.ini"
 	;IniReadSection($licence_ini, $section)
-	;If @error Then 
-		;If $debug = "1" Then 
+	;If @error Then
+		;If $debug = "1" Then
 		;	_Message("Section " & $section & " introuvable dans " & $licence_ini & ".")
 		;EndIf
 		;$nokey=1
@@ -152,7 +151,7 @@ Else
 		;If $debug = "1" Then
 			;_Message( "Toutes variables initialisées :" & $actionrun )
 		;EndIf
-		
+
 		; lecture des actions programmees : plusieurs variables peuvent être nécessaires pour une action
 		$var = IniReadSection($file_ini, $sectionsliste[$i])
 		For $j = 1 To $var[0][0]
@@ -160,13 +159,13 @@ Else
 			; une fonction lit la clé et affecte les bonnes variables pour exécution en fin de section.
 			_ActionProgrammee($var[$j][0] , $var[$j][1])
 		Next
-		
+
 		; A IMPLEMENTER
 		; si $nokey=0
 		; Alors on teste si, dans $licence_ini , une section $sectionsliste[$i] existe
 		; 	si oui, on lit la clé key et on met sa valeur dans $actionkey
 		; 	si non , on passe à la suite.
-		
+
 		; lancement des actions programmees
 		_ActionLanceur()
     Next
@@ -176,18 +175,18 @@ Func _ActionProgrammee($key , $value)
 	; action timeout personnalisé
 	If $key = "timeout" Then
 		$timeout = $value
-	EndIf	
-	
+	EndIf
+
 	; action afterwait : permet d'attendre x secondes après l'action en cours dans la section
 	If $key = "afterwait" Then
 		$afterwait = $value
-	EndIf	
-	
+	EndIf
+
 	; action run
 	If $key = "run" Then
 		$actionrun = "" & $value & ""
 	EndIf
-	
+
 	; action clic sur un bouton
 	If $key = "titre" Then
 		$actiontitre = $value
@@ -198,7 +197,7 @@ Func _ActionProgrammee($key , $value)
 	If $key = "texte" Then
 		$actiontexte = $value
 	EndIf
-	
+
 	; action saisie clé de licence avec nom d'utilisateur
 	If $key = "key" Then
 		$actionkey = $value
@@ -211,13 +210,13 @@ Func _ActionProgrammee($key , $value)
 	If $key = "keymultizone" Then
 		$actionkeymultizone = $value
 	EndIf
-	
+
 EndFunc
 
 Func _ActionLanceur()
 	; initialisation du compteur temps à chaque fenêtre
 	$begin = TimerInit()
-	
+
 	; action timeout personnalisé
 	If $timeout <> 900 Then
 		If $debug = "1" Then
@@ -227,7 +226,7 @@ Func _ActionLanceur()
 		If $debug > 1 Then
 			_Message("Timeout par défaut :" & $timeout )
 		EndIf
-	EndIf	
+	EndIf
 
 	; action run
 	If $actionrun <> "" Then
@@ -240,14 +239,14 @@ Func _ActionLanceur()
 		EndIf
 		$pid = Run($Commande, EnvGet("SystemRoot"))
 	EndIf
-	
+
 	; action saisie clé de licence
 	If $actionkey <> "" Then
 	If $actiontitre <> "" And $actionkey <> "" Then
 		If $debug = "1" Then
 			_Message("Action clé de licence perso :" & $actionkey & " dans la fenêtre : " & $actiontitre )
 		EndIf
-		; A VERIFIER : non testé 
+		; A VERIFIER : non testé
 		If WinExists($actiontitre,$actiontexte) Then
 			; on clique sur le champ de saisie désiré
 			ControlClick($actiontitre, $actiontexte, $actionbouton)
@@ -276,14 +275,14 @@ Func _ActionLanceur()
 		;	_Message("pas de key fournie dans la section : " & $sectionsliste[$i] & ".")
 		;EndIf
 	EndIf
-	
+
 	; action clic sur un bouton
 	If $actiontitre <> "" And $actionbouton <> "" Then
 		; le texte du bouton est facultatif mais préférable.
 		If $debug = "1" Then
 			_Message( "Action clic bouton programmee sur le bouton :" & $actiontexte & "(Advanced mode :" & $actionbouton & "), dans la fenêtre : " & $actiontitre )
 		EndIf
-		
+
 		; variable permettant de savoir si on sort de la boucle par timeout ou par succès d'apparition de la fenêtre.
 		$success = 0
 
@@ -301,7 +300,7 @@ Func _ActionLanceur()
 			  ExitLoop
 		    EndIf
 			_Message("Attente de la fenêtre : " & $actiontitre & @CRLF & "depuis " & $timediff & " secondes avec un timeout de " & Number($timeout) & " secondes.")
-			
+
 			; dépassement du timeout ?
 			If $timediff > Number($timeout) Then
 				_Message("Timeout atteint : " & $timediff & ">" & Number($timeout))
@@ -315,14 +314,14 @@ Func _ActionLanceur()
 				_Message("Timeout atteint : la fenêtre espérée n'existe toujours pas après " & $timeout & " secondes." )
 				Sleep(1000)
 			EndIf
-			Exit(1)
+			;Exit(1)
 		EndIf
 	ElseIf $actiontitre <> "" Or $actionbouton <> "" Then
 		If $debug = "1" Then
 			_Message("Seule une des deux clés bouton ou titre est définie dans la section : " & $sectionsliste[$i] & ". Il est nécessaire de définir les deux pour que l'autoit puisse cliquer sur le bouton désiré." )
 		EndIf
 	EndIf
-	
+
 	; action attente après action personnalisée : $afterwait
 	If $afterwait <> 1 Then
 		If $debug = "1" Then
