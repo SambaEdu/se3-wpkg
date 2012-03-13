@@ -22,12 +22,13 @@ if [ "$Nnew" == "0" ]; then
     echo "rapports.xml était à jour."
 else
     echo "$Nnew rapports à prendre en compte."
-    NewRapports=1
 fi
-if [ "$NewRapports" == "1" ] ;then
+if [ ! "$Nnew" == "0" -o "$NewRapports" == "1" ] ;then
     echo "Mise à jour de rapports.xml."
+	# Si NewRapports=0, on met a jour rapports.xml seulement avec les nouveaux fichiers txt. Sinon, c'est qu'il s'agit de l'initialisation : on met a jour a partir de tous les fichiers presents.
+	[ "$NewRapports" == "0" ] && OPTION="-cnewer rapports.xml" &&echo "Option : $OPTION"
     # Création de rapports.xml à partir des fichiers rapport (*.txt)
-    gawk --re-interval -f /var/www/se3/wpkg/bin/rapports.awk `find . -iname '*.txt' -a -cnewer rapports.xml -maxdepth 1 -printf '%f '` > TMP$RAPPORTXML
+    gawk --re-interval -f /var/www/se3/wpkg/bin/rapports.awk `find . -iname '*.txt' $OPTION -a -maxdepth 1 -printf '%f '` > TMP$RAPPORTXML
     xsltproc --output $RAPPORTXML /var/www/se3/wpkg/bin/rapports.xsl TMP$RAPPORTXML
     if [ -e TMP$RAPPORTXML ] ; then
         /bin/rm TMP$RAPPORTXML
