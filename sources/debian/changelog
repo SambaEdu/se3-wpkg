@@ -1,3 +1,9 @@
+se3-wpkg (0.1-41) stable; urgency=low
+
+  * correction bug rapports
+
+ -- root <root@localhost.localdomain>  Mon, 19 Mar 2012 01:22:00 +0100
+
 se3-wpkg (0.1-40) stable; urgency=low
 
   * modif autoit generique
