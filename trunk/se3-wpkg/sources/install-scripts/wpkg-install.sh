@@ -77,8 +77,8 @@ PASSADMINSE3="$xppass"
 # donc ce qui suit est inutile. Normalement ....
 # sysutils pour unix2dos
 if [ ! -x "`which unix2dos`" ] ; then
-   echo "Installation du paquet tofrodos"; 
-   apt-get install tofrodos; 
+   echo "Verification du paquet tofrodos"; 
+#   apt-get install tofrodos; 
    if [ ! -x "`which unix2dos`" ] ; then
        echo "Erreur d'installation de tofrodos"
        exit 1
@@ -87,8 +87,8 @@ fi
 
 # unzip 
 if [ ! -x "`which unzip`" ] ; then
-    echo "Installation du paquet unzip"; 
-    apt-get install unzip;
+    echo "verification du paquet unzip"; 
+#    apt-get install unzip;
     if [ ! -x "`which unzip`" ] ; then 
         echo "Erreur d'installation du paquet unzip."
         exit 1
