@@ -76,14 +76,14 @@ PASSADMINSE3="$xppass"
 # les paquets necessaire sont dejà là grace à la gestion des dependances
 # donc ce qui suit est inutile. Normalement ....
 # sysutils pour unix2dos
-if [ ! -x "`which unix2dos`" ] ; then
-   echo "Verification du paquet tofrodos"; 
+#if [ ! -x "`which unix2dos`" ] ; then
+#   echo "Verification du paquet tofrodos"; 
 #   apt-get install tofrodos; 
-   if [ ! -x "`which unix2dos`" ] ; then
-       echo "Erreur d'installation de tofrodos"
-       exit 1
-    fi
-fi
+#   if [ ! -x "`which unix2dos`" ] ; then
+#       echo "Erreur d'installation de tofrodos"
+#       exit 1
+#    fi
+#fi
 
 # unzip 
 if [ ! -x "`which unzip`" ] ; then
