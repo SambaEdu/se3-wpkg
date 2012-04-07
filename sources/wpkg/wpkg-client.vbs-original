@@ -551,7 +551,7 @@ Function SetEnvironnement()
    If noforcedremove Then WPKG_OPTIONS = WPKG_OPTIONS & " /noforcedremove:true"
    'Ajout wpkg.js 1.3 (Olikin)
    If noreboot Then WPKG_OPTIONS = WPKG_OPTIONS & " /noreboot:true"
-   WPKG_OPTIONS = WPKG_OPTIONS & " /logLevel=" & logLevel
+   WPKG_OPTIONS = WPKG_OPTIONS & " /logLevel:" & logLevel
    
    End Function
 Function ExecIni
