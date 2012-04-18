@@ -17,4 +17,6 @@ install:
 	# verif_wpkg
 	[ -d $(DESTDIR)/var/se3/Progs/install ] || mkdir -p $(DESTDIR)/var/se3/Progs/install
 	cp -R verif_wpkg/verif_wpkg.exe $(DESTDIR)/var/se3/Progs/install/
+	# Ajout de l'entree dans la crontab
+	cp crontab/se3-wpkg $(DESTDIR)/etc/cron.d/
 clean:
