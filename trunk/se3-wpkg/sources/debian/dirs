@@ -6,3 +6,4 @@
 /var/www/se3/wpkg
 /var/www/se3/includes/menu.d/
 /var/www/se3/Progs/install/
+/etc/cron.d
