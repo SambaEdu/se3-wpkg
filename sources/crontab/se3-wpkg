@@ -1,0 +1,2 @@
+# On teste si des maj wsusoffline sont disponibles
+45 18  * * *   root    /usr/share/se3/scripts/wsusoffline-download.sh >/dev/null 2>&1
