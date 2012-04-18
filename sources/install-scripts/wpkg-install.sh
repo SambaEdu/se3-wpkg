@@ -409,7 +409,7 @@ echo Fin de wpkg-se3.bat
 WPKGSE3BAT
 #--------Fin wpkg-se3.bat-----------#
 recode $script_charset..CP850 $WPKGDIR/wpkg-se3.bat
-unix2dos $WPKGDIR/wpkg-se3.bat
+todos $WPKGDIR/wpkg-se3.bat
 chmod 755 $WPKGDIR/wpkg-se3.bat
 echo "Script $WPKGDIR/wpkg-se3.bat cree."
 
@@ -670,7 +670,7 @@ echo %date% %time% Fin de wpkg-install.bat.
 PREINSTBAT
 #--------Fin wpkg-install.bat-----------#
 recode $script_charset..CP850 $WPKGDIR/wpkg-install.bat
-unix2dos $WPKGDIR/wpkg-install.bat
+todos $WPKGDIR/wpkg-install.bat
 echo "Script $WPKGDIR/wpkg-install.bat cree."
 
 # Chemin du job d'installation de wpkg sur un poste pour un utilisateur lambda
@@ -777,7 +777,7 @@ Goto Done
 WPKGDIAG
 #--------Fin wpkg-diag.bat-----------#
 recode $script_charset..CP850 /var/se3/Progs/install/wpkg-diag.bat
-unix2dos /var/se3/Progs/install/wpkg-diag.bat
+todos /var/se3/Progs/install/wpkg-diag.bat
 # setfacl -m u::rwx -m g::rx -m o::rx /var/se3/Progs/install/wpkg-diag.bat
 chmod 755 /var/se3/Progs/install/wpkg-diag.bat
 echo "Script /var/se3/Progs/install/wpkg-diag.bat cree."
@@ -884,7 +884,7 @@ echo -- Fin wpkg-install.log --- >> %LOGSRV%
 WPKGREPAIR
 #--------Fin wpkg-repair.bat-----------#
 recode $script_charset..CP850 $WPKGDIR/wpkg-repair.bat
-unix2dos $WPKGDIR/wpkg-repair.bat
+todos $WPKGDIR/wpkg-repair.bat
 echo "Script $WPKGDIR/wpkg-repair.bat cree."
 
 
@@ -1472,7 +1472,7 @@ else
 	[ -e "/home/admin/profil/Bureau/Applications Wpkg.lnk" ] && echo "Suppression du raccourci invalide (ancienne generation wpkg) du Bureau d'admin" && rm "/home/admin/profil/Bureau/Applications Wpkg.lnk"
 	echo "$CMDINSTALL" >> $LOGONSCRIPT
     #recode $script_charset..CP850 $LOGONSCRIPT
-    unix2dos $LOGONSCRIPT
+    todos $LOGONSCRIPT
     chown admin:admins $LOGONSCRIPT
     chmod 770 $LOGONSCRIPT
 fi
@@ -1514,7 +1514,7 @@ else
 	#echo "$CMDINSTALL"
     echo "$CMDINSTALL" >> /home/templates/base/logon.bat
     #recode $script_charset..CP850 /home/templates/base/logon.bat
-    unix2dos /home/templates/base/logon.bat
+    todos /home/templates/base/logon.bat
     chown admin:admins /home/templates/base/logon.bat
     chmod 770 /home/templates/base/logon.bat
 fi
@@ -1532,7 +1532,7 @@ else
     echo "Commande de diagnostique wpkg ajoutee commentee a /home/templates/base/logon.bat"
     echo "$CMDINSTALL" >> /home/templates/base/logon.bat
     #recode $script_charset..CP850 /home/templates/base/logon.bat
-    unix2dos /home/templates/base/logon.bat
+    todos /home/templates/base/logon.bat
     chown admin:admins /home/templates/base/logon.bat
     chmod 770 /home/templates/base/logon.bat
 fi
@@ -1544,7 +1544,7 @@ fi
 # Client wpkg exécuté par la tâche planifiée.
 # Mise à jour du paramètre $SE3 dans wpkg-client.vbs
 sed "s/\$SE3/$SE3/g" $WPKGDIR/wpkg-client.vbs-original > $WPKGDIR/wpkg-client.vbs
-unix2dos $WPKGDIR/wpkg-client.vbs
+todos $WPKGDIR/wpkg-client.vbs
 echo "Script $WPKGDIR/wpkg-client.vbs cree."
 
 # Clés publiques ssh de www-se3 et de root disponibles pour être recopiées sur les postes lors de l'install de copssh
@@ -1600,7 +1600,7 @@ echo "<wpkg>" >> $TOUSLESPOSTESXML
 echo "<host name=\".+\" profile-id=\"_TousLesPostes\" />" >> $TOUSLESPOSTESXML
 echo "</wpkg>" >> $TOUSLESPOSTESXML
 recode $script_charset..CP850 $TOUSLESPOSTESXML
-unix2dos $TOUSLESPOSTESXML
+todos $TOUSLESPOSTESXML
 echo "Fichier $TOUSLESPOSTESXML cree."
 
 # on efface le fichier cree inutilement : non fonctionnel
