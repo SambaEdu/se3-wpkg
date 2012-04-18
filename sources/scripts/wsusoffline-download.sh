@@ -7,7 +7,7 @@
 #    mars 2012
 #    olivier-yves-cl.lacroix@ac-montpellier.fr
 #
-## $Id:$ ##
+## $Id$ ##
 #
 
 
