@@ -64,12 +64,17 @@ case "$1" in
 	###### Ajout des scripts wsusoffline ####
 	if [ ! -e /var/se3/unattended/install/wsusoffline ] ; then
 		echo "Telechargement des scripts wsusoffline"
-		wget http://olivier.lax.free.fr/se3/wpkg/wsusoffline/wsusoffline.zip -O /var/se3/unattended/install/wsusoffline.zip > /dev/null
+		WSUSOFFLINEROOT=http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages/files/wsusoffline
+		wget $WSUSOFFLINEROOT/wsusoffline.zip -O /var/se3/unattended/install/wsusoffline.zip > /dev/null
 		# unzip est present car installe par se3-wpkg
 		if [ -e /var/se3/unattended/install/wsusoffline.zip ]; then
 			if ( ! unzip -o /var/se3/unattended/install/wsusoffline.zip -d /var/se3/unattended/install/ > /dev/null ) ; then
 				echo "Erreur unzip -o /var/se3/unattended/install/wsusoffline.zip"
 			else
+				# mise en place initiale du fichier temoin
+				echo "Mise en place initiale du fichier temoin."
+				TEMOIN=/var/se3/unattended/install/wsusoffline/version.txt
+				wget -o=$TEMOIN $WSUSOFFLINEROOT/version.txt > /dev/null
 				echo "Reglage des droits sur les fichiers wsusoffline."
 				chmod -R ug+rwx /var/se3/unattended/install/wsusoffline
 				chown -R admin:admins /var/se3/unattended/install/wsusoffline
