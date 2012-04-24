@@ -186,11 +186,12 @@ do
 done
 
 # Envoi d'un mail a l'admin en cas de nouvelles mises a jour trouvees.
-TEST=`cat $MAIL | grep "Telechargement de nouvelles mises a jour"`
+TEST=`cat $MAIL | grep "successfully downloaded"`
 if [ ! "$TEST" == "" ]; then
 	SENDMAIL "[Module se3-wpkg : telechargement des mises a jour microsoft par wsusoffline]"
 else
 	echo "Pas de nouvelle mise a jour telechargee. Pas d'envoi de mail a l'admin."
+	#[ -e $MAIL ] && rm -f $MAIL
 fi
 
 
