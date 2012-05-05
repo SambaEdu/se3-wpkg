@@ -7,5 +7,5 @@ Standards-Version: 3.7.2
 
 Package: se3-wpkg
 Architecture: all
-Depends: se3 (>= 1.50), unzip, xsltproc, cabextract, recode, wakeonlan, tofrodos
+Depends: se3 (>= 2.2), unzip, xsltproc, cabextract, recode, wakeonlan, tofrodos, md5deep
 Description: Paquet optionnel d'installation d'applications sur les clients windows avec wpkg. This package is used to install applications on the windows XP clients.
