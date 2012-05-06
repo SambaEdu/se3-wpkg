@@ -1,8 +1,14 @@
+se3-wpkg (0.1-43) stable; urgency=low
+
+  * dl automatique wsus offline
+
+ -- root <root@localhost.localdomain>  Sun, 06 May 2012 00:55:04 +0200
+
 se3-wpkg (0.1-42) stable; urgency=low
 
-  * compatibilites dependances pour squeeze 
+  * correction option log debug
 
- -- Denis Bonnenfant <denis.bonnenfant@se3.diderot.org>  Tue, 20 Mar 2012 15:09:03 +0100
+ -- root <root@localhost.localdomain>  Mon, 09 Apr 2012 14:59:00 +0200
 
 se3-wpkg (0.1-41) stable; urgency=low
 
