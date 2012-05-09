@@ -398,46 +398,52 @@ Function ParseArguments()
       End Select
    Next
    End Function
-Function TestCpuLoad()
-   Dim i, j
-   i = 15 * 60 ' 15 mn maxi
-   Do
-      j = 60 ' 60sec maxi
-      Set cProc = oWMIService.ExecQuery( "Select * from Win32_Processor" )
-      Do While (Err.Number > 0) And (j>0)
-         print "oWMIService.ExecQuery( 'Select * from Win32_Processor' )"
-         If Tempo Then 
-            Wscript.Sleep 1000
-         Else
-            Wscript.Sleep 10
-         End If
-         j = j - 1   
-         Set cProc = oWMIService.ExecQuery( "Select * from Win32_Processor" )
-      Loop
-      cpuLoadOK = 0
-      If j>0 Then
-         For Each oProc In cProc
-            cpuLoad = oProc.LoadPercentage
-            If cpuLoad > maxCpuLoad Then 
-               print "cpuLoad = " & cpuLoad & "% > " & maxCpuLoad & "%"
+Function TestCpuLoad
+	' Calcul le taux d'occupation processeur du system consommé par les process sur une durée de 5 secondes
+	' toutes les 30 secondes. Si ce taux d'occupation est en dessous de la charge maximum demandée pour lancer WPKG
+	'la fonction sort de la boucle et retourne vrai. Au bout de 15 minutes de taux d'occupation supérieur
+	'la fonction retourne faux.
+	bExitFlag = False
+	' Résultat par défaut.
+	TestCpuLoad = False 
+	' Délai entre deux check pour le calcul de performance (5 secondes).
+	iDelayBetweenCheck = 5000
+	' Délai entre deux tests de performance de charge (25 secondes).
+	iWaitDelay = 25000
+	' Nombre de tests de performance maximum a effectuer (un test = 60s).
+	iRetryCount = 30
+	iRetryCounter =1
+	do
+	    Set oPPPFirstCheck = oWMIService.Get("Win32_PerfRawData_PerfOS_Processor.Name='_Total'")
+		' Taux d'occupation cpu premier check.
+		pptFirstCheck = oPPPFirstCheck.PercentProcessorTime
+		tssFirstCheck = oPPPFirstCheck.TimeStamp_Sys100NS
+		Wscript.Sleep(iDelayBetweenCheck)
+	    Set oPPPSecondCheck = oWMIService.Get("Win32_PerfRawData_PerfOS_Processor.Name='_Total'")
+		' Taux d'occupation cpu second check.
+		pptSecondCheck = oPPPSecondCheck.PercentProcessorTime
+		tssSecondCheck = oPPPSecondCheck.TimeStamp_Sys100NS
+
+        ' CounterType - PERF_100NSEC_TIMER_INV
+		' Formula - (1- ((N2 - N1) / (D2 - D1))) x 100
+		pptCPUConsumed = (1 - ((pptSecondCheck - pptFirstCheck)/(tssSecondCheck-tssFirstCheck)))*100
+        Wscript.Echo "% Processor Time=" , pptCPUConsumed	
+        If pptCPUConsumed > maxCpuLoad Then 
+               Wscript.Echo "cpuLoad = " & pptCPUConsumed & "% > " & maxCpuLoad & "%"
+			   Wscript.Echo "Nouveau test de la charge CPU dans " & ((iWaitDelay + iDelayBetweenCheck)/1000) & " secondes. Veuillez patienter."
             Else
-               cpuLoadOK = 1
-               print "cpuLoad = " & cpuLoad & "%"
+			   TestCpuLoad = True
+			   Wscript.Echo "cpuLoad : OK ( " & pptCPUConsumed & "% <= " & maxCpuLoad & "% )"
                Exit Do
             End If
-         Next
-         print ""
-      End If
-      i = i -1
-   Loop While (i>0) And (cpuLoadOK = 0)
-   If i<=0 Then 
-      print "Durée maxi d'attente écoulée. Le PC est trop chargé."
-      TestCpuLoad = False
-   Else
-      print "cpuLoad : OK ( " & cpuLoad & "% <= " & maxCpuLoad & "% )"
-      TestCpuLoad = True
-   End If
-   End Function
+		WScript.Sleep(iWaitDelay)
+		iRetryCounter = IRetryCounter + 1
+		If iRetryCounter > iRetryCount Then
+			Wscript.Echo "Durée maxi d'attente écoulée. Le PC est trop chargé."
+			Exit Do
+	    End if
+	loop while (bExitFlag=false)	
+	End Function
 Function wpkgAuBoot()
    ' Execute s'il existe %WinDir%\wpkgAuBoot.bat
    Dim cmd
