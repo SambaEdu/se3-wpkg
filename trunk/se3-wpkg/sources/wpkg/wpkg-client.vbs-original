@@ -105,7 +105,7 @@ Dim noforcedremove : noforcedremove=false ' Mettre à true pour ne pas retirer le
 
 ' Ajouts version 1.1.2 de wpkg.js (Olikin)
 Dim noreboot : noreboot=true  ' Pour ne pas rebooter en cours de session, même si un programme le nécessite.
-Dim logLevel : logLevel=31 ' Masque binaire : 0  disable logging.  1  log errors only  2  log warnings  4  log information  8  log audit success  16 log audit failure 
+Dim logLevel : logLevel=23 ' Masque binaire : 0  disable logging.  1  log errors only  2  log warnings  4  log information  8  log audit success  16 log audit failure 
 
 ParseArguments
 
