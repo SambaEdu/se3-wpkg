@@ -3,7 +3,7 @@
 //
 // ## $Id$ ##
 
-// Compatibilité register_globals = Off
+// Compatibilitï¿½ register_globals = Off
 foreach($_POST AS $key => $value) {
 	${$key} = $value;
 }
@@ -29,12 +29,12 @@ if (! $login ) {
 } else {
 	if ( ! $wpkgUser ) { 
 		include entete.inc.php; ?>
-			<h2>Déploiement d'applications</h2>
-			<div class=error_msg>Vous n'avez pas les droits nécessaires à l'utilisation de ce module !</div>
+			<h2>D&#233;ploiement d'applications</h2>
+			<div class=error_msg>Vous n'avez pas les droits n&#233;cessaires &#224; l'utilisation de ce module !</div>
 <?		include pdp.inc.php;
 		exit;
 	} else { 
-		# On a affaire à un utilisateur autorisé de wpkg
+		# On a affaire a un utilisateur autorise de wpkg
 
 		if ( isset($getXml) ) {
 			# Download d'un fichier xml
@@ -45,8 +45,8 @@ if (! $login ) {
 			get_fichierCP850("rapports/".$_GET['logfile']);
 
 		} elseif ( isset($iCmd) && isset($associer) && isset($idPackage) && isset($idProfile)) {
-			# Association ou dissociation d'une appli à un profile
-			//sleep(4); // Simule un serveur qui répond lentement
+			# Association ou dissociation d'une appli ï¿½ un profile
+			//sleep(4); // Simule un serveur qui rï¿½pond lentement
 			associer($_GET['iCmd'], $_GET['associer'], $_GET['idPackage'], $_GET['idProfile']);
 
 		} elseif ( isset($updateProfiles) ) {
@@ -55,11 +55,11 @@ if (! $login ) {
 			passthru ( "bash /usr/share/se3/scripts/update_hosts_profiles_xml.sh '$computersRdn' '$parcsRdn' '$ldap_base_dn'", $status);
 			echo "</pre>\n";
 			if ( $status == 0 ) {
-				echo "Les fichiers hosts.xml et profiles.xml ont été mis à jour.<br>\n";
+				echo "Les fichiers hosts.xml et profiles.xml ont &#233;t&#233; mis &#224; jour.<br>\n";
 			} else {
 				echo "Erreur $status : bash /usr/share/se3/scripts/update_hosts_profiles_xml.sh '$parcsRdn' '$ldap_base_dn'<br>\n";
 			}
-			echo "<br>Retourner à la page <a href='index.php'>Déploiement d'applications</a>.<br>\n";
+			echo "<br>Retourner &#224; la page <a href='index.php'>D&#233;ploiement d'applications</a>.<br>\n";
 
 		} elseif ( isset($updateDroits) ) {
 			echo "<pre>";
@@ -67,11 +67,11 @@ if (! $login ) {
 			passthru ( "bash /usr/share/se3/scripts/update_droits_xml.sh", $status);
 			echo "</pre>\n";
 			if ( $status == 0 ) {
-				echo "Le fichier droits.xml a été mis à jour.<br>\n";
+				echo "Le fichier droits.xml a &#233;t&#233; mis &#224; jour.<br>\n";
 			} else {
 				echo "Erreur $status : bash /usr/share/se3/scripts/update_droits_xml.sh<br>\n";
 			}
-			echo "<br>Retourner à la page <a href='index.php'>Déploiement d'applications</a>.<br>\n";
+			echo "<br>Retourner &#224; la page <a href='index.php'>D&#233;ploiement d'applications</a>.<br>\n";
 
 		} elseif ( isset($extractAppli) ) {
 			extractAppli($extractAppli);
@@ -93,7 +93,7 @@ if (! $login ) {
 				} else {
 					echo "Erreur _POST['SupprimerAppli'] est vide !<br>";
 				}
-				echo "<br>Retourner à la page <a href='index.php'>Déploiement d'applications</a>.<br>\n";
+				echo "<br>Retourner &#224; la page <a href='index.php'>D&#233;ploiement d'applications</a>.<br>\n";
 				echo "</body></html>\n";
 			}
 		} elseif ( isset($displayDelPackage) ) {
@@ -112,7 +112,7 @@ if (! $login ) {
 						$urlMD5 = '';
 					}
 					if ( isset($LocalappliXml) ) {
-						# Vérification que l'appli est déjà sur le serveur
+						# Vï¿½rification que l'appli est d&#233;j&#224; sur le serveur
 						if ( file_exists("$wpkgroot/$LocalappliXml") ) {
 							printHead();
 							$appli = basename("$wpkgroot/$LocalappliXml");
@@ -130,7 +130,7 @@ if (! $login ) {
 							printHead();
 							echo "<h1>Ajout d'une application</h1>\n";
 							echo "<h2>Transfert du fichier XML</h2>\n";
-							echo "Le fichier '$appli' a été transféré avec succès.<br>\n";
+							echo "Le fichier '$appli' a &#233;t&#233; transf&#233;r&#233; avec succ&#232;s.<br>\n";
 							flush();
 							configAppli($appli);
 							echo "</body></html>";
@@ -143,33 +143,33 @@ if (! $login ) {
 						}
 					} else {
 						Erreur(404);
-						echo "Erreur : appliXml n'est pas défini !<br>\n";
+						echo "Erreur : appliXml n'est pas d&#233;fini !<br>\n";
 					}
 				} else {
 					Erreur(404);
-					echo "Erreur : urlWawadebMD5 n'est pas défini et le contrôle MD5 est demandé !<br>\n";
+					echo "Erreur : urlWawadebMD5 n'est pas d&#233;fini et le contr&#244;le MD5 est demand&#233; !<br>\n";
 				}
-				echo "<br>Retourner à la page <a href='index.php'>Déploiement d'applications</a>.<br>\n";
+				echo "<br>Retourner &#224; la page <a href='index.php'>D&#233;ploiement d'applications</a>.<br>\n";
 				echo "</body></html>";
 			}
 		} elseif ( $_GET['UpdateApplis'] == "1" ) {
 			if ( adminWpkg() ) {
-				# Installation d'applis à partir du dépot officiel
+				# Installation d'applis ï¿½ partir du dï¿½pot officiel
 				if (isset($urlWawadebMD5)) {
 					$urlMD5 = isset($urlWawadebMD5) ? $_POST['urlWawadebMD5'] : '';
 					$pasDeDownload = $_POST['noDownload'];
 					$ignoreMD5 = $_POST['ignoreWawadebMD5'];
 					printHead();
 					if (count($chk) > 0) {
-						echo "<h1>Mise à jour des applications</h1>\n";
+						echo "<h1>Mise &#224; jour des applications</h1>\n";
 						while (list ($key,$val) = @each ($chk)) {
 							# Pour eviter : Fatal error:  Maximum execution time of 30 seconds exceeded
 							set_time_limit(300);
 							//echo "key=$key, val=$val<br>\n";
-							list($forum, $xml, $url) = split(':', $val, 3); 
+							list($forum, $xml, $url) = preg_split('/:/', $val, 3); 
 
 							echo "<div style='width: 100%;padding-top: 10px;padding-right: 10px;padding-bottom: 10px;padding-left: 10px;vertical-align: text-bottom;text-align: center;color: #005594;font-weight: bold;font-size: 16pt;background-color: #6699cc;'>Installation de '<b>$xml</b>'</div>\n";
-							echo "<h3>Téléchargement</h3>\n";
+							echo "<h3>T&#233;l&#233;chargement</h3>\n";
 							echo "<pre>";
 							passthru ( "cd $wpkgroot/tmp;wget --output-document='$xml' '$url' 2>&1", $status);
 							echo "</pre>";
@@ -185,14 +185,14 @@ if (! $login ) {
 							}
 						} 
 					} else {
-						echo "Aucune application n'était sélectionnée !<br/>\n";
+						echo "Aucune application n'&#233;tait s&#233;lectionn&#233;e !<br/>\n";
 					}
-					echo "<br>Retourner à la page <a href='index.php'>Déploiement d'applications</a>.<br>\n";
+					echo "<br>Retourner &#224; la page <a href='index.php'>D&#233;ploiement d'applications</a>.<br>\n";
 					echo "</body></html>";
 				}
 			}
 		} else {
-			# Par défaut redirection sur admin.html
+			# Par dï¿½faut redirection sur admin.html
 			header("Location: http://" . $_SERVER['HTTP_HOST'] . rtrim(dirname($_SERVER['PHP_SELF']), '/\\') . "/admin.html");
 		}
 	}
@@ -204,7 +204,7 @@ function adminWpkg() {
 		?>
 			<link  href='../style.css' rel='StyleSheet' type='text/css'>
 			<html><body>
-			<h2>Déploiement d'applications</h2>
+			<h2>D&#233;ploiement d'applications</h2>
 			<div class=error_msg>Vous devez avoir des droits d'administration pour utiliser cette fonction !</div>
 <?		include "pdp.inc.php";
 		return false;
@@ -219,9 +219,9 @@ function configAppli($Appli) {
 	$status = runprint("bash $wpkgwebdir/bin/installPackage.sh '$Appli' '$pasDeDownload' '$login' '$urlMD5' '$ignoreMD5'");
 	# echo "status=$status<br>\n";
 	if ( $status != 0 ) {
-		#echo "Erreur $status. Le contenu du fichier '$Appli' n'a pas été ajouté aux applications disponibles.<br>";
+		#echo "Erreur $status. Le contenu du fichier '$Appli' n'a pas &#233;t&#233; ajout&#233; aux applications disponibles.<br>";
 	} else {
-		#echo "<br>Félicitation ! Le contenu du fichier <b>$Appli</b> a été ajouté avec succès.<br>\n";
+		#echo "<br>F&#233;licitation ! Le contenu du fichier <b>$Appli</b> a &#233;t&#233; ajout&#233; avec succ&#232;s.<br>\n";
 	}
 	echo '</body></html>';
 
@@ -233,7 +233,7 @@ function microtime_float() {
 }
 
 function runprint ( $cmd ) {
-	# Exécute $cmd en affichant son résultat
+	# Exï¿½cute $cmd en affichant son rï¿½sultat
 
 	$handle = popen("$cmd 2>&1", 'r');
 	if (is_resource($handle)) {
@@ -273,7 +273,7 @@ function printHead() {
 ?>
 	<html>
 		<head>
-			<title>Déploiement d'applications</title>
+			<title>D&#233;ploiement d'applications</title>
 			<link  href='../style.css' rel='StyleSheet' type='text/css'>
 		</head>
 	<body>  
@@ -316,7 +316,7 @@ function extractAppli ($idAppli) {
 
 function associer ($iCmd, $operation, $package, $profile) {
 	global $DEBUG, $wpkgwebdir, $wpkgroot, $wpkgAdmin, $wpkgUser, $login;
-	# Associe un appli à un profil si l'utilisateur en a le droit
+	# Associe un appli ï¿½ un profil si l'utilisateur en a le droit
 	
 	exec ( "$wpkgwebdir/bin/associer.sh '$operation' '$package' '$profile' '$login' 2>&1", $output, $status );
 	//$last_line = system ( "$wpkgwebdir/bin/associer.sh '$operation' '$package' '$profile' '$login' >/dev/null 2>&1", $status);
@@ -345,7 +345,7 @@ function associer ($iCmd, $operation, $package, $profile) {
 
 function SupprAppli ( $idAppli, $delFiles) {
 	global $wpkgwebdir, $login;
-	# echo "Exécution de : bash $wpkgwebdir/bin/deletePackage.sh '$idAppli' '$delFiles'<br>";
+	# echo "Exï¿½cution de : bash $wpkgwebdir/bin/deletePackage.sh '$idAppli' '$delFiles'<br>";
 	echo "<h3>Suppression de l'application '$idAppli'</h3>\n";
 	echo "<pre>";
 	passthru ( "bash $wpkgwebdir/bin/deletePackage.sh '$login' '$idAppli' '$delFiles' 2>&1", $status);
