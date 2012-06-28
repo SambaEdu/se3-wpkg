@@ -47,7 +47,7 @@ if ( $wpkgUser && ($login != "")) {
 			echo "Parametre page non défini !";
 	}
 	$Maintenant = strftime ( "%D_%T" );
-	exec ( "sh $wpkgwebdir/bin/wpkgXml.sh '$login'", $output, $return_value);
+	exec ( "$wpkgwebdir/bin/wpkgXml.sh '$login'", $output, $return_value);
 	if ( $return_value == 0 ) {
 		get_html($xsl, $xml, $parametres);
 	} else {
