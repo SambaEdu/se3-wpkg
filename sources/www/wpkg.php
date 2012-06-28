@@ -7,7 +7,7 @@ include "inc/wpkg.auth.php";
 
 if ( $wpkgUser && ($login != "")) {
 	// Mise à jour de tmp/wpkg.$login.xml en cas de besoin
-	exec ( "sh $wpkgwebdir/bin/wpkgXml.sh '$login'", $output, $return_value);
+	exec ( "$wpkgwebdir/bin/wpkgXml.sh '$login'", $output, $return_value);
 	if ( $return_value == 0 ) {
 		get_xml("tmp/wpkg.$login.xml");
 	} else {
