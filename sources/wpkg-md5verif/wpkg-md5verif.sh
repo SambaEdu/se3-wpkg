@@ -4,9 +4,16 @@
 
 # ATTENTION : ce script ne doit pas tre exŽcutŽ sur un serveur en production. Il doit tre exŽcutŽ uniquement sur un serveur de tests car il modifie la base des xml wpkg automatiquement !
 
+# Nom netbios du se3
+SE3="\\se3\install\wpkg-md5verif"
+
 # Dossier contenant tous les fichiers generes par ce script.
 REP=/var/se3/unattended/install/wpkg-md5verif
+REPSOUSWIN="$SE3\install\wpkg-md5verif"
 mkdir -p $REP
+
+# dossier contenant les fichiers temoins pour les pauses.
+mkdir -p $REP/pause
 
 # MODE DEBUG
 DEBUG=0
@@ -28,8 +35,22 @@ DESTFILE=$REP/wpkg-md5-verif-file.tmp
 # mail d'envoi
 DESTMAIL=wpkg-se3@listes.tice.ac-caen.fr
 
+# IP du SE3
+IPSE3="10.211.55.200"
+
+# IP du client windows (qui doit repondre aux pings)
+IPWIN="10.211.55.6"
+
+# Acces au script wpkg-se3.js
+WPKGJS="$SE3\install\wpkg\wpkg-se3.js"
+
+# PARAMETRES wpkg-se3.js obligatoires
+PARAM="/noDownload:True"
 
 ####### CONF : ne pas modifier la suite ###########
+
+# emplacement local du fichier repertoriant les applications installees
+WPKGXML="%systemroot%\system32\wpkg.xml"
 
 # url de telechargement des xml (doit contenir trois sous-dossiers stable, testing (avec les xml) et logs (avec les fichiers journaux))
 export url=http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages
@@ -95,6 +116,75 @@ fi
 
 
 ####################### DEBUT DES FONCTIONS ############
+
+function CmdToWin {
+	echo $1 >> $TESTFILE
+}
+
+function WpkgInstall {
+	idpackage=$1
+	CmdToWin "cscript $WPKGJS $PARAM /install:$idpackage"
+	RecupereWpkgXml
+}
+
+function WpkgUpgrade {
+	idpackage=$1
+	CmdToWin "cscript $WPKGJS $PARAM /upgrade:$idpackage"
+	RecupereWpkgXml
+}
+
+function WpkgRemove {
+	idpackage=$1
+	CmdToWin "cscript $WPKGJS $PARAM /remove:$idpackage"
+	RecupereWpkgXml
+}
+
+function CreeTemoin {
+	FICHIERTEMOIN=$1
+	mkdir -p $REP/pause
+	touch $REP/pause/$FICHIERTEMOIN
+}
+
+function SupprimeTemoin {
+	FICHIERTEMOIN=$1
+	[ -e $REP/pause/$FICHIERTEMOIN ] && rm -f $REP/pause/$FICHIERTEMOIN
+}
+
+function PauseWinTantQue {
+	FICHIERTEMOIN=$1
+	CmdToWin ":debut"
+	CmdToWin "if not exist $REPSOUSWIN\pause\$FICHIERTEMOIN goto suite$FICHIERTEMOIN"
+	CmdToWin "ping -n 10 $IPSE3 1&2> NUL"
+	CmdToWin "goto debut"
+	CmdToWin ":suite$FICHIERTEMOIN"
+}
+
+function PauseSE3TantQue {
+# met le script en pause tant que wpkg.xml n'a pas change de date : passe la main au bout d'une heure en envoyant un mail
+	APPLI=$1
+	[ "$DEBUG" = "1" ] && echo "Pause en attendant le test de $APPLI sur le client windows."
+	FICHIER=$REP/wpkg.xml
+	modifinit=$(stat -c '%y' $FICHIER)
+	dateinit=$(date +"%s")
+	while 1
+	do
+		modif=$(stat -c '%y' $FICHIER)
+		[ "$modif" != "$modifinit" ] && break # teste si le ficheir wpkg.xml a change depuis le debut de l'execution
+		[ $(date +"%s") - $dateinit > 3600 ] && break # teste si une heure s'est ecoule depuis le debut de la pause 
+		sleep 10
+	done 
+}
+
+function InstallXmlSE3 {
+	# installe le xml passe en parametre sur le SE3, dans packages.xml
+	XML=$1
+	/var/www/se3/wpkg/bin/installPackage.sh $XML NoDownload admin urlMD5 ignoreMD5
+	# reste : recuperer l'erreur en cas de probleme md5 (si besoin)
+}
+
+function RecupereWpkgXml {
+	CmdToWin "copy /F %WPKGXML% %REPSOUSWIN%"
+}
 
 function svnUpdate {
     echo "Recuperation de $1 depuis le svn..."
@@ -179,10 +269,53 @@ function MiseAJourDuXml {
 
 ################## FIN DES FONCTIONS ##################
 
-svnUpdate "stable"
-svnUpdate "testing"
-svnUpdate "logs"
+####################### NOUVEAU SCRIPT EXECUTE UNIQUEMENT AVEC CLIENT WINDOWS #######################
+# Permet la modification autoamtique des xml incorrects via un test de validation (upgrade-remove-install) sur le client windows
 
+function TestAndModify {
+# programme principal du script nouvelle version
+
+AjoutCrontabCommandeClientWindows # ajout crontab pour dialogue avec le client windows
+
+# Pour chaque fichier $APPLI de stable puis de testing faire
+BRANCHE="stable"
+APPLI=$REP/$BRANCHE/algobox.xml
+	NOMAPPLI=$(echo "$APPLI" | sed -e "s+$(dirname $APPLI)/++g" | cut -d"." -f1)
+	echo "On teste : $NOMAPPLI de $BRANCHE"
+	# Tester tous les download url de $APPLI
+	# Si l'une d'elle est erronee 
+		# Si tout est corrige dans $REP/xml/$APPLI :
+			# on teste $REP/xml/$APPLI sur le client windows
+			# on provoque une install de l'ancien xml sur le client windows : si celle-ci provoque une erreur (download impossible ou install invalide, on ignore)
+			CreeTemoin $NOMAPPLI # met le poste windows en attente
+			PauseWinTantQue $NOMAPPLI # met le poste windows en attente
+			WpkgInstall $NOMAPPLI # commande d'install de l'ancienne version du xml
+			InstallXmlSE3 $APPLI # telecharge les fichiers du xml old version sur le SE3
+			SupprimeTemoin $NOMAPPLI # declenche l'install sur le client windows a ce moment la
+			PauseSE3TantQue $NOMAPPLI # teste la date de $WPKGXML par exemple
+			# on provoque un upgrade depuis l'ancienne version.
+			CreeTemoin $NOMAPPLI # met le poste windows en attente
+			PauseWinTantQue $NOMAPPLI # met le poste windows en attente
+			WpkgInstall $NOMAPPLI # commande d'install de l'ancienne version du xml
+			InstallXmlSE3 $REP/xml/$APPLI # telecharge les fichiers du xml corrige sur le SE3
+			SupprimeTemoin $NOMAPPLI # declenche l'install=upgrade sur le client windows a ce moment la
+			PauseSE3TantQue $NOMAPPLI # teste la date de $WPKGXML par exemple
+			# recupere la sortie dans wpkg.xml
+			# si succes 
+				# on teste le remove
+			# else
+				# on envoie un mail pour signifier que l'upgrade s'est mal deroule
+		# Sinon
+			# on envoie un mail car un lien est invalide.
+	# sinon
+		# aucune url n'est erronee , on passe au xml suivant
+		# echo "Toutes les url des attributes download de $APPLI sont corrects"
+}
+
+####################### FIN DU NOUVEAU SCRIPT EXECUTE UNIQUEMENT AVEC CLIENT WINDOWS #######################
+
+####################### VIEUX SCRIPT EXECUTE UNIQUEMENT SANS CLIENT WINDOWS #######################
+function TestOnly {
 [ -e $PACKAGESFILE ] && rm -f $PACKAGESFILES
 [ -e $LISTEURLMD5 ] && rm -f LISTEURLMD5
 
@@ -299,4 +432,20 @@ done
 rm -f $MAILFILETMP
 rm -f $DESTFILE
 rm -f $LISTEURLMD5
+}
 
+####################### FIN VIEUX SCRIPT EXECUTE UNIQUEMENT SANS CLIENT WINDOWS #######################
+
+### MAIN ()
+
+# mise a jour par rapport au svn
+svnUpdate "stable"
+svnUpdate "testing"
+svnUpdate "logs"
+
+# Si le client windows repond au ping, on l'utilise, sinon, on ne fait que tester.
+if [ $(ping -n 4 $IPWIN) ]; then
+	TestAndModify
+else
+	TestOnly
+fi
