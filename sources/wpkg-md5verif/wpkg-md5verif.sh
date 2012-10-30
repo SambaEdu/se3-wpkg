@@ -16,7 +16,7 @@ mkdir -p $REP
 mkdir -p $REP/pause
 
 # MODE DEBUG
-DEBUG=0
+DEBUG=1
 
 # quantite max a telecharger en une execution de ce script (en Ko)
 # le script prend en compte cette limite avant le debut du telechargement suivant :
@@ -39,7 +39,7 @@ DESTMAIL=wpkg-se3@listes.tice.ac-caen.fr
 IPSE3="10.211.55.200"
 
 # IP du client windows (qui doit repondre aux pings)
-IPWIN="10.211.55.6"
+IPWIN="10.211.55.9"
 
 # Acces au script wpkg-se3.js
 WPKGJS="$SE3\install\wpkg\wpkg-se3.js"
@@ -162,24 +162,27 @@ function PauseWinTantQue {
 function PauseSE3TantQue {
 # met le script en pause tant que wpkg.xml n'a pas change de date : passe la main au bout d'une heure en envoyant un mail
 	APPLI=$1
-	[ "$DEBUG" = "1" ] && echo "Pause en attendant le test de $APPLI sur le client windows."
+	[ "$DEBUG" = "1" ] && echo "Pause sur le SE3 en attendant le test de $APPLI sur le client windows."
 	FICHIER=$REP/wpkg.xml
+	[ ! -e $FICHIER ] && touch $FICHIER
 	modifinit=$(stat -c '%y' $FICHIER)
 	dateinit=$(date +"%s")
-	while 1
+	while true
 	do
 		modif=$(stat -c '%y' $FICHIER)
-		[ "$modif" != "$modifinit" ] && break # teste si le ficheir wpkg.xml a change depuis le debut de l'execution
-		[ $(date +"%s") - $dateinit > 3600 ] && break # teste si une heure s'est ecoule depuis le debut de la pause 
+		[ "$modif" != "$modifinit" ] && echo "Le fichier wpkg.xml a change, on poursuit." && break # teste si le ficheir wpkg.xml a change depuis le debut de l'execution
+echo "date actu : $(date +\"%s\") - date init : $dateinit"
+echo "diff : $(($(date +"%s") - $dateinit))"
+		[ $(($(date +"%s") - $dateinit)) -gt 3600 ] && echo "Le fichier wpkg.xml n'a pas change depuis 1H, on poursuit." && break # teste si une heure s'est ecoule depuis le debut de la pause 
 		sleep 10
 	done 
 }
 
 function InstallXmlSE3 {
-	# installe le xml passe en parametre sur le SE3, dans packages.xml
 	XML=$1
-	/var/www/se3/wpkg/bin/installPackage.sh $XML NoDownload admin urlMD5 ignoreMD5
-	# reste : recuperer l'erreur en cas de probleme md5 (si besoin)
+	[ "$DEBUG" = "1" ] && echo "Installation de $XML dans la base packages.xml du SE3, telechargement des fichiers necessaires. En cours."
+	/var/www/se3/wpkg/bin/installPackage.sh $XML 0 admin urlmd5 1 > /dev/null
+	# reste : recuperer l'erreur en cas de probleme md5 (si besoin: pas forcement besoin car on a corrige la somme md5 au prealable sur les xml testes et les anciens liens, si non valides ne peuvent plus etre telechargees...)
 }
 
 function RecupereWpkgXml {
@@ -292,14 +295,14 @@ APPLI=$REP/$BRANCHE/algobox.xml
 			WpkgInstall $NOMAPPLI # commande d'install de l'ancienne version du xml
 			InstallXmlSE3 $APPLI # telecharge les fichiers du xml old version sur le SE3
 			SupprimeTemoin $NOMAPPLI # declenche l'install sur le client windows a ce moment la
-			PauseSE3TantQue $NOMAPPLI # teste la date de $WPKGXML par exemple
-			# on provoque un upgrade depuis l'ancienne version.
+			PauseSE3TantQue $NOMAPPLI # teste la date de $WPKGXML et poursuit quand elle a change ou apres une heure
+			echo "On lance un upgrade depuis l'ancienne version vers la version corrigee."
 			CreeTemoin $NOMAPPLI # met le poste windows en attente
 			PauseWinTantQue $NOMAPPLI # met le poste windows en attente
 			WpkgInstall $NOMAPPLI # commande d'install de l'ancienne version du xml
 			InstallXmlSE3 $REP/xml/$APPLI # telecharge les fichiers du xml corrige sur le SE3
 			SupprimeTemoin $NOMAPPLI # declenche l'install=upgrade sur le client windows a ce moment la
-			PauseSE3TantQue $NOMAPPLI # teste la date de $WPKGXML par exemple
+			PauseSE3TantQue $NOMAPPLI # teste la date de $WPKGXML et poursuit quand elle a change ou apres une heure
 			# recupere la sortie dans wpkg.xml
 			# si succes 
 				# on teste le remove
@@ -439,13 +442,18 @@ rm -f $LISTEURLMD5
 ### MAIN ()
 
 # mise a jour par rapport au svn
-svnUpdate "stable"
-svnUpdate "testing"
-svnUpdate "logs"
+# reste : decommenter les trois lignes suivantes
+# svnUpdate "stable"
+# svnUpdate "testing"
+# svnUpdate "logs"
 
 # Si le client windows repond au ping, on l'utilise, sinon, on ne fait que tester.
-if [ $(ping -n 4 $IPWIN) ]; then
+WINDOWSPRESENT=0
+ping -c 4 $IPWIN > /dev/null && WINDOWSPRESENT=1
+if [ $WINDOWSPRESENT == 1 ]; then
+	echo "Le client windows $IPWIN est present, on l'utilise pour les validations des corrections md5"
 	TestAndModify
 else
+	echo "Le client windows $IPWIN n'est pas present, on teste juste les sommes md5"
 	TestOnly
 fi
