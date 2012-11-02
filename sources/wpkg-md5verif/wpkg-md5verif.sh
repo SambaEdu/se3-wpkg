@@ -4,8 +4,8 @@
 
 # ATTENTION : ce script ne doit pas tre exŽcutŽ sur un serveur en production. Il doit tre exŽcutŽ uniquement sur un serveur de tests car il modifie la base des xml wpkg automatiquement !
 
-# Nom netbios du se3
-SE3="\\se3\install\wpkg-md5verif"
+# Chemin UNC vers partages du se3
+SE3="\\\\se3"
 
 # Dossier contenant tous les fichiers generes par ce script.
 REP=/var/se3/unattended/install/wpkg-md5verif
@@ -39,7 +39,7 @@ DESTMAIL=wpkg-se3@listes.tice.ac-caen.fr
 IPSE3="10.211.55.200"
 
 # IP du client windows (qui doit repondre aux pings)
-IPWIN="10.211.55.9"
+IPWIN="10.211.55.150"
 
 # Acces au script wpkg-se3.js
 WPKGJS="$SE3\install\wpkg\wpkg-se3.js"
@@ -60,12 +60,29 @@ DESTFILEDOSSIER="$(dirname "$DESTFILE")"
 [ "$DEBUG" = "1" ] && echo "Le dossier de destination des telechargements est $DESTFILEDOSSIER."
 mkdir -p $DESTFILEDOSSIER
 
+# Dossier de dialogue avec le client
+REPBAT=$REP/client
+mkdir -p $REPBAT
+REPBATWIN=$REPSOUSWIN\\client
 
 # Fichier de dialogue avec le client windows : contient la liste des instructions qu'il devra exŽcuter pour tester les xml modifiŽs.
-TESTFILE=$REP/TesteXml.bat
+TESTFILE=$REPBAT/TesteXml.bat
+TESTFILEWIN=$REPBATWIN\\TesteXml.bat
+
+# Fichier provoquant une pause
+PAUSEFILE=$REPBAT/pause.vbs
+PAUSEFILEWIN=$REPBATWIN\\pause.vbs
+
+# Fichier execute en tache panifiee au demarrage du pc client, qui ne s'arrete jamais et teste toutes les 10 secondes s'il y a quelquechose a faire (presence de $TESTFILE)
+TACHEFILE=$REPBAT/bootscript.bat
+TACHEFILEWIN=$REPBATWIN\\bootscript.bat
+
+# Fichier provoquant une pause
+INSTALLSCRIPTCLIENT=$REPBAT/install.bat
 
 # Fichier de retour du client windows : contient les informations utiles pour savoir si l'install, l'upgrade, le remove ont fonctionnŽ.
-RETOURFILE=$REP/TesteXml.log
+RETOURFILE=$REPBAT/TesteXml.log
+RETOURFILEWIN=$REPBATWIN\\TesteXml.log
 
 # Dossier contenant toutes les commandes passŽes par le poste windows au serveur SE3.
 REPCMDCRON=$REP/cron
@@ -121,22 +138,34 @@ function CmdToWin {
 	echo $1 >> $TESTFILE
 }
 
+function SupprimeScriptClient {
+	rm -f $TESTFILE
+}
+
 function WpkgInstall {
 	idpackage=$1
 	CmdToWin "cscript $WPKGJS $PARAM /install:$idpackage"
 	RecupereWpkgXml
+	WpkgStatus $idpackage
 }
 
 function WpkgUpgrade {
 	idpackage=$1
 	CmdToWin "cscript $WPKGJS $PARAM /upgrade:$idpackage"
 	RecupereWpkgXml
+	WpkgStatus $idpackage
 }
 
 function WpkgRemove {
 	idpackage=$1
 	CmdToWin "cscript $WPKGJS $PARAM /remove:$idpackage"
 	RecupereWpkgXml
+	WpkgStatus $idpackage
+}
+
+function WpkgStatus {
+	idpackage=$1
+	CmdToWin "cscript $WPKGJS /show:$idpackage > $RETOURFILEWIN"
 }
 
 function CreeTemoin {
@@ -150,12 +179,28 @@ function SupprimeTemoin {
 	[ -e $REP/pause/$FICHIERTEMOIN ] && rm -f $REP/pause/$FICHIERTEMOIN
 }
 
+function CreeScriptClient {
+	echo "WScript.Sleep 10000" > $PAUSEFILE
+	echo "set Z=$SE3\\install" > $TACHEFILE
+	echo "set PACKAGE=$SE3\\install\\packages" >> $TACHEFILE
+	echo ":debut" >> $TACHEFILE
+	echo "if exist $TESTFILEWIN (" >> $TACHEFILE
+	echo " call $TESTFILEWIN" >> $TACHEFILE
+	#echo " del /F /Q /S  $TESTFILEWIN" >> $TACHEFILE
+	echo ")" >> $TACHEFILE
+	echo "cscript $REPBATWIN\pause.vbs > NUL" >> $TACHEFILE
+	echo "goto debut" >> $TACHEFILE
+	echo "copy /Y $TACHEFILEWIN %Systemdrive%" > $INSTALLSCRIPTCLIENT
+	echo "if exist %systemroot%\\tasks\\WpkgMd5Verif.job del /F /Q /S %systemroot%\\tasks\\WpkgMd5Verif.job" >> $INSTALLSCRIPTCLIENT
+	echo "schtasks /create /tn WpkgMd5Verif /sc ONSTART /tr \"%Comspec% /C start %Systemdrive%\\bootscript.bat\" " >> $INSTALLSCRIPTCLIENT
+}
+
 function PauseWinTantQue {
 	FICHIERTEMOIN=$1
-	CmdToWin ":debut"
-	CmdToWin "if not exist $REPSOUSWIN\pause\$FICHIERTEMOIN goto suite$FICHIERTEMOIN"
+	CmdToWin ":debut$FICHIERTEMOIN"
+	CmdToWin "if not exist $REPSOUSWIN\pause\\$FICHIERTEMOIN goto suite$FICHIERTEMOIN"
 	CmdToWin "ping -n 10 $IPSE3 1&2> NUL"
-	CmdToWin "goto debut"
+	CmdToWin "goto debut$FICHIERTEMOIN"
 	CmdToWin ":suite$FICHIERTEMOIN"
 }
 
@@ -171,11 +216,12 @@ function PauseSE3TantQue {
 	do
 		modif=$(stat -c '%y' $FICHIER)
 		[ "$modif" != "$modifinit" ] && echo "Le fichier wpkg.xml a change, on poursuit." && break # teste si le ficheir wpkg.xml a change depuis le debut de l'execution
-echo "date actu : $(date +\"%s\") - date init : $dateinit"
-echo "diff : $(($(date +"%s") - $dateinit))"
+#echo "date actu : $(date +\"%s\") - date init : $dateinit"
+#echo "diff : $(($(date +"%s") - $dateinit))"
 		[ $(($(date +"%s") - $dateinit)) -gt 3600 ] && echo "Le fichier wpkg.xml n'a pas change depuis 1H, on poursuit." && break # teste si une heure s'est ecoule depuis le debut de la pause 
-		sleep 10
-	done 
+		sleep 5
+	done
+	echo "Fin de la pause. wpkg.xml a ete modifie."
 }
 
 function InstallXmlSE3 {
@@ -186,16 +232,15 @@ function InstallXmlSE3 {
 }
 
 function RecupereWpkgXml {
-	CmdToWin "copy /F %WPKGXML% %REPSOUSWIN%"
+	CmdToWin "copy /Y $WPKGXML $REPSOUSWIN"
 }
 
 function svnUpdate {
     echo "Recuperation de $1 depuis le svn..."
-    mkdir -p files
-    if [ ! -e files/$1 ] ; then
-       svn checkout $url/$1 files/$1
+    if [ ! -e $REP/$1 ] ; then
+       svn checkout $url/$1 $REP/$1
     else
-       svn update files/$1
+       svn update $REP/$1
     fi
 }
 
@@ -209,8 +254,30 @@ ls -t files/$1 | while read FILE; do
 done
 }
 
+######## Fonctions de lecture de wpkg.xml ###############
+
+# lit le fichier $RETOURFILE 
+function AppliInstalled {
+	TEST=$(cat $RETOURFILE | grep "Status" | grep "Installed")
+	if [ "$TEST" == "" ]; then
+		RETOUR="True"
+	else
+		RETOUR="False"
+	fi
+	echo $RETOUR
+	#xmlstarlet sel -t -m "/wpkg:wpkg/checkResults/" -v "@result" $WpkgXml
+	#xmlstarlet ed -i "/packages/package/download[@url='$URL']" -t attr -n "md5sum" -v "$MD5" $FILE
+}
+
+
 
 ######## Fonctions de modification des xml du svn #########
+
+function Lireid {
+	FILE=$1
+	RETOUR=$(cat $FILE | xmlstarlet sel -t -m "/packages/package" -v "@id" -n)
+	echo "$RETOUR"
+}
 
 function InsertMd5Sum {
 	FILE=$1
@@ -265,8 +332,9 @@ function MiseAJourDuXml {
 		MiseAJourDuLog $JOURNAL "Mise a jour de la somme md5 $MD5 dans le fichier $FILE."
 	fi
  	
-# si le xml est en stable mais pas en testing, on le passe en testing. Dans le cas contraire, on le corrige et on le commite sur place. 
+	# si le xml est en testing et que les tests sont concluants, on le passe en stable.
 	mv -f $FILETMP $FILE
+	# reste a commiter le fichier
 }
 
 
@@ -275,45 +343,84 @@ function MiseAJourDuXml {
 ####################### NOUVEAU SCRIPT EXECUTE UNIQUEMENT AVEC CLIENT WINDOWS #######################
 # Permet la modification autoamtique des xml incorrects via un test de validation (upgrade-remove-install) sur le client windows
 
-function TestAndModify {
-# programme principal du script nouvelle version
-
-AjoutCrontabCommandeClientWindows # ajout crontab pour dialogue avec le client windows
-
-# Pour chaque fichier $APPLI de stable puis de testing faire
-BRANCHE="stable"
-APPLI=$REP/$BRANCHE/algobox.xml
+function TesterXml {
+	BRANCHE=$1
+	Xml=$2
+	Correctif=$3
+	APPLI=$REP/$BRANCHE/$Xml
+	ID=$(Lireid $APPLI)
 	NOMAPPLI=$(echo "$APPLI" | sed -e "s+$(dirname $APPLI)/++g" | cut -d"." -f1)
-	echo "On teste : $NOMAPPLI de $BRANCHE"
+	echo "On teste : $NOMAPPLI de $BRANCHE avec l'id $ID"
 	# Tester tous les download url de $APPLI
-	# Si l'une d'elle est erronee 
+	# Si l'une d'elle est erronee ou si "$BRANCHE" == "testing"
 		# Si tout est corrige dans $REP/xml/$APPLI :
-			# on teste $REP/xml/$APPLI sur le client windows
-			# on provoque une install de l'ancien xml sur le client windows : si celle-ci provoque une erreur (download impossible ou install invalide, on ignore)
-			CreeTemoin $NOMAPPLI # met le poste windows en attente
-			PauseWinTantQue $NOMAPPLI # met le poste windows en attente
-			WpkgInstall $NOMAPPLI # commande d'install de l'ancienne version du xml
-			InstallXmlSE3 $APPLI # telecharge les fichiers du xml old version sur le SE3
-			SupprimeTemoin $NOMAPPLI # declenche l'install sur le client windows a ce moment la
-			PauseSE3TantQue $NOMAPPLI # teste la date de $WPKGXML et poursuit quand elle a change ou apres une heure
+			if [ "$Correctif" == 1 ]; then
+				# on teste $REP/xml/$APPLI sur le client windows
+				echo "On provoque l'install de l'ancien xml sur le client windows."
+				# si celle-ci provoque une erreur : download impossible ou install invalide, on ignore"
+				InstallXmlSE3 $APPLI # telecharge les fichiers du xml old version sur le SE3
+				WpkgInstall $ID # commande d'install de l'ancienne version du xml
+				PauseSE3TantQue $NOMAPPLI # teste la date de $WPKGXML et poursuit quand elle a change ou apres une heure
+				SupprimeScriptClient # supprime le script car deja execute par le client windows.
+			fi 
+			
 			echo "On lance un upgrade depuis l'ancienne version vers la version corrigee."
-			CreeTemoin $NOMAPPLI # met le poste windows en attente
-			PauseWinTantQue $NOMAPPLI # met le poste windows en attente
-			WpkgInstall $NOMAPPLI # commande d'install de l'ancienne version du xml
 			InstallXmlSE3 $REP/xml/$APPLI # telecharge les fichiers du xml corrige sur le SE3
-			SupprimeTemoin $NOMAPPLI # declenche l'install=upgrade sur le client windows a ce moment la
+			WpkgInstall $ID # commande d'install de l'ancienne version du xml pour le client windows
 			PauseSE3TantQue $NOMAPPLI # teste la date de $WPKGXML et poursuit quand elle a change ou apres une heure
-			# recupere la sortie dans wpkg.xml
+			SupprimeScriptClient # supprime le script car deja execute par le client windows.
+
+			# recupere le succes de l'installation-upgrade
+			INSTALLED=$(AppliInstalled)
 			# si succes 
+			if [ "$INSTALLED" == "True" ]; then
 				# on teste le remove
-			# else
-				# on envoie un mail pour signifier que l'upgrade s'est mal deroule
+				echo "On lance un remove depuis l'ancienne version vers la version corrigee."
+				WpkgRemove $ID # commande d'install de l'ancienne version du xml pour le client windows
+				PauseSE3TantQue $NOMAPPLI # teste la date de $WPKGXML et poursuit quand elle a change ou apres une heure
+				SupprimeScriptClient # supprime le script car deja execute par le client windows.
+				# recupere le succes du remove
+				INSTALLED=$(AppliInstalled)
+				if [ "$INSTALLED" == "True" ]; then
+					echo "Le remove de $NOMAPPLI d'id $ID s'est mal deroule" >> $MAILFILETMP
+					echo "Le remove de $NOMAPPLI d'id $ID s'est mal deroule"
+				else
+					echo "L'upgrade $NOMAPPLI d'id $ID depuis le xml actuel et le remove semblent corrects. On valide ce xml corrige." >> $MAILFILETMP
+					echo "L'upgrade $NOMAPPLI d'id $ID depuis le xml actuel et le remove semblent corrects. On valide ce xml corrige."
+				fi
+			else
+				echo "L'upgrade de $NOMAPPLI d'id $ID s'est mal deroule" >> $MAILFILETMP
+				echo "L'upgrade de $NOMAPPLI d'id $ID s'est mal deroule"
+			fi
 		# Sinon
 			# on envoie un mail car un lien est invalide.
 	# sinon
 		# aucune url n'est erronee , on passe au xml suivant
 		# echo "Toutes les url des attributes download de $APPLI sont corrects"
 }
+
+function TestAndModify {
+# programme principal du script nouvelle version
+
+AjoutCrontabCommandeClientWindows # ajout crontab pour dialogue avec le client windows
+CreeScriptClient # creation des scripts a executer cote client au boot , en tache planifiee
+
+
+# Pour chaque fichier $APPLI de stable puis de testing faire
+BRANCHE="stable"
+#APPLI=$REP/$BRANCHE/algobox.xml
+ls $REP/$BRANCHE | while read FILE ; do
+	TesterXml "stable" $FILE
+done
+
+# envoi de mail puis menage
+[ -e $MAILFILETMP ] && mail $DESTMAIL -s"Controle des sommes md5 WPKG" < $MAILFILETMP
+
+rm -f $MAILFILETMP
+rm -f $DESTFILE
+rm -f $LISTEURLMD5
+}
+
 
 ####################### FIN DU NOUVEAU SCRIPT EXECUTE UNIQUEMENT AVEC CLIENT WINDOWS #######################
 
@@ -443,7 +550,7 @@ rm -f $LISTEURLMD5
 
 # mise a jour par rapport au svn
 # reste : decommenter les trois lignes suivantes
-# svnUpdate "stable"
+svnUpdate "stable"
 # svnUpdate "testing"
 # svnUpdate "logs"
 
