@@ -60,41 +60,6 @@ WPKGROOT="\\\\$SE3\\install\\wpkg"
 ADMINSE3="adminse3"
 PASSADMINSE3="$xppass"
 
-
-# adminse3 maintenant par defaut dans l'annuaire ldap
-# On pourrait remettre ce test dans un des scripts de /usr/share/se3/scripts/
-#if [ "$PASSADMINSE3" != "`gawk -F'=' '/password_admin_local/ {gsub("\r","");printf("%s", $2)}' /var/se3/Progs/install/installdll/confse3.ini`" ]; then
-#   echo "Erreur le mot de passe d'adminse3 trouve dans var/se3/Progs/install/installdll/confse3.ini"
-#   echo " ne correspond pas à celui indique dans la table params de se3db."
-#   echo " Reglez ce problème avant de reprendre l'installation."
-#   echo ""
-#   echo "Echec de l'installation."
-#   exit 1
-#fi
-
-# Telechargement des packages necessaires
-# les paquets necessaire sont dejà là grace à la gestion des dependances
-# donc ce qui suit est inutile. Normalement ....
-# sysutils pour unix2dos
-#if [ ! -x "`which unix2dos`" ] ; then
-#   echo "Verification du paquet tofrodos"; 
-#   apt-get install tofrodos; 
-#   if [ ! -x "`which unix2dos`" ] ; then
-#       echo "Erreur d'installation de tofrodos"
-#       exit 1
-#    fi
-#fi
-
-# unzip 
-if [ ! -x "`which unzip`" ] ; then
-    echo "verification du paquet unzip"; 
-#    apt-get install unzip;
-    if [ ! -x "`which unzip`" ] ; then 
-        echo "Erreur d'installation du paquet unzip."
-        exit 1
-    fi
-fi
-
 if [ ! -d $WPKGDIR ]; then
    echo "Erreur le repertoire $WPKGDIR n'existe pas."
    echo ""
@@ -212,8 +177,8 @@ RebootSpecial=""
 # Depuis que sysinternals ete rachete par Microsoft, il faut ajouter /accepteula aux options des commandes :(
 if [ ! -e psshutdown.exe ] || [ ! -e pslist.exe ] ; then
    if [ ! -e PsTools.zip ]; then
-      echo "Telechargement des PsTools (http://download.sysinternals.com/Files/PsTools.zip)."
-      if ( ! wget "http://download.sysinternals.com/Files/PsTools.zip" ) ; then
+      echo "Telechargement des PsTools (http://live.sysinternals.com/Files/PSTools.zip)."
+      if ( ! wget "http://live.sysinternals.com/Files/PSTools.zip" ) ; then
         echo "Erreur de telechargement."
         if [ -e PsTools.zip ]; then
           rm PsTools.zip
