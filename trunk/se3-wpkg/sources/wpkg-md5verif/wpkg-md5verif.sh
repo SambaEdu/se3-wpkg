@@ -4,6 +4,18 @@
 
 # ATTENTION : ce script ne doit pas tre exŽcutŽ sur un serveur en production. Il doit tre exŽcutŽ uniquement sur un serveur de tests car il modifie la base des xml wpkg automatiquement !
 
+######## Utilisation : ##########
+
+# 1. copier wpkg-md5verif.sh sur le serveur se3 de test.
+# 2. renseigner toutes les variables en debut de script : nom netbios du se3, IP du client windows de test, etc...
+# 3. exŽcuter une fois wpkg-md5verif.sh afin de generer les scripts utiles et la conf : installation en crontab de l'exŽcution de wpkg-md5verif.sh
+# 4. sur le client windows, sous le compte admin executer une fois Y:\unattended\install\wpkg-md5verif\client\install.bat : renseigner le mot de passe d'admin lors de la creation de la tache planifiee.
+# 5. redemarrer le client windows pour activer automatiquement la tache planifiee.
+
+# PS : verifier au prealable que le serveur SE3 peut envoyer des mails.
+
+####### Fin de la documentation sur l'utilisation ########
+
 # Chemin UNC vers partages du se3
 SE3="\\\\se3"
 
@@ -26,7 +38,7 @@ DEBUG=1
 MAXDOWNLOAD=6000000
 
 # Heure du matin a partir de laquelle le script s'interrompt
-HOURMAX=6
+HOURMAX=8
 
 # Emplacement du fichier downloade... Ecrase-efface a chaque fois pour ne pas remplir le disque.
 # 1Go doit etre dispo sur la partition du serveur pour certains download qui pesent un peu (orcad, ...).
@@ -49,15 +61,22 @@ PARAM="/noDownload:True"
 
 ####### CONF : ne pas modifier la suite ###########
 
+wpkgroot=/var/se3/unattended/install/wpkg
+
+LISTEDESXML=$REP/wpkg-LISTEDESXML
+
 # emplacement local du fichier repertoriant les applications installees
 WPKGXML="%systemroot%\system32\wpkg.xml"
 
 # url de telechargement des xml (doit contenir trois sous-dossiers stable, testing (avec les xml) et logs (avec les fichiers journaux))
 export url=http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages
 
+# variable globales utiles
+export RetourTelechargeUrls=0
+export TOUTESTCORRIGE=1
+
 # creation si besoin du dossier pour DESTFILE
 DESTFILEDOSSIER="$(dirname "$DESTFILE")"
-[ "$DEBUG" = "1" ] && echo "Le dossier de destination des telechargements est $DESTFILEDOSSIER."
 mkdir -p $DESTFILEDOSSIER
 
 # Dossier de dialogue avec le client
@@ -68,6 +87,7 @@ REPBATWIN=$REPSOUSWIN\\client
 # Fichier de dialogue avec le client windows : contient la liste des instructions qu'il devra exŽcuter pour tester les xml modifiŽs.
 TESTFILE=$REPBAT/TesteXml.bat
 TESTFILEWIN=$REPBATWIN\\TesteXml.bat
+[ -e $TESTFILE ] && rm -f $TESTFILE
 
 # Fichier provoquant une pause
 PAUSEFILE=$REPBAT/pause.vbs
@@ -111,7 +131,7 @@ export FILETMP=$REP/wpkg-md5verif-temp.xml
 
 ######################## FIN CONF #######################
 
-####################### DEBUT DES VERIFICATIONS DES DEPENDANCES ############
+############### DEBUT DES VERIFICATIONS DES DEPENDANCES ET TEST DE NON DOUBLE EXECUTION ############
 # dependance subversion...
 TEST=$(dpkg -l | grep subversion)
 if [ "$TEST" == "" ] ; then
@@ -128,8 +148,14 @@ if [ "$TEST" == "" ] ; then
 	exit 1
 fi
 
+VERROU=/var/lock/wpkg-md5verif
 
-####################### FIN DES VERIFICATIONS DES DEPENDANCES ############
+if [ -e $VERROU ]; then
+	echo "wpkg-md5verif.sh est deja en cours d'execution sur ce serveur"
+	exit 0
+fi
+
+####################### FIN DES VERIFICATIONS DES DEPENDANCES ET DU TEST ############
 
 
 ####################### DEBUT DES FONCTIONS ############
@@ -145,21 +171,21 @@ function SupprimeScriptClient {
 function WpkgInstall {
 	idpackage=$1
 	CmdToWin "cscript $WPKGJS $PARAM /install:$idpackage"
-	RecupereWpkgXml
+	#RecupereWpkgXml
 	WpkgStatus $idpackage
 }
 
 function WpkgUpgrade {
 	idpackage=$1
 	CmdToWin "cscript $WPKGJS $PARAM /upgrade:$idpackage"
-	RecupereWpkgXml
+	#RecupereWpkgXml
 	WpkgStatus $idpackage
 }
 
 function WpkgRemove {
 	idpackage=$1
 	CmdToWin "cscript $WPKGJS $PARAM /remove:$idpackage"
-	RecupereWpkgXml
+	#RecupereWpkgXml
 	WpkgStatus $idpackage
 }
 
@@ -182,7 +208,7 @@ function SupprimeTemoin {
 function CreeScriptClient {
 	echo "WScript.Sleep 10000" > $PAUSEFILE
 	echo "set Z=$SE3\\install" > $TACHEFILE
-	echo "set PACKAGE=$SE3\\install\\packages" >> $TACHEFILE
+	echo "set SOFTWARE=$SE3\\install\\packages" >> $TACHEFILE
 	echo ":debut" >> $TACHEFILE
 	echo "if exist $TESTFILEWIN (" >> $TACHEFILE
 	echo " call $TESTFILEWIN" >> $TACHEFILE
@@ -205,29 +231,31 @@ function PauseWinTantQue {
 }
 
 function PauseSE3TantQue {
-# met le script en pause tant que wpkg.xml n'a pas change de date : passe la main au bout d'une heure en envoyant un mail
+# met le script en pause tant que $RETOURFILE n'a pas change de date : passe la main au bout d'une heure en envoyant un mail
 	APPLI=$1
 	[ "$DEBUG" = "1" ] && echo "Pause sur le SE3 en attendant le test de $APPLI sur le client windows."
-	FICHIER=$REP/wpkg.xml
+	FICHIER=$RETOURFILE
 	[ ! -e $FICHIER ] && touch $FICHIER
 	modifinit=$(stat -c '%y' $FICHIER)
 	dateinit=$(date +"%s")
 	while true
 	do
 		modif=$(stat -c '%y' $FICHIER)
-		[ "$modif" != "$modifinit" ] && echo "Le fichier wpkg.xml a change, on poursuit." && break # teste si le ficheir wpkg.xml a change depuis le debut de l'execution
+		[ "$modif" != "$modifinit" ] && echo "Le fichier $RETOURFILE a change, on poursuit." && break # teste si le ficheir wpkg.xml a change depuis le debut de l'execution
 #echo "date actu : $(date +\"%s\") - date init : $dateinit"
 #echo "diff : $(($(date +"%s") - $dateinit))"
-		[ $(($(date +"%s") - $dateinit)) -gt 3600 ] && echo "Le fichier wpkg.xml n'a pas change depuis 1H, on poursuit." && break # teste si une heure s'est ecoule depuis le debut de la pause 
+		[ $(($(date +"%s") - $dateinit)) -gt 3600 ] && echo "Le fichier $RETOURFILE n'a pas change depuis 1H, on poursuit." && break # teste si une heure s'est ecoule depuis le debut de la pause 
 		sleep 5
 	done
-	echo "Fin de la pause. wpkg.xml a ete modifie."
+	echo "Fin de la pause. $RETOURFILE a ete modifie."
 }
 
 function InstallXmlSE3 {
 	XML=$1
+	NOMDUXML="`basename \"$XML\"`"
 	[ "$DEBUG" = "1" ] && echo "Installation de $XML dans la base packages.xml du SE3, telechargement des fichiers necessaires. En cours."
-	/var/www/se3/wpkg/bin/installPackage.sh $XML 0 admin urlmd5 1 > /dev/null
+	cp -f $XML $wpkgroot/tmp
+	retourinstallPackage=$(/var/www/se3/wpkg/bin/installPackage.sh $wpkgroot/tmp/$NOMDUXML 0 admin urlmd5 1)
 	# reste : recuperer l'erreur en cas de probleme md5 (si besoin: pas forcement besoin car on a corrige la somme md5 au prealable sur les xml testes et les anciens liens, si non valides ne peuvent plus etre telechargees...)
 }
 
@@ -246,25 +274,33 @@ function svnUpdate {
 
 function regroupeXml {
 # on filtre les xml obsolete en les classant par date : les plus recents en premier
-# en effet, certains xml obsoletes sont restes sur le forum/files
 echo "Examen de tous les attributs download de tous les xml du svn, branche $1" 
-ls -t files/$1 | while read FILE; do
+ls -t $REP/$1 | while read FILE; do
 	[ "$DEBUG" = "1" ] && echo "Examen de $FILE"
-	cat files/$1/$FILE | xmlstarlet sel -t -m "/packages/package/download" -o "$1/$FILE#" -v "@url" -o "#" -v "@md5sum" -n >> $LISTEURLMD5
+	cat $REP/$1/$FILE | xmlstarlet sel -t -m "/packages/package/download" -o "$REP/$1/$FILE#" -v "@url" -o "#" -v "@md5sum" -n >> $LISTEURLMD5
 done
 }
+
+
+function ExtraireDownloadDuXml {
+	#[ -e $LISTEURLMD5 ] && rm -f $LISTEURLMD5
+	FICHIER=$1
+	echo "Examen de tous les attributs download de $FICHIER" 
+	cat $FICHIER | xmlstarlet sel -t -m "/packages/package/download" -v "@url" -o "#" -v "@md5sum" -o "#" -v "@saveto" -n > $LISTEURLMD5
+}
+
 
 ######## Fonctions de lecture de wpkg.xml ###############
 
 # lit le fichier $RETOURFILE 
 function AppliInstalled {
-	TEST=$(cat $RETOURFILE | grep "Status" | grep "Installed")
+	TEST=$(cat $RETOURFILE | grep "Status" | grep "Not Installed")
 	if [ "$TEST" == "" ]; then
-		RETOUR="True"
+		RETOURAppliInstalled="True"
 	else
-		RETOUR="False"
+		RETOURAppliInstalled="False"
 	fi
-	echo $RETOUR
+	#echo $RETOUR
 	#xmlstarlet sel -t -m "/wpkg:wpkg/checkResults/" -v "@result" $WpkgXml
 	#xmlstarlet ed -i "/packages/package/download[@url='$URL']" -t attr -n "md5sum" -v "$MD5" $FILE
 }
@@ -303,10 +339,12 @@ function MiseAJourDuLog {
 }
 
 function AjoutCrontabCommandeClientWindows {
-	if [ ! -e /etc/cron.d/se3-wpkg-md5verif ]; then
-		
-		[ "$DEBUG" = "1" ] && echo "Ajout de la commande crontab (absente)."
-	fi
+	CRONFILE=/etc/cron.d/se3-wpkg-md5verif
+	SCRIPT=$0
+	echo "# Execution de $SCRIPT tous les soirs a 2H du matin" > $CRONFILE
+	echo "0 2 * * * root $SCRIPT > /dev/null 2>&1" >> $CRONFILE
+	[ "$DEBUG" = "1" ] && echo "Mise a jour de la commande crontab : execution de $SCRIPT a 2H tous les jours."
+	/etc/init.d/cron restart > /dev/null
 }
 
 function AppliATester {
@@ -316,6 +354,34 @@ function AppliATester {
 	echo "$(date) : $2" >> $LOG
 	echo "" >> $LOG
 	[ "$DEBUG" = "1" ] && echo "Mise a jour du fichier journal $LOG."
+}
+
+function GenereListeDesXml {
+	# compte le nombre de xml a tester dans $LISTEDESXML 
+	if [ -e $LISTEDESXML ] ; then
+		NBRELINES=$(wc -l $LISTEDESXML | cut -d" " -f1)
+	else
+		NBRELINES=0
+	fi
+
+	NBREDEXMLSTABLE=$(ls $REP/stable | wc -l)
+	NBREDEXMLTESTING=$(ls $REP/testing | wc -l)
+	NBRETOTALDEXML=$(($NBREDEXMLSTABLE+$NBREDEXMLTESTING))
+
+	if [ $NBRELINES -ge $NBRETOTALDEXML ] ; then
+		[ "$DEBUG" = "1" ] && echo "Le fichier $LISTEDESXML contient deja toutes les applications."
+	else
+		[ "$DEBUG" = "1" ] && echo "Le fichier $LISTEDEXML ne contient pas tous les packages, on les ajoute."
+		ls -t $REP/stable | while read FILE; do
+			[ "$DEBUG" = "1" ] && echo "Examen programme de $REP/$FILE"
+			echo stable/$FILE >> $LISTEDESXML
+		done
+		ls -t $REP/testing | while read FILE; do
+			[ "$DEBUG" = "1" ] && echo "Examen programme de $REP/$FILE"
+			echo testing/$FILE >> $LISTEDESXML
+		done
+		[ "$DEBUG" = "1" ] && echo "Mise a jour du fichier $LISTEDESXML effectuee."
+	fi
 }
 
 function MiseAJourDuXml {
@@ -337,6 +403,67 @@ function MiseAJourDuXml {
 	# reste a commiter le fichier
 }
 
+function TelechargeUrls {
+if [ -e $LISTEURLMD5 ]; then
+	TOUTESTCORRIGE=1
+	RETOUR=0
+	cat $LISTEURLMD5 | while read LINE; do
+		# echo "$LINE"
+		# nouvelle extraction des url et md5sum
+		url=$(echo "$LINE" | cut -d"#" -f1)
+		md5sum=$(echo "$LINE" | cut -d"#" -f2)
+	    DESTFILE=$(echo "$LINE" | cut -d"#" -f3)
+		DESTFILE=/var/se3/unattended/install/$DESTFILE
+		[ "$url" == "" ]&& exit 0
+		echo "Telechargement de $url. MD5 attendue : $md5sum sauve vers $DESTFILE"
+        /usr/bin/wget -O "$DESTFILE" "$url" 1>/dev/null 2>/dev/null
+        # 2>>$MAILFILETMP
+        # recuperation taille du download
+        REALSIZE=$(stat -c %s $DESTFILE)
+        #SIZEMO=$[ $(stat -c %s $DESTFILE) / 1000 ]
+		# calcul de la somme md5, envoi du mail si mauvaise
+        if [ -e $DESTFILE ] ; then
+		  # en cas d'erreur 404, le fichier est vide.
+		  if [ $REALSIZE -eq 0 ] ; then
+				echo "Le fichier telecharge depuis $url est vide. Une erreur 404 surement..." >> $MAILFILETMP
+				echo "Le fichier telecharge depuis $url est vide. Une erreur 404 surement... Envoi d'un email d'avertissement."
+				RETOUR=1
+				TOUTESTCORRIGE=0
+				echo "RETOUR=$RETOUR et $TOUTESTCORRIGE=TOUTESTCORRIGE"
+		  else
+				[ "$DEBUG" = "1" ] && echo "Fichier bien telecharge : $DESTFILE"
+				MD5REAL="$(/usr/bin/md5sum $DESTFILE | cut -d" " -f1)"
+    		    if [ "$md5sum" = "" ] ; then
+ 			       echo "Somme md5 absente du fichier xml pour $url. On l'ajoute." >> $MAILFILETMP
+ 			       echo "Somme md5 absente du fichier xml pour $url. On l'ajoute."
+				   # on le fait par ailleurs : sed -e "s/$url#$md5sum#$DESTFILE/$url#$MD5REAL#$DESTFILE/g" $LISTEURLMD5
+				   InsertMd5Sum $XMLCORRIGE $url $MD5REAL
+				   ERREUR=1
+    	    	elif [ "$MD5REAL" = "$md5sum" ]; then
+                		echo "Tout va bien : somme md5 reelle $MD5REAL = somme md5 du xml $md5sum."
+          		else
+               			echo "Somme md5 incorrecte. Le telechargement depuis $url a la somme md5 $MD5REAL et non celle attendue $md5sum." >> $MAILFILETMP
+                		echo "Somme md5 incorrecte. Le telechargement depuis $url a la somme md5 $MD5REAL et non celle attendue $md5sum. Envoi d'un mail d'avertissement"
+						UpdateMd5Sum $XMLCORRIGE $url $MD5REAL
+						RETOUR=1
+           		fi
+		  fi
+        else
+           	echo "Fichier non telecharge : l'url $url du fichier xml est invalide." >> $MAILFILETMP
+			echo "Fichier non telecharge : l'url $url du fichier xml est invalide. Envoi d'un mail d'avertissement."
+			RETOUR=1
+			TOUTESTCORRIGE=0
+        fi
+	done
+	RetourTelechargeUrls=$RETOUR
+	echo "RETOUR=$RETOUR et $TOUTESTCORRIGE=TOUTESTCORRIGE"
+else
+	echo "$LISTEURLMD5 est vide pour $XMLATESTER. Peut-etre normal s'il ne comporte aucun lien download."
+	RetourTelechargeUrls=0
+fi
+echo $RetourTelechargeUrls > $ERREURFILE
+echo $TOUTESTCORRIGE > $TOUTESTCORRIGEFILE
+}
 
 ################## FIN DES FONCTIONS ##################
 
@@ -350,10 +477,8 @@ function TesterXml {
 	APPLI=$REP/$BRANCHE/$Xml
 	ID=$(Lireid $APPLI)
 	NOMAPPLI=$(echo "$APPLI" | sed -e "s+$(dirname $APPLI)/++g" | cut -d"." -f1)
-	echo "On teste : $NOMAPPLI de $BRANCHE avec l'id $ID"
-	# Tester tous les download url de $APPLI
-	# Si l'une d'elle est erronee ou si "$BRANCHE" == "testing"
-		# Si tout est corrige dans $REP/xml/$APPLI :
+	echo "On teste : $APPLI de $BRANCHE avec l'id $ID"
+		# Si tout est corrige :
 			if [ "$Correctif" == 1 ]; then
 				# on teste $REP/xml/$APPLI sur le client windows
 				echo "On provoque l'install de l'ancien xml sur le client windows."
@@ -362,42 +487,67 @@ function TesterXml {
 				WpkgInstall $ID # commande d'install de l'ancienne version du xml
 				PauseSE3TantQue $NOMAPPLI # teste la date de $WPKGXML et poursuit quand elle a change ou apres une heure
 				SupprimeScriptClient # supprime le script car deja execute par le client windows.
-			fi 
-			
-			echo "On lance un upgrade depuis l'ancienne version vers la version corrigee."
-			InstallXmlSE3 $REP/xml/$APPLI # telecharge les fichiers du xml corrige sur le SE3
-			WpkgInstall $ID # commande d'install de l'ancienne version du xml pour le client windows
-			PauseSE3TantQue $NOMAPPLI # teste la date de $WPKGXML et poursuit quand elle a change ou apres une heure
-			SupprimeScriptClient # supprime le script car deja execute par le client windows.
+				
+				echo "On lance un upgrade depuis l'ancienne version vers la version corrigee."
+				InstallXmlSE3 $XMLCORRIGE # telecharge les fichiers du xml corrige sur le SE3
+				WpkgInstall $ID # commande d'install de l'ancienne version du xml pour le client windows
+				PauseSE3TantQue $NOMAPPLI # teste la date de $WPKGXML et poursuit quand elle a change ou apres une heure
+				SupprimeScriptClient # supprime le script car deja execute par le client windows.
+			else
+				echo "Xml jamais teste avec ce script sur ce serveur. On lance une installation de la version du svn."
+				InstallXmlSE3 $APPLI # telecharge les fichiers du xml du svn sur le SE3
+				WpkgInstall $ID # commande d'install de l'ancienne version du xml pour le client windows
+				PauseSE3TantQue $NOMAPPLI # teste la date de $WPKGXML et poursuit quand elle a change ou apres une heure
+				SupprimeScriptClient # supprime le script car deja execute par le client windows.				
+			fi
 
 			# recupere le succes de l'installation-upgrade
-			INSTALLED=$(AppliInstalled)
+			AppliInstalled
+			INSTALLED=$RETOURAppliInstalled
 			# si succes 
 			if [ "$INSTALLED" == "True" ]; then
+				echo "Installation-Upgrade realise avec succes."
 				# on teste le remove
-				echo "On lance un remove depuis l'ancienne version vers la version corrigee."
+				echo "On lance un remove."
 				WpkgRemove $ID # commande d'install de l'ancienne version du xml pour le client windows
 				PauseSE3TantQue $NOMAPPLI # teste la date de $WPKGXML et poursuit quand elle a change ou apres une heure
 				SupprimeScriptClient # supprime le script car deja execute par le client windows.
 				# recupere le succes du remove
-				INSTALLED=$(AppliInstalled)
+				AppliInstalled
+				INSTALLED=$RETOURAppliInstalled
 				if [ "$INSTALLED" == "True" ]; then
-					echo "Le remove de $NOMAPPLI d'id $ID s'est mal deroule" >> $MAILFILETMP
-					echo "Le remove de $NOMAPPLI d'id $ID s'est mal deroule"
+					echo "Le remove de $APPLI d'id $ID s'est mal deroule." >> $MAILFILETMP
+					echo "Le remove de $APPLI d'id $ID s'est mal deroule. Envoi d'un mail"
 				else
-					echo "L'upgrade $NOMAPPLI d'id $ID depuis le xml actuel et le remove semblent corrects. On valide ce xml corrige." >> $MAILFILETMP
-					echo "L'upgrade $NOMAPPLI d'id $ID depuis le xml actuel et le remove semblent corrects. On valide ce xml corrige."
+					echo "L'install-upgrade $APPLI d'id $ID depuis le xml actuel et le remove semblent corrects. On valide ce xml corrige:" >> $MAILFILETMP
+					echo "L'install-upgrade $APPLI d'id $ID depuis le xml actuel et le remove semblent corrects. On valide ce xml corrige:"
+					cat $XMLCORRIGE
+					cat $XMLCORRIGE >> $MAILFILETMP
+					echo "" >> $MAILFILETMP
+					stat -c '%y' $XMLCORRIGE > $REP/xml/$NOMAPPLI.$BRANCHE.teste # garde en memoire la date du xml valide pour ne pas le tester indefiniment.
+					# reste : le corriger automatiquement sur le svn.
+					# A FAIRE.
 				fi
 			else
-				echo "L'upgrade de $NOMAPPLI d'id $ID s'est mal deroule" >> $MAILFILETMP
-				echo "L'upgrade de $NOMAPPLI d'id $ID s'est mal deroule"
+				echo "L'upgrade de $APPLI d'id $ID s'est mal deroule" >> $MAILFILETMP
+				echo "L'upgrade de $APPLI d'id $ID s'est mal deroule"
+				# reste :  effectuer une correction du check s'il s'agit d'un type de check uninstall
+				# si check nouveau non valide 
+					# envoi d'un mail.
+				
+				# effectuer le remove dans tous les cas pour nettoyer le client. On ne regarde pas si le remove a reussi ou pas.
+				echo "On lance un remove pour vider le DD de la VM."
+				WpkgRemove $ID # commande d'install de l'ancienne version du xml pour le client windows
+				PauseSE3TantQue $NOMAPPLI # teste la date de $WPKGXML et poursuit quand elle a change ou apres une heure
+				SupprimeScriptClient # supprime le script car deja execute par le client windows.
 			fi
 		# Sinon
 			# on envoie un mail car un lien est invalide.
-	# sinon
-		# aucune url n'est erronee , on passe au xml suivant
-		# echo "Toutes les url des attributes download de $APPLI sont corrects"
 }
+
+# fichier rajoute a cause d'un probleme de portee de variable.
+ERREURFILE=/tmp/wpkg-md5verifERREURFILE
+TOUTESTCORRIGEFILE=/tmp/wpkg-md5verifTOUTESTCORRIGEFILE
 
 function TestAndModify {
 # programme principal du script nouvelle version
@@ -405,12 +555,78 @@ function TestAndModify {
 AjoutCrontabCommandeClientWindows # ajout crontab pour dialogue avec le client windows
 CreeScriptClient # creation des scripts a executer cote client au boot , en tache planifiee
 
+GenereListeDesXml # Genere la liste des xml ˆ examiner. Permet de reprendre les tests la ou le script s'est interrompu
 
-# Pour chaque fichier $APPLI de stable puis de testing faire
-BRANCHE="stable"
-#APPLI=$REP/$BRANCHE/algobox.xml
-ls $REP/$BRANCHE | while read FILE ; do
-	TesterXml "stable" $FILE
+# Pour chaque fichier de stable puis de testing faire
+cat $LISTEDESXML | while read XMLATESTER ; do
+	NOMAPPLI=$(echo "$REP/$XMLATESTER" | sed -e "s+$(dirname $REP/$XMLATESTER)/++g" | cut -d"." -f1)
+	BRANCHE=$(echo "$XMLATESTER" | cut -d"/" -f1)
+	FILE=$(echo "$XMLATESTER" | cut -d"/" -f2)
+	ERREUR=0
+	echo "On examine $NOMAPPLI de la branche $BRANCHE dans le fichier $FILE"
+
+	# Tester tous les download url de $REP/$XMLATESTER
+	ExtraireDownloadDuXml $REP/$XMLATESTER
+	# Ce dernier script genere un fichier $LISTEURLMD5 qui contient url#md5#saveto
+	# on modifie le xml ailleurs et on ne repercute sur le depot svn qu'en cas de succes.
+	mkdir -p $REP/xml
+	cp -f $REP/$XMLATESTER $REP/xml/
+	# On corrige le xml dans 
+	XMLCORRIGE=$REP/xml/$NOMAPPLI.xml
+	TelechargeUrls # telecharge toutes les urls du $XMLATESTER et corrige les sommes md5 si besoin dans $XMLCORRIGE
+	# si l'une d'elle est erronee alors ERREUR=1
+	ERREUR=$(cat $ERREURFILE)
+	TOUTESTCORRIGE=$(cat $TOUTESTCORRIGEFILE)
+	echo "ERREUR=$ERREUR et TOUTESTCORRIGE=$TOUTESTCORRIGE"
+	
+	# si le fichier xml a change depuis la derniere execution que le client windows, il faut le retester.
+	# tester la date contenue dans $REP/xml/$NOMAPPLI.$BRANCHE.teste la comparer a la variable $actu ci-apres
+	if [ -e $REP/xml/$NOMAPPLI.$BRANCHE.teste ]; then
+		old=$(cat $REP/xml/$NOMAPPLI.$BRANCHE.teste)
+	else
+		old="ToutSaufUneDateValide"
+	fi
+	actu=$(stat -c '%y' $REP/$BRANCHE/$FILE)
+	# si le xml a change depuis le dernier test sur le client windows, on le teste de nouveau. Suppression du fichier temoin.
+	echo "old=$old actu=$actu"
+	[ ! "$old" == "$actu" ] && [ -e $REP/xml/$NOMAPPLI.$BRANCHE.teste ] && rm -f $REP/xml/$NOMAPPLI.$BRANCHE.teste 
+	
+	# teste si le xml a ete corrige entirement :
+	[ "$ERREUR" == "1" -a "$TOUTESTCORRIGE" == "1" ] && CORRIGEENTIEREMENT=1
+	if [ ! -e $REP/xml/$NOMAPPLI.$BRANCHE.teste -o "$CORRIGEENTIEREMENT"="1" ]; then
+		# Si le client windows repond au ping, on l'utilise, sinon, on ne fait que tester.
+		WINDOWSPRESENT=0
+		ping -c 4 $IPWIN > /dev/null && WINDOWSPRESENT=1
+		if [ $WINDOWSPRESENT == 1 ]; then
+			echo "Le client windows $IPWIN est present, on l'utilise pour les validations des corrections de $BRANCHE/$FILE."
+			# si jamais teste, on teste le xml corrige dessus.
+			# si le xml a pu etre completement corrige, on le teste, sinon on envoie un mail : erreur 404 probable.
+			if [ "$TOUTESTCORRIGE" == "1" ]; then
+				TesterXml $BRANCHE $FILE $ERREUR
+				#[ ! -e $REP/xml/$NOMAPPLI.$BRANCHE.teste ] && stat -c '%y' $XMLCORRIGE > $REP/xml/$NOMAPPLI.$BRANCHE.teste
+			else
+				echo "Le xml $XMLATESTER n'a ete que partiellement corrige (erreur 404 probable)"
+				cat $XMLCORRIGE
+				echo "Le xml $XMLATESTER n'a ete que partiellement corrige (erreur 404 probable)" >> $MAILFILETMP
+				echo ""  >> $MAILFILETMP
+				cat $XMLCORRIGE  >> $MAILFILETMP
+				echo ""  >> $MAILFILETMP
+			fi
+		else
+			echo "On envoie $XMLATESTER corrige par mail au destinataire sans garantie."
+			echo "Voici $XMLATESTER corrige avec les nouvelles sommes md5. Malheureusement, en l'absence de client windows, impossible de tester son bon fonctionnement."
+			echo ""
+			cat $XMLCORRIGE
+			echo ""	
+			echo "Voici $XMLATESTER corrige avec les nouvelles sommes md5. Malheureusement, en l'absence de client windows, impossible de tester son bon fonctionnement." >> $MAILFILETMP
+			echo ""  >> $MAILFILETMP
+			cat $XMLCORRIGE  >> $MAILFILETMP
+			echo ""  >> $MAILFILETMP			
+		fi
+	else
+		echo "$BRANCHE/$FILE a deja ete teste et il n'y a pas d'erreur md5, on passe au xml suivant"
+	fi
+	[ -e $XMLCORRIGE ] && rm -f $XMLCORRIGE
 done
 
 # envoi de mail puis menage
@@ -427,7 +643,7 @@ rm -f $LISTEURLMD5
 ####################### VIEUX SCRIPT EXECUTE UNIQUEMENT SANS CLIENT WINDOWS #######################
 function TestOnly {
 [ -e $PACKAGESFILE ] && rm -f $PACKAGESFILES
-[ -e $LISTEURLMD5 ] && rm -f LISTEURLMD5
+[ -e $LISTEURLMD5 ] && rm -f $LISTEURLMD5
 
 regroupeXml "testing"
 regroupeXml "stable"
@@ -514,7 +730,7 @@ cat $LISTEAEXECUTER | while read LINE; do
         fi
 
         # nettoyage liste download avec sed -i
-        FILENAME=$(echo "$url" | sed -e "s+$(dirname $url)/++g")
+        FILENAME=$(echo "$url" | sed -e "s+$(dirname $url)/++g" | sed -e "s+/++g")
 	# FILENAME=$(echo $url | sed -e "s#/#\\\\/#g")
         [ "$DEBUG" = "1" ] && echo "On supprime le telechargement $FILENAME de la liste a verifier." 
 	#echo $FILENAME
@@ -548,19 +764,26 @@ rm -f $LISTEURLMD5
 
 ### MAIN ()
 
+# reste : decommenter la ligne qui suit
+#touch $VERROU
+
+[ "$DEBUG" = "1" ] && echo "Le dossier de destination des telechargements est $DESTFILEDOSSIER."
+
 # mise a jour par rapport au svn
 # reste : decommenter les trois lignes suivantes
-svnUpdate "stable"
-# svnUpdate "testing"
-# svnUpdate "logs"
+#svnUpdate "stable"
+#svnUpdate "testing"
+#svnUpdate "logs"
 
 # Si le client windows repond au ping, on l'utilise, sinon, on ne fait que tester.
-WINDOWSPRESENT=0
-ping -c 4 $IPWIN > /dev/null && WINDOWSPRESENT=1
-if [ $WINDOWSPRESENT == 1 ]; then
-	echo "Le client windows $IPWIN est present, on l'utilise pour les validations des corrections md5"
-	TestAndModify
-else
-	echo "Le client windows $IPWIN n'est pas present, on teste juste les sommes md5"
-	TestOnly
-fi
+#WINDOWSPRESENT=0
+#ping -c 4 $IPWIN > /dev/null && WINDOWSPRESENT=1
+#if [ $WINDOWSPRESENT == 1 ]; then
+#	echo "Le client windows $IPWIN est present, on l'utilise pour les validations des corrections md5"
+	TestAndModify ##### Nouvelle version du script qui gere tous les cas : client present ou pas... Le script TestOnly est obsolete.
+#else
+#	echo "Le client windows $IPWIN n'est pas present, on teste juste les sommes md5"
+#	TestOnly
+#fi
+
+[ -e $VERROU ] && rm -f $VERROU
