@@ -74,7 +74,7 @@ case "$1" in
 				# mise en place initiale du fichier temoin
 				echo "Mise en place initiale du fichier temoin."
 				TEMOIN=/var/se3/unattended/install/wsusoffline/version.txt
-				wget -o=$TEMOIN $WSUSOFFLINEROOT/version.txt > /dev/null
+				wget -o $TEMOIN $WSUSOFFLINEROOT/version.txt > /dev/null
 				echo "Reglage des droits sur les fichiers wsusoffline."
 				chmod -R ug+rwx /var/se3/unattended/install/wsusoffline
 				chown -R admin:admins /var/se3/unattended/install/wsusoffline
