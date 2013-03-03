@@ -10,19 +10,19 @@
 ## $Id$ ##
 #
 # Trucs et astuces.
-#    Pour installer le client wpkg sur un poste équipé de sshd, sans attendre le prochain login d'un utilisateur :
-#        ssh administrateur@IpDuPoste (authentification par mot de passe, pas par clé, sinon le net use suivant ne marche pas sous XP avec cygwin+openssh; avec copssh c'est ok)
+#    Pour installer le client wpkg sur un poste equipe de sshd, sans attendre le prochain login d'un utilisateur :
+#        ssh administrateur@IpDuPoste (authentification par mot de passe, pas par cle, sinon le net use suivant ne marche pas sous XP avec cygwin+openssh; avec copssh c'est ok)
 #           net use \\\\se3 PassAdmin /user:se3\\admin
 #           cmd /c \\\\se3\\Progs\\install\\installdll\\CPAU.exe -dec -lwp -cwd c:\\ -file \\\\se3\\Progs\\ro\\wpkgInstall.job
 #
-#        pour relancer l'exécution du client wpkg sans avoir à redémarrer le poste :
+#        pour relancer l'execution du client wpkg sans avoir a redemarrer le poste :
 #             schtasks.exe /Run /Tn wpkg
 #          ou jt.exe /LJ $WINDIR\\tasks\\wpkg.job /RJ
 
 # Mode debug "1" ou "0"
 DBG="0"
 
-# Il faudrait peut-être définir le répertoire de travail en cours...
+# Il faudrait peut-etre definir le repertoire de travail en cours...
 # cd /var/tmp
 
 ### on suppose que l'on est sous debian  ####
@@ -38,8 +38,8 @@ script_charset="UTF8"
 echo "Installation de wpkg : installation automatique d'applications sur clients Windows 2000 et XP."
 echo ""
 if [ ! -d /var/se3/unattended/install ]; then
-   echo "Le répertoire /var/se3/unattended/install n'existe pas"
-   echo "Il aurait dû être créé lors de l'installation d'unattended."
+   echo "Le repertoire /var/se3/unattended/install n'existe pas"
+   echo "Il aurait dû etre cree lors de l'installation d'unattended."
    echo "Echec de l'installation."
    exit 1
 fi
@@ -73,11 +73,11 @@ if [ ! -d $WPKGDIR/tools ]; then
    mkdir /var/se3/unattended/install/wpkg/tools
 fi
 if [ ! -d $WPKGDIR/tools ]; then
-   echo "Erreur : le repertoire $WPKGDIR/tools n'a pas pu être cree."
+   echo "Erreur : le repertoire $WPKGDIR/tools n'a pas pu etre cree."
    exit 1
 fi
 
-# Telechargements pour mettre à jour les postes Windows qui en ont besoin
+# Telechargements pour mettre a jour les postes Windows qui en ont besoin
 if [ ! -d /var/se3/unattended/install/packages/windows ] ; then
    mkdir -p /var/se3/unattended/install/packages/windows 
 fi
@@ -88,7 +88,7 @@ if [ ! -e scripten.exe ] ; then
    echo "Telechargement de WindowsScript57 (http://download.microsoft.com/download/4/4/d/44de8a9e-630d-4c10-9f17-b9b34d3f6417/scripten.exe)."
    if ( ! wget 'http://download.microsoft.com/download/4/4/d/44de8a9e-630d-4c10-9f17-b9b34d3f6417/scripten.exe' ) ; then
       echo "Erreur de telechargement de WindowsScript57."
-      echo "  Vous pourrez le telecharger plus tard à partir de l'adresse :"
+      echo "  Vous pourrez le telecharger plus tard a partir de l'adresse :"
       echo "  http://www.microsoft.com/downloads/details.aspx?FamilyID=47809025-D896-482E-A0D6-524E7E844D81&displaylang=en"
       echo "  et placer scripten.exe"
       echo "  dans \\\\$SE3\\install\\packages\\windows\\ ."
@@ -164,49 +164,49 @@ if [ ! -e jt.exe ] ; then
       # if [ -e jt.zip ] ; then rm jt.zip; fi
    else
       echo "L'utilitaire jt.exe n'est pas disponible ! Ressayez plus tard ...";
-      echo "jt.exe pourra, par la suite, être depose dans $WPKGROOT\\tools par l'admin."
+      echo "jt.exe pourra, par la suite, etre depose dans $WPKGROOT\\tools par l'admin."
    fi
 else
-   echo "L'utilitaire jt.exe etait dejà disponible."
+   echo "L'utilitaire jt.exe etait deja disponible."
 fi
 
 #  Quelques utilitaires bien pratiques pour gerer les Windows
 
 RebootSpecial=""
-# PsTools pour psshutdown.exe pslist.exe ...
+# PSTools pour psshutdown.exe pslist.exe ...
 # Depuis que sysinternals ete rachete par Microsoft, il faut ajouter /accepteula aux options des commandes :(
 if [ ! -e psshutdown.exe ] || [ ! -e pslist.exe ] ; then
-   if [ ! -e PsTools.zip ]; then
-      echo "Telechargement des PsTools (http://live.sysinternals.com/Files/PSTools.zip)."
+   if [ ! -e PSTools.zip ]; then
+      echo "Telechargement des PSTools (http://live.sysinternals.com/Files/PSTools.zip)."
       if ( ! wget "http://live.sysinternals.com/Files/PSTools.zip" ) ; then
         echo "Erreur de telechargement."
-        if [ -e PsTools.zip ]; then
-          rm PsTools.zip
+        if [ -e PSTools.zip ]; then
+          rm PSTools.zip
         fi
       fi
    fi
-   if [ -e PsTools.zip ]; then
-      if ( ! unzip -o PsTools.zip ) ; then
-         echo "Erreur unzip -o PsTools.zip"
+   if [ -e PSTools.zip ]; then
+      if ( ! unzip -o PSTools.zip ) ; then
+         echo "Erreur unzip -o PSTools.zip"
       fi
    fi
    if [ -e psshutdown.exe ] && [ -e pslist.exe ] ; then
       echo "Les pstools sont maintenant disponibles.";
 #       RebootSpecial="/rebootcmd:special"
-#       if [ -e PsTools.zip ]; then
-#          if ( ! rm PsTools.zip ) ; then
-#             echo "Erreur rm PsTools.zip"
+#       if [ -e PSTools.zip ]; then
+#          if ( ! rm PSTools.zip ) ; then
+#             echo "Erreur rm PSTools.zip"
 #          fi
 #       fi
    else
-      echo "Les PsTools ne sont pas disponibles ! Ressayez plus tard ...";
+      echo "Les PSTools ne sont pas disponibles ! Ressayez plus tard ...";
    fi
 else
-   echo "Les PsTools etaient dejà disponibles."
+   echo "Les PSTools etaient deja disponibles."
 #    RebootSpecial="/rebootcmd:special"
 fi   
 
-# SetAcl (dejà dans le paquet)
+# SetAcl (deja dans le paquet)
 # http://ovh.dl.sourceforge.net/sourceforge/setacl/setacl-cmdline-2.0.2.0-binary.zip
 if [ ! -e SetACL.exe ]; then
    if [ ! -e setacl-cmdline-2.0.2.0-binary.zip ]; then
@@ -242,13 +242,13 @@ if [ ! -e SetACL.exe ]; then
       fi
    else
       echo "L'utilitaire SetACL.exe n'est pas disponible ! Ressayez plus tard ...";
-      echo "SetACL.exe pourra, par la suite, être depose dans $WPKGROOT\\tools par l'admin."
+      echo "SetACL.exe pourra, par la suite, etre depose dans $WPKGROOT\\tools par l'admin."
    fi
 else
-   echo "L'utilitaire SetACL.exe etait dejà disponible."
+   echo "L'utilitaire SetACL.exe etait deja disponible."
 fi   
 
-# wget.exe (dejà dans le paquet)
+# wget.exe (deja dans le paquet)
 if [ ! -e wget.exe ] ; then
    echo "Telechargement de l'utilitaire wget.exe (http://users.ugent.be/~bpuype/cgi-bin/fetch.pl?dl=wget/wget.exe)."
    if ( ! wget --tries=3 "http://users.ugent.be/~bpuype/cgi-bin/fetch.pl?dl=wget/wget.exe" ) ; then 
@@ -268,13 +268,13 @@ if [ ! -e wget.exe ] ; then
       fi
    else
       echo "L'utilitaire wget.exe n'est pas disponible ! Ressayez plus tard ..."
-      echo "wget.exe pourra, par la suite, être depose dans $WPKGROOT\\tools par l'admin."
+      echo "wget.exe pourra, par la suite, etre depose dans $WPKGROOT\\tools par l'admin."
    fi
 else
-   echo "L'utilitaire wget.exe etait dejà disponible."
+   echo "L'utilitaire wget.exe etait deja disponible."
 fi
 
-# md5sum.exe (dejà dans le paquet)
+# md5sum.exe (deja dans le paquet)
 if [ ! -e md5sum.exe ] ; then
    if [ ! -e md5sum-w32.zip ] ; then 
       echo "Telechargement de l'utilitaire md5sum.exe (http://ftp.fr.debian.org/debian/tools/md5sum-w32.zip)."
@@ -304,10 +304,10 @@ if [ ! -e md5sum.exe ] ; then
       fi
    else
       echo "L'utilitaire md5sum.exe n'est pas disponible ! Ressayez plus tard ..."
-      echo "md5sum.exe pourra, par la suite, être depose dans $WPKGROOT\\tools par l'admin."
+      echo "md5sum.exe pourra, par la suite, etre depose dans $WPKGROOT\\tools par l'admin."
    fi
 else
-   echo "L'utilitaire md5sum.exe etait dejà disponible."
+   echo "L'utilitaire md5sum.exe etait deja disponible."
 fi
 
 cd -
@@ -336,17 +336,17 @@ cat - > $WPKGDIR/wpkg-se3.bat <<WPKGSE3BAT
 :: ## $Id$ ##
 @Echo OFF
 Set Silent=1
-Echo %date% %time% Mise à jour du client wpkg.
-:: Lancement de wpkg-repair.bat à l'aide du job wpkg-repair.job
+Echo %date% %time% Mise a jour du client wpkg.
+:: Lancement de wpkg-repair.bat a l'aide du job wpkg-repair.job
 If Not Exist \\\\$SE3\\Progs\\ro\\wpkg-repair.job Goto NoWpkgRepairJob
 Echo Lancement du job CPAU wpkg-repair 
 \\\\$SE3\\netlogon\\CPAU.exe -dec -lwp -cwd %SystemDrive%\\ -file \\\\$SE3\\Progs\\ro\\wpkg-repair.job 2>NUL >NUL
 If "%ErrorLevel%"=="1907" Goto ErrAdminse3Expire
 If "%ErrorLevel%"=="1326" Goto ErrAdminse3BadPassword
-If Not "%ErrorLevel%"=="0" Echo Erreur %ErrorLevel% lors de l'exécution de 'CPAU.exe -dec -lwp -cwd %SystemDrive%\\ -file \\\\$SE3\\Progs\\ro\\wpkg-repair.job'
+If Not "%ErrorLevel%"=="0" Echo Erreur %ErrorLevel% lors de l'execution de 'CPAU.exe -dec -lwp -cwd %SystemDrive%\\ -file \\\\$SE3\\Progs\\ro\\wpkg-repair.job'
 
 echo.
-echo Le rapport de la mise à jour du client est disponible ici :
+echo Le rapport de la mise a jour du client est disponible ici :
 echo ^</pre^>
 echo  ^<a href="$URLSE3/wpkg/index.php?logfile=%COMPUTERNAME%.maj"^>$URLSE3/wpkg/index.php?logfile=%COMPUTERNAME%.maj^</a^>
 echo ^<pre^>
@@ -384,9 +384,9 @@ if [ -e $WPKGDIR/wpkgApres.bat ]; then
    echo "Ancien script $WPKGDIR/wpkgApres.bat supprime (il n'est plus utilise dans cette version)."
 fi
 
-# Script d'installation de la tache planifiée sur le poste
-# Est exécuté sous local\adminse3 avec CPAU l'authentification au serveur etant deja faite
-#--------Début wpkg-install.bat-----------#
+# Script d'installation de la tache planifiee sur le poste
+# Est execute sous local\adminse3 avec CPAU l'authentification au serveur etant deja faite
+#--------Debut wpkg-install.bat-----------#
 cat - > $WPKGDIR/wpkg-install.bat <<PREINSTBAT
 :: Script d'installation de wpkg sur le client.
 :: S'execute avec le compte local $ADMINSE3 grace a CPAU, 
@@ -420,7 +420,7 @@ echo.
 set Log=%Windir%\\wpkg.log
 set NbErreur=0
 
-:: Copie sur le poste local des fichiers nécessaires
+:: Copie sur le poste local des fichiers necessaires
 Set REGEXE=%WinDir%\\system32\\reg.exe
 If Exist "%REGEXE%" Goto REGEXEFOUND
 If Exist \\\\$SE3\\install\\wpkg\\tools\\reg.exe copy /Y /B /V \\\\$SE3\\install\\wpkg\\tools\\reg.exe "%REGEXE%"
@@ -640,21 +640,21 @@ echo "Script $WPKGDIR/wpkg-install.bat cree."
 
 # Chemin du job d'installation de wpkg sur un poste pour un utilisateur lambda
 INSTTASKJOB="\\\\$SE3\\Progs\\ro\\wpkgInstall.job"
-# Chemin du job d'exécution de wpkg sur un poste pour un utilisateur lambda
+# Chemin du job d'execution de wpkg sur un poste pour un utilisateur lambda
 RUNWPKGJOB="\\\\$SE3\\Progs\\ro\\wpkgRun.job"
-# Commande à placer dans le script de login des utilisateurs
+# Commande a placer dans le script de login des utilisateurs
 CMDINSTALL="@if \"%%OS%%\"==\"Windows_NT\" if not exist \"%%WinDir%%\\wpkg-client.vbs\" $CPAU -dec -lwp -hide -cwd %%SystemDrive%%\\ -file $INSTTASKJOB 2^>NUL ^>NUL"
 FINDCMD="@if \"\"%%OS%%\"\"==\"\"Windows_NT\"\" if not exist \"\"%%WinDir%%\\wpkg-client.vbs\"\" $CPAU -dec -lwp -hide -cwd %%SystemDrive%%\\ -file $INSTTASKJOB 2>NUL >NUL"
 # Chemin du script de login
 LogonBat="\\\\$SE3\\admhomes\\templates\\base\\logon.bat"
-# Commande exécutée par adminse3 pour installer wpkg sur le poste
+# Commande executee par adminse3 pour installer wpkg sur le poste
 TASK="(net use \\\\$SE3||(exit 8))&&(Set APPENDLOG=1&&Set TaskUser=$ADMINSE3&&Set TaskPass=$PASSADMINSE3&&call $WPKGROOT\\wpkg-install.bat&net use * /delete /y)"
-# Commande exécutée par adminse3 pour exécuter wpkg sur le poste
+# Commande executee par adminse3 pour executer wpkg sur le poste
 TASKRUNWPKG='{%%{ComSpec}%%} /C cscript {%%{Windir}%%}\\wpkg-client.vbs /debug /notempo /cpuLoad 80&pause'
 
-# Script de diagnostic et réparation d'un client wpkg récalcitrant
-# par exemple à cause d' un compt adminse3 défaillant
-#--------Début wpkg-diag.bat-----------#
+# Script de diagnostic et reparation d'un client wpkg recalcitrant
+# par exemple a cause d' un compt adminse3 defaillant
+#--------Debut wpkg-diag.bat-----------#
 cat - > /var/se3/Progs/install/wpkg-diag.bat <<WPKGDIAG
 :: Script de diagnostic/reparation d'un client wpkg qui ne demarre plus.
 :: Verifie le compte adminse3 puis lance wpkg-repair.bat sous adminse3.
@@ -692,7 +692,7 @@ net user adminse3 | find /I "Mot de passe exig" | find /I "Oui" >>%LOG%
 If ErrorLevel 1 Goto ErrAdminse3NoPassword
 echo. >>%LOG%
 
-:: Lancement de wpkg-repair.bat à l'aide du job wpkg-repair.job
+:: Lancement de wpkg-repair.bat a l'aide du job wpkg-repair.job
 If Not Exist \\\\%se3%\\Progs\\ro\\wpkg-repair.job Goto NoWpkgRepairJob
 Echo Lancement du job CPAU wpkg-repair >>%LOG%
 \\\\%se3%\\netlogon\\CPAU.exe -dec -wait -lwp -cwd %SystemDrive%\\ -file \\\\%se3%\\Progs\\ro\\wpkg-repair.job 2>NUL >NUL
@@ -747,9 +747,9 @@ todos /var/se3/Progs/install/wpkg-diag.bat
 chmod 755 /var/se3/Progs/install/wpkg-diag.bat
 echo "Script /var/se3/Progs/install/wpkg-diag.bat cree."
 
-# Script de réparation d'un client wpkg récalcitrant
-# par exemple à cause de running=true qui bloque l'exécution
-#--------Début wpkg-repair.bat-----------#
+# Script de reparation d'un client wpkg recalcitrant
+# par exemple a cause de running=true qui bloque l'execution
+#--------Debut wpkg-repair.bat-----------#
 cat - > $WPKGDIR/wpkg-repair.bat <<WPKGREPAIR
 :: Script de diagnostic/reparation d'un client wpkg qui ne s'execute pas.
 :: Il s'execute sous adminse3 (encore faut-il que ce compte soit valide !)
@@ -853,8 +853,8 @@ todos $WPKGDIR/wpkg-repair.bat
 echo "Script $WPKGDIR/wpkg-repair.bat cree."
 
 
-#--------Début wpkg-config.bat-----------#
-# A exécuter une fois par l'admin pour créer les jobs cpau et placer la commande d'installation dans 'templates\\base\\logon.bat'
+#--------Debut wpkg-config.bat-----------#
+# A executer une fois par l'admin pour creer les jobs cpau et placer la commande d'installation dans 'templates\\base\\logon.bat'
 # cat - > $CONFIGBAT <<FINCONFIGBAT
 # @echo off
 
@@ -871,7 +871,7 @@ echo "Script $WPKGDIR/wpkg-repair.bat cree."
 # Set SCHTASKS=schtasks2k
 # If Not Exist %WPKGROOT%\\tools\\schtasks2k.exe Goto MAKESCHTASKS2K
 # echo %WPKGROOT%\\tools\\schtasks2k.exe ‚tait d‚j… disponible.
-# If "%WinType%"=="XP" echo Si vous souhaitez regénérer schtasks2k.exe, 
+# If "%WinType%"=="XP" echo Si vous souhaitez regenerer schtasks2k.exe, 
 # If "%WinType%"=="XP" echo   effacez-le puis relancez wpkg-config.bat.
 # echo.
 # Goto JTorSCHTASKS2KOK
@@ -928,7 +928,7 @@ echo "Script $WPKGDIR/wpkg-repair.bat cree."
 # type sortie.txt | find "00 E8 68 EC FF FF 85 C0-EB 0F 68 7F 15 00 00 E8" >NUL
 
 # If ErrorLevel 1 Goto PatchNotDone
-# Echo Le patch a été appliqué avec succès.
+# Echo Le patch a ete applique avec succes.
 
 # :: Recopie de ce fichier sur le serveur
 # copy /Y /B schtasks.dat %DestExe% >NUL
@@ -945,11 +945,11 @@ echo "Script $WPKGDIR/wpkg-repair.bat cree."
 # Goto ErreurPatch
 
 # :PatchNotDone
-# Echo Erreur : l'application du patch a échoué !
+# Echo Erreur : l'application du patch a echoue !
 # Goto ErreurPatch
 
 # :ErrDebug
-# Echo Erreur : La commande DEBUG a quitté avec l'erreur %ErrorLevel% !
+# Echo Erreur : La commande DEBUG a quitte avec l'erreur %ErrorLevel% !
 # Goto ErreurPatch
 
 # :BadFile
@@ -979,8 +979,8 @@ echo "Script $WPKGDIR/wpkg-repair.bat cree."
 # :: ----------------------------- Fin patch schtasks.exe ---------------------------------------
 
 # :PatchFail
-# echo Erreur : L'application du patch au fichier SCHTASKEXE a echoué.
-# echo Vous pouvez tenter d'exécuter à nouveau ce script à partir d'un autre PC (Windows XP SP2).
+# echo Erreur : L'application du patch au fichier SCHTASKEXE a echoue.
+# echo Vous pouvez tenter d'executer a nouveau ce script a partir d'un autre PC (Windows XP SP2).
 # If Exist %WPKGROOT%\\tools\\jt.exe Goto JtEstLa
 # Goto RECOMMANDEJT
 
@@ -992,19 +992,19 @@ echo "Script $WPKGDIR/wpkg-repair.bat cree."
 # :JTorSCHTASKS2KOK
 # echo.
 # echo Essai de %WPKGROOT%\\tools\\schtasks2k.exe 
-# echo   en listant les 'tâches planifiées' actuelles de ce poste :
+# echo   en listant les 'tâches planifiees' actuelles de ce poste :
 # %DestExe%
 # echo.
 # if ErrorLevel 1 Echo %DestExe%
-# if ErrorLevel 1 Echo   a généré une erreur : ErrorLevel=%ErrorLevel%
+# if ErrorLevel 1 Echo   a genere une erreur : ErrorLevel=%ErrorLevel%
 # if ErrorLevel 1 Echo.
 
 # :: Presence jt.exe
 # If Exist %WPKGROOT%\\tools\\jt.exe Goto JtEstLa
 # :RECOMMANDEJT
-# echo Vous devriez télécharger l'utilitaire jt.exe à l'adresse :
+# echo Vous devriez telecharger l'utilitaire jt.exe a l'adresse :
 # echo   ftp://ftp.microsoft.com/reskit/win2000/jt.zip
-# echo   Et placer après décompression jt.exe dans %WPKGROOT%\\tools
+# echo   Et placer apres decompression jt.exe dans %WPKGROOT%\\tools
 # echo Ainsi, vous n'aurez plus besoin du fichier patch‚ schtasks2K.exe.
 # echo Il vous faudra ensuite relancer ce script.
 # echo.
@@ -1012,15 +1012,15 @@ echo "Script $WPKGDIR/wpkg-repair.bat cree."
 # Goto SetACL
 # :JtEstLa
 # Echo L'utilitaire jt.exe est disponible. 
-# echo   Il sera utilis‚ pour créer la tâche planifiée.
+# echo   Il sera utilis‚ pour creer la tâche planifiee.
 # echo.
 
 # :SetACL
 # Set SetACL=%WPKGROOT%\\tools\\SetACL.exe
 # If Exist %SetACL% Goto SetACLOK
-# echo Vous devriez télécharger l'utilitaire SetACL à l'adresse :
+# echo Vous devriez telecharger l'utilitaire SetACL a l'adresse :
 # echo   http://ovh.dl.sourceforge.net/sourceforge/setacl/setacl-cmdline-2.0.2.0-binary.zip
-# echo   Et placer après décompression SetACL.exe dans %WPKGROOT%\\tools
+# echo   Et placer apres decompression SetACL.exe dans %WPKGROOT%\\tools
 # echo.
 # Goto CreationJob
 # :SetACLOK
@@ -1036,7 +1036,7 @@ echo "Script $WPKGDIR/wpkg-repair.bat cree."
 # :CreationJob
 # ::If Exist "$WPKGROOT\\wpkg.job" Del /F /Q "$WPKGROOT\\wpkg.job"
 
-# ::echo Création du job CPAU d'install sous le compte $ADMINSE3
+# ::echo Creation du job CPAU d'install sous le compte $ADMINSE3
 # ::echo $INSTTASKJOB
 # ::If Exist "$INSTTASKJOB" Del /F /Q "$INSTTASKJOB"
 # ::set TASK="$TASK"
@@ -1051,7 +1051,7 @@ echo "Script $WPKGDIR/wpkg-repair.bat cree."
 # echo $INSTTASKJOB : SUCCES.
 
 # echo.
-# echo Création du lien de lancement manuel de wpkg
+# echo Creation du lien de lancement manuel de wpkg
 # Set TASKRUNWPKG="$TASKRUNWPKG"
 # @$CPAU -u $ADMINSE3 -p $PASSADMINSE3 -enc -file $RUNWPKGJOB -lwp -c -ex %TASKRUNWPKG% 2>NUL >NUL
 # %WPKGROOT%\\tools\\nircmdc.exe shortcut $CPAU "~\$folder.desktop\$" "Synchronise les applications Wpkg" "-dec -lwp -cwd c:\\ -file $RUNWPKGJOB" %%windir%%\\system32\\setup.exe
@@ -1059,13 +1059,13 @@ echo "Script $WPKGDIR/wpkg-repair.bat cree."
 # %WPKGROOT%\\tools\\nircmdc.exe execmd RENAME "~\$folder.desktop\$\\Synchronise les applications Wpkg.lnk" "Applications Wpkg.lnk"
 
 # :: echo.
-# :: echo Création du lien pour forcer la valeur running=false
+# :: echo Creation du lien pour forcer la valeur running=false
 # :: Set wpkgRunningFalseJOB=\\\\$SE3\\Progs\\ro\\wpkgRunningFalse.job
 # :: @$CPAU -u $ADMINSE3 -p $PASSADMINSE3 -enc -file "%wpkgRunningFalseJOB%" -lwp -c -ex "\\\\$SE3\\install\\wpkg\\tools\reg.exe ADD HKLM\\Software\\wpkg /v running /d false /f" 2>NUL >NUL
 # :: %WPKGROOT%\\tools\\nircmdc.exe shortcut $CPAU "\\\\$SE3\\Progs\\ro" "WpkgRunningFalse" "-dec -lwp -cwd c:\\ -file %wpkgRunningFalseJOB%" %%windir%%\\regedit.exe
 
 # echo.
-# echo Création du job pour lancer wpkg-repair.bat
+# echo Creation du job pour lancer wpkg-repair.bat
 # Set wpkgRepairJOB=\\\\$SE3\\Progs\\ro\\wpkg-repair.job
 # Set wpkgRepairBAT=\\\\$SE3\\install\\wpkg\\wpkg-repair.bat
 # @$CPAU -u $ADMINSE3 -p $PASSADMINSE3 -enc -file "%wpkgRepairJOB%" -lwp -c -ex "(net use \\\\$SE3||exit 8)&&(set TaskUser=$ADMINSE3&&set TaskPass=$PASSADMINSE3&&call %wpkgRepairBAT%&net use * /delete /y)" 2>NUL >NUL
@@ -1102,7 +1102,7 @@ echo "Script $WPKGDIR/wpkg-repair.bat cree."
 # :NoAdminse3Actif
 # echo.
 # echo Le compte local $ADMINSE3 n'est pas actif.
-# echo   Le test de la procédure d'installation de wpkg n'est pas possible sur ce poste.
+# echo   Le test de la procedure d'installation de wpkg n'est pas possible sur ce poste.
 # pause
 # Goto LOGONBAT
 
@@ -1110,7 +1110,7 @@ echo "Script $WPKGDIR/wpkg-repair.bat cree."
 # echo.
 # echo Le compte local $ADMINSE3 n'existe sur ce poste.
 # echo   Ce poste n'a vraisemblablement pas rejoint le domaine...
-# echo   Le test de la procédure d'installation de wpkg n'est pas possible sur ce poste.
+# echo   Le test de la procedure d'installation de wpkg n'est pas possible sur ce poste.
 # pause
 # Goto LOGONBAT
 
@@ -1120,7 +1120,7 @@ echo "Script $WPKGDIR/wpkg-repair.bat cree."
 # echo Avant de placer la commande d'installation dans le script de login,
 # echo vous pouvez tester le script d'installation de wpkg sur ce poste.
 # echo.
-# echo Rmq. Les fenêtres qui s'ouvrent pour ce test, seront masquées 
+# echo Rmq. Les fenetres qui s'ouvrent pour ce test, seront masquees 
 # echo      lors de l'installation 'normale' au login d'un utilisateur.
 # echo.
 
@@ -1141,13 +1141,13 @@ echo "Script $WPKGDIR/wpkg-repair.bat cree."
 # If "%NoRunWpkgJS%"=="1" Goto LOGONBAT
 # echo.
 # If Exist %WinDir%\\wpkg.txt echo   %WinDir%\\wpkg.txt : Etat des applis wpkg de ce poste.
-# If Exist %WinDir%\\wpkg.log echo   %WinDir%\\wpkg.log : Log de l'exécution de wpkg-se3.js
-# If Not Exist %WinDir%\\wpkg.txt echo  Err. %WinDir%\\wpkg.txt absent : Pas d'état des applis disponibles.
-# If Not Exist %WinDir%\\wpkg.log echo  Err. %WinDir%\\wpkg.log : Pas de Log de l'exécution de wpkg.
-# If Exist %WPKGROOT%\\rapports\\%COMPUTERNAME%.txt echo   %WPKGROOT%\\rapports\\%COMPUTERNAME%.txt : Remontée serveur.
-# If Exist %WPKGROOT%\\rapports\\%COMPUTERNAME%.log echo   %WPKGROOT%\\rapports\\%COMPUTERNAME%.log : Remontée serveur.
-# If Not Exist %WPKGROOT%\\rapports\\%COMPUTERNAME%.txt echo  Err. %WPKGROOT%\\rapports\\%COMPUTERNAME%.txt absent : Pas de Remontée sur le serveur.
-# If Not Exist %WPKGROOT%\\rapports\\%COMPUTERNAME%.log echo  Err. %WPKGROOT%\\rapports\\%COMPUTERNAME%.log absent : Pas de Remontée sur le serveur.
+# If Exist %WinDir%\\wpkg.log echo   %WinDir%\\wpkg.log : Log de l'execution de wpkg-se3.js
+# If Not Exist %WinDir%\\wpkg.txt echo  Err. %WinDir%\\wpkg.txt absent : Pas d'etat des applis disponibles.
+# If Not Exist %WinDir%\\wpkg.log echo  Err. %WinDir%\\wpkg.log : Pas de Log de l'execution de wpkg.
+# If Exist %WPKGROOT%\\rapports\\%COMPUTERNAME%.txt echo   %WPKGROOT%\\rapports\\%COMPUTERNAME%.txt : Remontee serveur.
+# If Exist %WPKGROOT%\\rapports\\%COMPUTERNAME%.log echo   %WPKGROOT%\\rapports\\%COMPUTERNAME%.log : Remontee serveur.
+# If Not Exist %WPKGROOT%\\rapports\\%COMPUTERNAME%.txt echo  Err. %WPKGROOT%\\rapports\\%COMPUTERNAME%.txt absent : Pas de Remontee sur le serveur.
+# If Not Exist %WPKGROOT%\\rapports\\%COMPUTERNAME%.log echo  Err. %WPKGROOT%\\rapports\\%COMPUTERNAME%.log absent : Pas de Remontee sur le serveur.
 # pause
 # :: --------------Fin Install client sur poste local------------------------------
 
@@ -1155,7 +1155,7 @@ echo "Script $WPKGDIR/wpkg-repair.bat cree."
 # :: ------------------Insert Installwpkg dans $LogonBat------------------------------
 # echo.
 # echo.
-# echo Commande à ajouter sur une ligne au script de login des utilisateurs :
+# echo Commande a ajouter sur une ligne au script de login des utilisateurs :
 # echo ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 # echo $CMDINSTALL
 # echo ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -1170,14 +1170,14 @@ echo "Script $WPKGDIR/wpkg-repair.bat cree."
 # If ErrorLevel 1 Goto PASCMDLOGIN
 # find "$FINDCMD" $LogonBat >NUL
 # If Not ErrorLevel 1 Goto SameCMD
-# echo Une commande d'installation de wpkg semble déjà présente dans logon.bat
-# echo   Elle n'est cependant pas identique à la commande préconisée.
-# echo   Voulez-vous quand même ajouter la commande d'installation de wpkg
+# echo Une commande d'installation de wpkg semble deja presente dans logon.bat
+# echo   Elle n'est cependant pas identique a la commande preconisee.
+# echo   Voulez-vous quand meme ajouter la commande d'installation de wpkg
 # Set REPONSE=N
 # Goto AskInsertCmd
 
 # :SameCMD
-# echo La commande qui se trouve dans le script coïncide avec la commande préconisée.
+# echo La commande qui se trouve dans le script coïncide avec la commande preconisee.
 # pause
 # echo.
 # Goto WPKGOK
@@ -1207,12 +1207,12 @@ echo "Script $WPKGDIR/wpkg-repair.bat cree."
 
 # :WPKGGreetings
 # echo.
-# echo Félicitation : WPKG est opérationnel sur ce serveur
-# echo   Il sera installé puis executé sur les postes 
+# echo Felicitation : WPKG est operationnel sur ce serveur
+# echo   Il sera installe puis execute sur les postes 
 # echo     au prochain login d'un utilisateur.
-# echo   Une fois installé, WPKG s'exécute au boot du poste,
-# echo     après une temporisation de 30sec,
-# echo     sans qu'il soit nécessaire de s'authentifier.
+# echo   Une fois installe, WPKG s'execute au boot du poste,
+# echo     apres une temporisation de 30sec,
+# echo     sans qu'il soit necessaire de s'authentifier.
 # Goto AUTODEL
 
 # :ErrAuthSe3
@@ -1222,23 +1222,23 @@ echo "Script $WPKGDIR/wpkg-repair.bat cree."
 
 # :NoAddTemplate
 # echo.
-# echo Félicitation : La configuration de Wpkg est terminée.
+# echo Felicitation : La configuration de Wpkg est terminee.
 # If "%InLoginScript%"=="1" Goto AUTODEL
-# echo   Il vous reste à ajouter la ligne de commande précédente
+# echo   Il vous reste a ajouter la ligne de commande precedente
 # echo   dans les templates de votre choix.
 # Goto AUTODEL
 
 # :No2000XP
 # Set WinType=9x
-# echo Erreur : Vous n'êtes pas sur un poste Windows 2000 ou XP.
+# echo Erreur : Vous n'etes pas sur un poste Windows 2000 ou XP.
 # Goto Done
 
 # :ErrMakeInstallJob
-# echo Erreur : le fichier $INSTTASKJOB n'a pas pu être cré.
+# echo Erreur : le fichier $INSTTASKJOB n'a pas pu etre cre.
 # Goto Done
 
 # :ErrRunJob
-# echo Erreur : l'installation de wpkg sur ce poste a échoué. Err=%ErrorLevel%
+# echo Erreur : l'installation de wpkg sur ce poste a echoue. Err=%ErrorLevel%
 # If EXIST "%SystemDrive%\\netinst\\wpkg-notempo.txt" del /F /Q "%SystemDrive%\\netinst\\wpkg-notempo.txt"
 # Goto Done
 
@@ -1247,22 +1247,22 @@ echo "Script $WPKGDIR/wpkg-repair.bat cree."
 # Goto NoInstallTemplate
 
 # :NoInstallTemplate
-# echo Erreur : le fichier template $LogonBat n'a pas pu êïtre mis à jour.
-# echo Ajoutez manuellement la ligne précédente au script de login des utilisateurs.
+# echo Erreur : le fichier template $LogonBat n'a pas pu etre mis a jour.
+# echo Ajoutez manuellement la ligne precedente au script de login des utilisateurs.
 # Goto Done
 
 # :NOJT
 # echo.
-# echo Erreur : Vous n'êtes pas sur un PC Windows XP et l'utilitaire jt.exe 
+# echo Erreur : Vous n'etes pas sur un PC Windows XP et l'utilitaire jt.exe 
 # echo   n'est pas disponible.
-# echo   Téléchargez jt.zip depuis l'adresse :
+# echo   Telechargez jt.zip depuis l'adresse :
 # echo     ftp://ftp.microsoft.com/reskit/win2000/jt.zip
-# echo     puis, après extraction, placez le fichier jt.exe dans le répertoire :
+# echo     puis, apres extraction, placez le fichier jt.exe dans le repertoire :
 # echo     %WPKGROOT%\\tools\\
 # echo   C'est ce que je vous recommande.
 # echo.
-# echo   Sinon, vous pouvez vous passer de jt.exe à condition d'exécuter ce script 
-# echo   à partir d'un PC Windows XP...
+# echo   Sinon, vous pouvez vous passer de jt.exe a condition d'executer ce script 
+# echo   a partir d'un PC Windows XP...
 # echo.
 # Goto Done
 
@@ -1270,30 +1270,30 @@ echo "Script $WPKGDIR/wpkg-repair.bat cree."
 # If Not Exist "%~f0" Goto Done
 # Set REPONSE=O
 # echo.
-# echo La gestion des applications à déployer sur les postes, 
-# echo   se fait à l'aide d'un navigateur web à l'adresse :
+# echo La gestion des applications a deployer sur les postes, 
+# echo   se fait a l'aide d'un navigateur web a l'adresse :
 # echo   $URLSE3/wpkg/  
 # echo.
-# echo Par sécurité, il serait prudent de supprimer ce fichier de configuration.
+# echo Par securite, il serait prudent de supprimer ce fichier de configuration.
 # echo    Pour cela, tapez : del %~f0  
 # echo.
-# echo    En cas de besoin, vous pourrez le recréer en exécutant à nouveau
+# echo    En cas de besoin, vous pourrez le recreer en executant a nouveau
 # echo    '/var/cache/se3_install/wpkg-install.sh'
 # echo    en root, sur la console du serveur.
 # echo.
 
 # If Not "%WpkgIsInstalled%"=="1" Goto WpkgNotInstalled
-# If "%NoRunWpkgJS%"=="1" echo Wpkg s'exécutera au prochain démarrage de ce poste.
-# If Not "%NoRunWpkgJS%"=="1" echo Wpkg s'exécutera à nouveau à chaque démarrage de ce poste.
-# echo Si vous voulez exécuter wpkg maintenant, utilisez le lien
+# If "%NoRunWpkgJS%"=="1" echo Wpkg s'executera au prochain demarrage de ce poste.
+# If Not "%NoRunWpkgJS%"=="1" echo Wpkg s'executera a nouveau a chaque demarrage de ce poste.
+# echo Si vous voulez executer wpkg maintenant, utilisez le lien
 # echo    'Applications Wpkg' sur le bureau de %UserName%.
 # echo.
 # :WpkgNotInstalled
 
-# @If "$DBG"=="1" Echo L'installation a été effectuée en mode DEBUG (DBG="1").
-# @If "$DBG"=="1" Echo   Si tout s'est bien passé, n'oubliez pas de
-# @If "$DBG"=="1" Echo   réexecuter ce script en mode normal (DBF="0")
-# @If "$DBG"=="1" Echo   pour supprimer les 'Pause' de l'exécution des scripts.
+# @If "$DBG"=="1" Echo L'installation a ete effectuee en mode DEBUG (DBG="1").
+# @If "$DBG"=="1" Echo   Si tout s'est bien passe, n'oubliez pas de
+# @If "$DBG"=="1" Echo   reexecuter ce script en mode normal (DBF="0")
+# @If "$DBG"=="1" Echo   pour supprimer les 'Pause' de l'execution des scripts.
 # @If "$DBG"=="1" Echo.
 
 # ::set /P REPONSE=Voulez-vous supprimer wpkg-config.bat maintenant ? O^|N [O]
@@ -1319,11 +1319,11 @@ echo "Script $WPKGDIR/wpkg-repair.bat cree."
 #--------Fin wpkg-config.bat-----------#
 # recode $script_charset..CP850 $CONFIGBAT
 # unix2dos $CONFIGBAT
-# echo "Script de configuration destine à l'admin $CONFIGBAT cree."
+# echo "Script de configuration destine a l'admin $CONFIGBAT cree."
 # chown admin:admins $CONFIGBAT
 # chmod 770 $CONFIGBAT
 
-#--------Début de la partie remplacant le lancement manuel de wpkg-config.bat-----------#
+#--------Debut de la partie remplacant le lancement manuel de wpkg-config.bat-----------#
 # script devenu obsolete : suppression.
 [ -e /var/se3/Progs/install/wpkg-config.bat ] && echo "Suppression de /var/se3/Progs/install/wpkg-config.bat"&& rm /var/se3/Progs/install/wpkg-config.bat
 
@@ -1331,20 +1331,20 @@ adminse3="adminse3"
 
 # Chemin du job d'installation de wpkg sur un poste pour un utilisateur lambda
 INSTTASKJOB="wpkgInstall.job"
-# Chemin du job d'exécution de wpkg sur un poste pour un utilisateur lambda
+# Chemin du job d'execution de wpkg sur un poste pour un utilisateur lambda
 RUNWPKGJOB="wpkgRun.job"
 # Chemin du script de login
 LogonBat="/home/templates/base/logon.bat"
-# Commande exécutée par adminse3 pour installer wpkg sur le poste
+# Commande executee par adminse3 pour installer wpkg sur le poste
 TASK="(net use \\\\$SE3||(exit 8))&&(Set APPENDLOG=1&&Set TaskUser=$ADMINSE3&&Set TaskPass=$PASSADMINSE3&&call $WPKGROOT\\wpkg-install.bat&net use * /delete /y)"
-# Commande exécutée par adminse3 pour exécuter wpkg sur le poste
+# Commande executee par adminse3 pour executer wpkg sur le poste
 TASKRUNWPKG='{%{ComSpec}%} /C cscript {%{Windir}%}\\wpkg-client.vbs /debug /notempo /cpuLoad 80&pause'
 #variable WPKGDIR deja definie
 
 #### on abandonne SCHTASK pour windows2000 puisque jt fonctionne.
 	
 # Recopie de reg.exe qui n'est pas disponible sous Win2k alors qu'il fonctionne parfaitement
-### on cherche un WinXP allumé et on tente un allumage si besoin.
+### on cherche un WinXP allume et on tente un allumage si besoin.
 # a implementer : avec requete ldap + tcpcheck
 #IPWINXP=10.211.55.160
 #NAMEWINXP=WINXPSE3
@@ -1466,7 +1466,7 @@ fi
 
 
 echo "Modification (si besoin) du script de login de base"
-# Commande à placer dans le script de login des utilisateurs
+# Commande a placer dans le script de login des utilisateurs
 CMDINSTALL="@if \"%OS%\"==\"Windows_NT\" if not exist \"%WinDir%\\wpkg-client.vbs\" $CPAU -dec -lwp -hide -cwd %SystemDrive%\\ -file \\\\$SE3\\Progs\\ro\\$INSTTASKJOB 2>NUL >NUL"
 FINDCMD="@if \"%OS%\"==\"Windows_NT\" if not exist \"%WinDir%\\\\wpkg-client.vbs\" \\\\\\\\$SE3\\\\netlogon\\\\CPAU.exe -dec -lwp -hide -cwd %SystemDrive%\\\\ -file \\\\\\\\$SE3\\\\Progs\\\\ro\\\\$INSTTASKJOB 2>NUL >NUL"
 
@@ -1484,7 +1484,7 @@ else
     chmod 770 /home/templates/base/logon.bat
 fi
 
-# Commande à placer dans le script de login des utilisateurs
+# Commande a placer dans le script de login des utilisateurs
 CMDINSTALL="Rem @if \"%COMPUTERNAME%\"==\"PosteProblemeWpkg\" call \\\\$SE3\\Progs\\install\\wpkg-diag.bat 2>NUL >NUL"
 FINDCMD="Rem @if \"%COMPUTERNAME%\"==\"PosteProblemeWpkg\" call \\\\\\\\$SE3\\\\Progs\\\\install\\\\wpkg-diag.bat 2>NUL >NUL"
 
@@ -1506,14 +1506,14 @@ fi
 #--------Fin de la partie remplacant le lancement manuel de wpkg-config.bat-----------#
 
 
-# Client wpkg exécuté par la tâche planifiée.
-# Mise à jour du paramètre $SE3 dans wpkg-client.vbs
+# Client wpkg execute par la tâche planifiee.
+# Mise a jour du parametre $SE3 dans wpkg-client.vbs
 sed "s/\$SE3/$SE3/g" $WPKGDIR/wpkg-client.vbs-original > $WPKGDIR/wpkg-client.vbs
 todos $WPKGDIR/wpkg-client.vbs
 echo "Script $WPKGDIR/wpkg-client.vbs cree."
 
-# Clés publiques ssh de www-se3 et de root disponibles pour être recopiées sur les postes lors de l'install de copssh
-# Contrôle (et création si besoin) d'une clé ssh pour l'utilisateur www-se3
+# Cles publiques ssh de www-se3 et de root disponibles pour etre recopiees sur les postes lors de l'install de copssh
+# Contrôle (et creation si besoin) d'une cle ssh pour l'utilisateur www-se3
 if [ ! -e "/var/remote_adm/.ssh/id_rsa.pub" ]; then
    if [ ! -d "/var/remote_adm/.ssh" ] ; then
       mkdir -p "/var/remote_adm/.ssh"
@@ -1521,22 +1521,22 @@ if [ ! -e "/var/remote_adm/.ssh/id_rsa.pub" ]; then
    chown www-se3:www-data
    chmod 700 "/var/remote_adm/.ssh"
    cd "/var/remote_adm/.ssh"
-   # Creation de la clé
+   # Creation de la cle
    sudo -u www-se3 ssh-keygen -q -b 1024 -t rsa -f id_rsa -N ''
    cd -
 fi
-# Contrôle (et création si besoin) d'une clé ssh pour l'utilisateur root
+# Contrôle (et creation si besoin) d'une cle ssh pour l'utilisateur root
 if [ ! -e "/root/.ssh/id_rsa.pub" ]; then
    if [ ! -d "/root/.ssh" ] ; then
       mkdir -p "/var/remote_adm/.ssh"
    fi
    chmod 700 "/root/.ssh"
    cd "/root/.ssh"
-   # Creation de la clé
+   # Creation de la cle
    ssh-keygen -q -b 1024 -t rsa -f id_rsa -N ''
    cd -
 fi
-# Mise à disposition des clés publiques de www-se3 et root pour adminse3
+# Mise a disposition des cles publiques de www-se3 et root pour adminse3
 cat /var/remote_adm/.ssh/id_rsa.pub /root/.ssh/id_rsa.pub > $WPKGDIR/authorized_keys
 
 # Initialisation de profiles.xml, hosts.xml et initvars_se3.bat
@@ -1593,7 +1593,7 @@ if [ ! -e "$WPKGDIR/packages.xml" ]; then
     cat - > $WPKGDIR/packages.xml <<PACKAGESXML
 <?xml version="1.0" encoding="iso-8859-1"?>
 <packages>
-    <package id="time" name="Mise à l'heure du poste" revision="1" reboot="false" priority="100" notify="false" execute="always">
+    <package id="time" name="Mise a l'heure du poste" revision="1" reboot="false" priority="100" notify="false" execute="always">
         <install cmd="net time \\\\$SE3 /set /yes"/>
     </package>
     
@@ -1615,14 +1615,14 @@ else
 fi
 
 # Paquet deploiementimprimantes.xml obsolete : on le rend inactif en supprimant le script qu'il execute.
-# Une maj du xml rendra également ce package inopérant.
+# Une maj du xml rendra egalement ce package inoperant.
 if [ -e /var/se3/unattended/install/packages/windows/printers/ajoutpilotesimprimantes.bat ]; then
 	echo "Suppression du script ajoutpilotesimprimantes.bat devenu obsolete en 2.0."
 	rm -f /var/se3/unattended/install/packages/windows/printers/ajoutpilotesimprimantes.bat
 fi
 
-# Dossier destiné à recevoir les rapports remontés par les postes
-# On donne droits rwx à adminse3
+# Dossier destine a recevoir les rapports remontes par les postes
+# On donne droits rwx a adminse3
 if [ ! -d $WPKGDIR/rapports ] ; then
    mkdir $WPKGDIR/rapports
 fi
@@ -1632,7 +1632,7 @@ if [ ! -d $WPKGDIR/ini ] ; then
    mkdir $WPKGDIR/ini
 fi
 
-# Le fichier patché 'schtasks2k.exe', a-t-il déjà été généré par l'admin.
+# Le fichier patche 'schtasks2k.exe', a-t-il deja ete genere par l'admin.
 if [ -e $WPKGDIR/tools/schtasks2k.exe ]; then
    echo "Le fichier patche schtasks2k.exe qui a ete genere par l'admin est disponible."
 fi
@@ -1640,7 +1640,7 @@ fi
 # Mise en place des droits sur $WPKGDIR
 setfacl -b -R $WPKGDIR
 # www-se3 a tous les droits sur /var/se3/unattended/install
-# C'est peut-être trop. A voir...
+# C'est peut-etre trop. A voir...
 chown -R www-se3 /var/se3/unattended/install
 setfacl -R -m u:www-se3:rwx -m d:u:www-se3:rwx /var/se3/unattended/install
 setfacl -R -m u:$ADMINSE3:rwx -m d:u:$ADMINSE3:rwx /var/se3/unattended/install/wpkg/rapports
