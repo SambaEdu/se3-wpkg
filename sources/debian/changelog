@@ -1,3 +1,9 @@
+se3-wpkg (0.1-46) stable; urgency=low
+
+  * correction casse pstools et bug wsus
+
+ -- root <root@DevilXen>  Sat, 09 Mar 2013 23:31:44 +0100
+
 se3-wpkg (0.1-45) stable; urgency=low
 
   * correction lien pstools nettoyage et ajouts fctions rapports.sh
