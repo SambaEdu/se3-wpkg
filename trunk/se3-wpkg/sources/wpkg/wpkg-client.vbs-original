@@ -186,6 +186,7 @@ Dim TOOLTIPfile  : TOOLTIPfile = Dest & "tooltip.exe"
 Dim tooltipActifs : tooltipActifs = true
 If InStr(GetTypeWin, "Server") > 0 Then
 	tooltipActifs = false ' ToolTip inactifs sur les Windows Server.
+	TooltipDelete() ' nettoyage des tooltips antérieurement déployés sur les OS serveurs
 End If
 
 If tooltipActifs Then
@@ -1009,3 +1010,16 @@ Function TooltipEnd()
 	f.WriteLine("")
 	f.Close
 End Function 
+
+Function TooltipDelete()
+	' Suppression des tooltips : prévu pour nettoyer les OS Windows Server de Caen
+	If fso.FileExists(MSGlog) Then
+		fso.DeleteFile MSGlog, True
+	End If
+	If fso.FileExists(MSGfile) Then
+		fso.DeleteFile MSGfile, True
+	End If
+	If Not fso.FileExists(TOOLTIPfile) Then
+		fso.DeleteFile TOOLTIPfile, True
+	End If
+End Function  
