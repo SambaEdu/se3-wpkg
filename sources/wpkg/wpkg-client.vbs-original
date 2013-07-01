@@ -25,6 +25,7 @@ Dim secBeforeStart : secBeforeStart = 30 ' Nombre de secondes à attendre avant d
 Dim secAfterRun    : secAfterRun = 5     ' Nombre de secondes à attendre pour RemoveNetworkDrive
 Dim maxCpuLoad     : maxCpuLoad = 10     ' % Charge CPU maxi autorisée pour démarrer
 Dim ServeurWpkg    : ServeurWpkg = "$SE3"  ' Serveur utilisé par les clients wpkg
+Dim testCPU		   : testCPU = false	  ' test CPU désactivé par défaut à cause des soucis de détection sur les nouveaux CPU : 06/2013
 '  Par défaut, le serveur se3 est utilisé pour déployer les applications.
 '  Vous pouvez cependant préférer utiliser un autre serveur (par ex. si se3 est très chargé).
 '  Pour utiliser le serveur 'NomDuServeur' à la place de 'se3', il faut :
@@ -119,7 +120,7 @@ If Not WaitWMIService() Then WScript.Quit 15
 Dim MsgErrNoRun : MsgErrNoRun=""
 Dim cProc
 Dim oProc, cpuLoadOK, cpuLoad
-If Not TestCpuLoad() Then
+If testCPU And Not TestCpuLoad() Then
    MsgErrNoRun = "La charge cpu est trop élevée. Pas d'exécution de wpkg."
    nowpkg=true
    CodeSortie = 14
@@ -182,8 +183,14 @@ Else
 	Dest=oShell.ExpandEnvironmentStrings("%AllUsersProfile%") & "\Microsoft\Windows\Start Menu\Programs\Startup\"
 End If
 Dim TOOLTIPfile  : TOOLTIPfile = Dest & "tooltip.exe"
-	
-TooltipInit 'initialisation de la configuration du poste, si besoin.
+Dim tooltipActifs : tooltipActifs = true
+If InStr(GetTypeWin, "Server") > 0 Then
+	tooltipActifs = false ' ToolTip inactifs sur les Windows Server.
+End If
+
+If tooltipActifs Then
+	TooltipInit 'initialisation de la configuration du poste, si besoin.
+End If
 
 If MiseAJourClient() Then WScript.Quit ' Teste si un nouveau client est dispo sur le serveur
 
@@ -210,7 +217,9 @@ Dim oSysEnv
 WpkgSynchronize 'Exécute wpkg-se3.js pour synchroniser les applications
 EtatPoste  ' Détermine l'état des applis sur le poste et remonte l'info sur le serveur
 
-TooltipEnd ' ajout de FIN WPKG dans le fichier MSGfile.
+If tooltipActifs Then
+	TooltipEnd ' ajout de FIN WPKG dans le fichier MSGfile.
+End If
 
 ' ---------------- Déconnexion se3 --------------------
 RemoveNetwork
@@ -920,7 +929,8 @@ Function LireRegistre(cle)
       LireRegistre = bKey
    End If
    'On Error Goto 0
-   End Function
+End Function
+
 Function GetTypeWin()
    Dim TypeWin
    Dim ProductName, CurrentVersion, ServicePack, CurrentBuildNumber
@@ -939,21 +949,24 @@ Function GetTypeWin()
       If InStr(ServicePack, "Pack 1") Then 
          TypeWin = TypeWin & "sp1"
       End If
-   End If
-   If InStr(ProductName, "Windows 2000") > 0 Then
-      TypeWin = "win2k"
-      If InStr(ServicePack, "Pack 4") Then 
-         TypeWin = TypeWin & "sp4"
-      End If
-      If InStr(ServicePack, "Pack 3") Then 
-         TypeWin = TypeWin & "sp3"
-      End If
-      If InStr(ServicePack, "Pack 2") Then 
-         TypeWin = TypeWin & "sp2"
-      End If
-      If InStr(ServicePack, "Pack 1") Then 
-         TypeWin = TypeWin & "sp1"
-      End If
+	Else
+		If InStr(ProductName, "Windows 2000") > 0 Then
+		      TypeWin = "win2k"
+		      If InStr(ServicePack, "Pack 4") Then 
+		         TypeWin = TypeWin & "sp4"
+		      End If
+		      If InStr(ServicePack, "Pack 3") Then 
+		         TypeWin = TypeWin & "sp3"
+		      End If
+		      If InStr(ServicePack, "Pack 2") Then 
+		         TypeWin = TypeWin & "sp2"
+		      End If
+		      If InStr(ServicePack, "Pack 1") Then 
+		         TypeWin = TypeWin & "sp1"
+		      End If
+		Else
+			  TypeWin = ProductName
+		End If
    End If
    GetTypeWin = TypeWin
 End Function
