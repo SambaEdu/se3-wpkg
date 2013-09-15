@@ -1,3 +1,9 @@
+se3-wpkg (0.1-47) stable; urgency=low
+
+  * nouvelle version sans test CPU et sans tooltil pour les win server
+
+ -- root <root@DevilXen>  Mon, 16 Sep 2013 00:39:05 +0200
+
 se3-wpkg (0.1-46) stable; urgency=low
 
   * correction casse pstools et bug wsus
