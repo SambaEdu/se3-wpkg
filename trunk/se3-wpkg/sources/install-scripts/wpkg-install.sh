@@ -1593,10 +1593,6 @@ if [ ! -e "$WPKGDIR/packages.xml" ]; then
     cat - > $WPKGDIR/packages.xml <<PACKAGESXML
 <?xml version="1.0" encoding="iso-8859-1"?>
 <packages>
-    <package id="time" name="Mise a l'heure du poste" revision="1" reboot="false" priority="100" notify="false" execute="always">
-        <install cmd="net time \\\\$SE3 /set /yes"/>
-    </package>
-    
     <package id="7za" name="7-Zip en ligne de commande" revision="442" reboot="false" priority="10">
         <check  type="file" condition="exists" path="%WinDir%\\7za.exe"/>
         <download url="http://www.etab.ac-caen.fr/serveurmalherbe/tools/7za/7za.exe" saveto="wpkg/tools/7za.exe" md5sum="885e9eb42889ca547f4e3515dcde5d3d"/>
