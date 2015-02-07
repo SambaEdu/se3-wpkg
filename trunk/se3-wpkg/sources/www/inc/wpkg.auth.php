@@ -191,7 +191,7 @@ function get_fichierCP850($filename)
 			$handle = fopen ("$PathFichier", "r");
 			$contents = fread ($handle, filesize ($PathFichier));
 			fclose ($handle);
-			echo htmlspecialchars($contents);
+			echo htmlspecialchars($contents, ENT_COMPAT | ENT_HTML401, 'ISO-8859-1');
             //if ( readfile("$PathFichier") ) {
             // Conversion OEM -> ANSI déjà faite dans le script (plus de dépendance avec recode)
             //passthru ( "cat $PathFichier | recode CP850/CR-LF..819/CR-LF", $status);
