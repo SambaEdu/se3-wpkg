@@ -9,6 +9,16 @@
 #
 ## $Id$ ##
 #
+#  Modifie par : Jean-Remi Couturier
+#    mars 2015
+#    jean-remi.couturier@ac-clermont.fr
+#  Corrections apportees :
+#    Modification du test TESTFREESPACE
+#    Forcer wget a telecharger le fichier temoin "version.txt" sans passer par le proxy (pour ne pas recuperer la copie mise en cache)
+#    Ajout de l'installation du paquet xmlstarlet si absent du serveur (necessaire au fonctionnement de DownloadUpdates.sh)
+#    Mise a jour des droits sur les dossiers WPKG pour contourner un probleme d'acl non correctes apres le telechargement du xml de wsusoffline
+#    
+#
 
 
 # Mode debug "1" ou "0"
@@ -66,11 +76,20 @@ if [ $# -ne 0 ]; then
 fi
 
 TESTFREESPACE()
+#{
+#	# PART=`df | grep "/var/se3\$" | sed -e "s/ .*//"`
+#	# PART_SIZE=$(df -m $PARTROOT | awk  '/se3/ {print $4}')
+#	if [ "$PART_SIZE" -le 1000 ]; then
+#		echo "La partition /var/se3 a moins de 1 Go disponible, c'est insuffisant pour telecharger de nouvelles mises a jour.">$MAIL
+#		echo "Merci de liberer de l'espace sur cette partition. Des que cela sera effectue, les mises a jour reprendront automatiquement, tous les soirs.">>$MAIL
+#		SENDMAIL "ERREUR WSUSOFFLINE : Place insuffisante sur la partition /var/se3."
+#		exit 1
+#	fi
+#}
 {
-	PART=`df | grep "/var/se3\$" | sed -e "s/ .*//"`
-	PART_SIZE=$(df -m $PARTROOT | awk  '/se3/ {print $4}')
-	if [ "$PART_SIZE" -le 1000 ]; then
-		echo "La partition /var/se3 a moins de 1 Go disponible, c'est insuffisant pour telecharger de nouvelles mises a jour.">$MAIL
+	FREE_VARSE3=`df -m /var/se3/ | awk '/[0-9]%/{print $(NF-2)}'`
+	if [ "$FREE_VARSE3" -le 10000 ]; then
+		echo "La partition /var/se3 a moins de 10 Go disponible, c'est insuffisant pour telecharger de nouvelles mises a jour.">$MAIL
 		echo "Merci de liberer de l'espace sur cette partition. Des que cela sera effectue, les mises a jour reprendront automatiquement, tous les soirs.">>$MAIL
 		SENDMAIL "ERREUR WSUSOFFLINE : Place insuffisante sur la partition /var/se3."
 		exit 1
@@ -85,7 +104,7 @@ TESTFREESPACE
 WSUSOFFLINEROOT=http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages/files/wsusoffline
 TEMOIN=/var/se3/unattended/install/wsusoffline/version.txt
 NEWTEMOIN=/tmp/wsusofflineversion.txt
-wget -O $NEWTEMOIN $WSUSOFFLINEROOT/version.txt >/dev/null 2>&1
+wget -O $NEWTEMOIN $WSUSOFFLINEROOT/version.txt? >/dev/null 2>&1
 SIZEFILE=`ls -la $NEWTEMOIN | awk '{print $5}'` >/dev/null 2>&1
 if [ "$SIZEFILE" == "0" -o "$SIZEFILE" == "" ]; then
 	echo "Le telechargement de $WSUSOFFLINEROOT/version.txt a echoue. Le proxy est peut etre mal parametre sur le serveur">$MAIL
@@ -125,7 +144,7 @@ else
 			rm -f /var/se3/unattended/install/wsusoffline.zip
 			echo "Reglage des droits sur les fichiers wsusoffline.">>$MAIL
 			chmod -R ug+rwx /var/se3/unattended/install/wsusoffline >>$MAIL
-			chown -R admin:admins /var/se3/unattended/install/wsusoffline >>$MAIL
+			chown -R www-se3:admins /var/se3/unattended/install/wsusoffline >>$MAIL
 			SENDMAIL "Information : une nouvelle version de wsusoffline a ete telechargee automatiquement afin de proteger au mieux vos pc sous windows."
 			# tout a reussi, on remplace le fichier temoin
 			[ -e $TEMOIN ] && rm -f $TEMOIN
@@ -138,6 +157,27 @@ else
 	fi
 fi
 
+####### Mise a jour des droits sur les dossiers WPKG pour contourner un probleme d'acl non correctes apres le telechargement du xml de wsusoffline
+####### (repris depuis /var/cache/se3_install/wpkg-install.sh)
+# www-se3 a tous les droits sur /var/se3/unattended/install
+# C'est peut-etre trop. A voir...
+echo Mise a jour des droits sur les dossiers WPKG :
+ADMINSE3="adminse3"
+chown -R www-se3 /var/se3/unattended/install
+setfacl -R -m u:www-se3:rwx -m d:u:www-se3:rwx /var/se3/unattended/install
+setfacl -R -m u:$ADMINSE3:rwx -m d:u:$ADMINSE3:rwx /var/se3/unattended/install/wpkg/rapports
+setfacl -R -m u::rwx -m g::rx -m o::rx -m d:m:rwx -m d:u::rwx -m d:g::rx -m d:o::rx /var/se3/unattended/install
+echo OK
+
+####### Si necessaire, installation du paquet xmlstarlet (pour la validation et la modification des documents XML) necessaire au fonctionnement de wsusoffline
+echo Verification de la presence du paquet xmlstarlet :
+PKG_XMLSTARLET=$(dpkg-query -W --showformat='${Status}\n' xmlstarlet|grep "install ok installed")
+if [ "" == "$PKG_XMLSTARLET" ]; then
+  echo "Le paquet est absent. Installation du paquet...."
+  apt-get --force-yes --yes install xmlstarlet
+else
+  echo OK. Le paquet est present.
+fi 
 
 ####### Utilisation du fichier ini renseigné par l'admin et de DownloadUpdates.sh pour recuperer les mises a jour #########
 [ ! -e $PARAMS ] && "echo Fichier $PARAMS absent." && exit 0
@@ -152,10 +192,10 @@ do
 		PARAMETRE=`echo "$line" | cut -f1 -d "="`
 		VALEUR=`echo "$line" | cut -f2 -d "="`
 		if [ ! "`echo "$VALEUR" | grep "Enabled"`" == "" ]; then
-			#echo "OS=CORRESPONDANCE $SECTION $PARAMETRE"
+			echo "OS=CORRESPONDANCE $SECTION $PARAMETRE"
 			OS=`CORRESPONDANCE "$SECTION" "$PARAMETRE"`
 			[ "$OS" == "" ] && OS="OtherSection"
-			#echo "nom court de l'OS : $OS"
+			echo "nom court de l'OS : $OS"
 			# si l'os est office ou options ou autre micellianous : alors gerer le cas en evitant de passer des mauvais arguments.
 			if [ "$PARAMETRE" == "glb" ]; then
 				# glb : global ou fra a passer en parametre ?...
@@ -169,7 +209,7 @@ do
 				PROXY="/proxy http://$ipproxy"
 			fi
 			if [ ! "$OS" == "OtherSection" ]; then
-				#echo "Section ignoree : $SECTION."
+				echo "Section ignoree : $SECTION."
 			#else
 				echo "Dans la section $SECTION, un parametre est active : $PARAMETRE = $VALEUR"
 				echo "Telechargement des mises a jour pour l'OS $OS et la langue $LANG..."
@@ -191,7 +231,7 @@ if [ ! "$TEST" == "" ]; then
 	SENDMAIL "[Module se3-wpkg : telechargement des mises a jour microsoft par wsusoffline]"
 else
 	echo "Pas de nouvelle mise a jour telechargee. Pas d'envoi de mail a l'admin."
-	#[ -e $MAIL ] && rm -f $MAIL
+	[ -e $MAIL ] && rm -f $MAIL
 fi
 
 
