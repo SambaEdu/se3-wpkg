@@ -1,6 +1,9 @@
 #!/bin/bash
 #
 #### Installation et configuration de wpkg #####
+#
+# Sous licence GPL
+# Si vous reprenez ou vous inspirez de ce programme, vous devez citer le Projet Samba Edu
 # 
 #  Auteur : Jean Le Bail
 #
@@ -8,6 +11,14 @@
 #    jean.lebail@etab.ac-caen.fr
 #
 ## $Id$ ##
+#
+#    Modifie par : Jean-Remi Couturier - Academie de Clermont-Ferrand - avril 2015
+#    A partir du travail sur WsusOffline de Olivier Lacroix
+#
+#  Corrections apportees :
+#    Message d'information de l'installation automatique de WsusOffline a partir de 20h45.
+#    Ligne 1680 :
+#    Modification "chown -R www-se3 /var/se3/unattended/install" par "chown -R www-se3:admins /var/se3/unattended/install"
 #
 # Trucs et astuces.
 #    Pour installer le client wpkg sur un poste equipe de sshd, sans attendre le prochain login d'un utilisateur :
@@ -1633,11 +1644,24 @@ if [ -e $WPKGDIR/tools/schtasks2k.exe ]; then
    echo "Le fichier patche schtasks2k.exe qui a ete genere par l'admin est disponible."
 fi
 
-# Mise en place des droits sur $WPKGDIR
+# Message d'information de l'installation automatique de WsusOffline.
+echo ""
+echo "WsusOffline sera installe automatiquement a partir de 20h45."
+echo "Si l'installation echoue, vous serez averti par mail,"
+echo "et sans intervention de votre part, une nouvelle tentative aura lieu,"
+echo "des le lendemain a la meme heure."
+echo "Si l'installation se termine correctement,"
+echo "les mises a jour Microsoft a deployer sur les ordinateurs,"
+echo "seront telechargees automatiquement dans la foulee, sur le serveur."
+echo "Vous n'aurez plus qu'a selectionner les parcs sur lesquels"
+echo "vous souhaitez deployer les mises a jour Microsoft."
+
+echo ""
+echo "Mise en place des droits sur $WPKGDIR."
 setfacl -b -R $WPKGDIR
 # www-se3 a tous les droits sur /var/se3/unattended/install
 # C'est peut-etre trop. A voir...
-chown -R www-se3 /var/se3/unattended/install
+chown -R www-se3:admins /var/se3/unattended/install
 setfacl -R -m u:www-se3:rwx -m d:u:www-se3:rwx /var/se3/unattended/install
 setfacl -R -m u:$ADMINSE3:rwx -m d:u:$ADMINSE3:rwx /var/se3/unattended/install/wpkg/rapports
 setfacl -R -m u::rwx -m g::rx -m o::rx -m d:m:rwx -m d:u::rwx -m d:g::rx -m d:o::rx /var/se3/unattended/install
