@@ -14,14 +14,15 @@
 ## $Id$ ##
 #
 #  Modifie par : Jean-Remi Couturier - Academie de Clermont-Ferrand
-#    avril 2015
+#    juin 2015
 #    jean-remi.couturier@ac-clermont.fr
 #  Corrections apportees :
 #    Modification du test TESTFREESPACE - 10 Go minimum
 #       Test effectue sur /var/se3/unattended/install/wsusoffline/client,
 #       On peut ainsi copier le dossier /var/se3/unattended/install/wsusoffline/client sur un autre disque si on manque de place,
 #       Puis le monter en lieu et place de l'actuel /var/se3/unattended/install/wsusoffline/client.
-#    Ajout de l'installation, si absent du serveur, des paquets cabextract, md5deep, xmlstarlet et dos2unix alias tofrodos, necessaires au fonctionnement de DownloadUpdates.sh
+#    Si le xml a ete accidentellement ou volontairement supprime de WPKG :
+#       on supprime le fichier "/var/se3/unattended/install/wsusoffline/WsusOffline-Versions.txt", pour forcer la reinstallation complete
 #    Forcer wget a telecharger le fichier temoin "WsusOffline-Versions.txt" sans passer par le proxy (pour ne pas recuperer la copie mise en cache)
 #    Si le fichier tag "WsusOffline-Versions.txt" a change sur le svn, telechargement et/ou installation de la derniere version des fichiers :
 #       - wsusoffline.zip
@@ -47,6 +48,11 @@ DEBUG="1"
 WWWPATH="/var/www"
 ### version debian  ####
 script_charset="UTF8"
+
+### Declaration repertoire systemes  ####
+
+export PATH=$PATH:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
+
 
 # Recuperation des variables necessaires au script
 . /usr/share/se3/includes/config.inc.sh -ml
@@ -88,127 +94,11 @@ SENDMAIL()
 	echo "OBJET :"
 	echo "$OBJET"
 	mail root -s"$RNE - $se3ip - $se3_domain - $OBJET" < $MAIL
-	#rm -f $MAIL
 }
 
 if [ $# -ne 0 ]; then
 	echo "Script a executer sans argument."
 	exit 0
-fi
-
-# mise a jour du cache APT
-/usr/bin/apt-get update
-
-####### Si necessaire, installation du paquet cabextract necessaire au fonctionnement de wsusoffline
-echo "Verification de la presence du paquet cabextract :"
-PKG_CABEXTRACT=$(dpkg-query -W --showformat='${Status}\n' cabextract|grep "install ok installed")
-if [ "" == "$PKG_CABEXTRACT" ]; then
-	echo "Le paquet est absent. Installation du paquet...."
-	apt-get --force-yes --yes install cabextract >$MAIL 2>&1
-	if [ $? != 0 ]; then
-		echo "ERREUR : apt-get --force-yes --yes install cabextract" >>$MAIL
-		echo "" >>$MAIL
-		echo "Une nouvelle tentative d'installation sera executee automatiquement, des demain a partir de 20h45" >>$MAIL
-		echo "" >>$MAIL
-		echo "Pour tenter de corriger ce probleme, vous pouvez mettre a jour votre serveur, en console ssh, avec les commandes suivantes :" >>$MAIL
-		echo "apt-get update" >>$MAIL
-		echo "puis" >>$MAIL
-		echo "apt-get upgrade" >>$MAIL
-		echo "" >>$MAIL
-		echo "IMPORTANT : Si vous etes invite a configurer automatiquement le fichier smb.conf, veuillez repondre NON." >>$MAIL
-		echo "Puis, lorsque cela vous est propose, choisissez de garder votre version actuelle." >>$MAIL
-		echo "" >>$MAIL
-		SENDMAIL "WsusOffline ERREUR : Installation du paquet cabextract"
-		exit 1
-	else
-		echo "OK : Le paquet a ete installe."
-	fi
-else
-	echo "OK : Le paquet est present."
-fi
-
-####### Si necessaire, installation du paquet md5deep necessaire au fonctionnement de wsusoffline
-echo "Verification de la presence du paquet md5deep :"
-PKG_MD5DEEP=$(dpkg-query -W --showformat='${Status}\n' md5deep|grep "install ok installed")
-if [ "" == "$PKG_MD5DEEP" ]; then
-	echo "Le paquet est absent. Installation du paquet...."
-	apt-get --force-yes --yes install md5deep >$MAIL 2>&1
-	if [ $? != 0 ]; then
-		echo "ERREUR : apt-get --force-yes --yes install md5deep" >>$MAIL
-		echo "" >>$MAIL
-		echo "Une nouvelle tentative d'installation sera executee automatiquement, des demain a partir de 20h45" >>$MAIL
-		echo "" >>$MAIL
-		echo "Pour tenter de corriger ce probleme, vous pouvez mettre a jour votre serveur, en console ssh, avec les commandes suivantes :" >>$MAIL
-		echo "apt-get update" >>$MAIL
-		echo "puis" >>$MAIL
-		echo "apt-get upgrade" >>$MAIL
-		echo "" >>$MAIL
-		echo "IMPORTANT : Si vous etes invite a configurer automatiquement le fichier smb.conf, veuillez repondre NON." >>$MAIL
-		echo "Puis, lorsque cela vous est propose, choisissez de garder votre version actuelle." >>$MAIL
-		echo "" >>$MAIL
-		SENDMAIL "WsusOffline ERREUR : Installation du paquet md5deep"
-		exit 1
-	else
-		echo "OK : Le paquet a ete installe."
-	fi
-else
-	echo "OK : Le paquet est present."
-fi
-
-####### Si necessaire, installation du paquet xmlstarlet (pour la validation et la modification des documents XML) necessaire au fonctionnement de wsusoffline
-echo "Verification de la presence du paquet xmlstarlet :"
-PKG_XMLSTARLET=$(dpkg-query -W --showformat='${Status}\n' xmlstarlet|grep "install ok installed")
-if [ "" == "$PKG_XMLSTARLET" ]; then
-	echo "Le paquet est absent. Installation du paquet...."
-	apt-get --force-yes --yes install xmlstarlet >$MAIL 2>&1
-	if [ $? != 0 ]; then
-		echo "ERREUR : apt-get --force-yes --yes install xmlstarlet" >>$MAIL
-		echo "" >>$MAIL
-		echo "Une nouvelle tentative d'installation sera executee automatiquement, des demain a partir de 20h45" >>$MAIL
-		echo "" >>$MAIL
-		echo "Pour tenter de corriger ce probleme, vous pouvez mettre a jour votre serveur, en console ssh, avec les commandes suivantes :" >>$MAIL
-		echo "apt-get update" >>$MAIL
-		echo "puis" >>$MAIL
-		echo "apt-get upgrade" >>$MAIL
-		echo "" >>$MAIL
-		echo "IMPORTANT : Si vous etes invite a configurer automatiquement le fichier smb.conf, veuillez repondre NON." >>$MAIL
-		echo "Puis, lorsque cela vous est propose, choisissez de garder votre version actuelle." >>$MAIL
-		echo "" >>$MAIL
-		SENDMAIL "WsusOffline ERREUR : Installation du paquet xmlstarlet"
-		exit 1
-	else
-		echo "OK : Le paquet a ete installe."
-	fi
-else
-	echo "OK : Le paquet est present."
-fi
-
-####### Si necessaire, installation du paquet dos2unix alias tofrodos necessaire au fonctionnement de wsusoffline
-echo "Verification de la presence du paquet dos2unix alias tofrodos :"
-PKG_TOFRODOS=$(dpkg-query -W --showformat='${Status}\n' tofrodos|grep "install ok installed")
-if [ "" == "$PKG_TOFRODOS" ]; then
-	echo "Le paquet est absent. Installation du paquet...."
-	apt-get --force-yes --yes install tofrodos >$MAIL 2>&1
-	if [ $? != 0 ]; then
-		echo "ERREUR : apt-get --force-yes --yes install tofrodos" >>$MAIL
-		echo "" >>$MAIL
-		echo "Une nouvelle tentative d'installation sera executee automatiquement, des demain a partir de 20h45" >>$MAIL
-		echo "" >>$MAIL
-		echo "Pour tenter de corriger ce probleme, vous pouvez mettre a jour votre serveur, en console ssh, avec les commandes suivantes :" >>$MAIL
-		echo "apt-get update" >>$MAIL
-		echo "puis" >>$MAIL
-		echo "apt-get upgrade" >>$MAIL
-		echo "" >>$MAIL
-		echo "IMPORTANT : Si vous etes invite a configurer automatiquement le fichier smb.conf, veuillez repondre NON." >>$MAIL
-		echo "Puis, lorsque cela vous est propose, choisissez de garder votre version actuelle." >>$MAIL
-		echo "" >>$MAIL
-		SENDMAIL "WsusOffline ERREUR : Installation du paquet tofrodos"
-		exit 1
-	else
-		echo "OK : Le paquet a ete installe."
-	fi
-else
-	echo "OK : Le paquet est present."
 fi
 
 TESTFREESPACE()
@@ -238,9 +128,24 @@ TESTFREESPACE
 
 ########### Suppression de l'ancien fichier temoin "version.txt" ###########
 [ -e /var/se3/unattended/install/wsusoffline/version.txt ] && rm -f /var/se3/unattended/install/wsusoffline/version.txt
+[ -e /var/se3/unattended/install/wsusoffline/Version.txt ] && rm -f /var/se3/unattended/install/wsusoffline/Version.txt
  
 ########### telechargement de la derniere version des fichiers si le fichier tag "WsusOffline-Versions.txt" a change sur le svn. ##########
 [ -e /var/se3/unattended/install/wsusoffline.zip ] && rm -f /var/se3/unattended/install/wsusoffline.zip
+
+########### Si le xml a ete accidentellement ou volontairement supprime de WPKG ##########
+########### On supprime le fichier "/var/se3/unattended/install/wsusoffline/WsusOffline-Versions.txt", pour forcer la reinstallation complete ##########
+cat /var/se3/unattended/install/wpkg/packages.xml | grep wsusoffline >/dev/null
+if [ $? != 0 ]; then
+	echo "" >$MAIL
+	echo "ERREUR : Le xml de wsusoffline est absent de WPKG" >>$MAIL
+	echo "" >>$MAIL
+	echo "  On supprime le fichier temoin /var/se3/unattended/install/wsusoffline/WsusOffline-Versions.txt pour forcer la reinstallation complete" >>$MAIL
+	rm -f /var/se3/unattended/install/wsusoffline/WsusOffline-Versions.txt >/dev/null 2>&1
+	SENDMAIL "WsusOffline : Reinstallation du xml qui est absent de WPKG."
+else
+	echo ""
+fi
 
 WSUSOFFLINEROOT=http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages/files/wsusoffline
 TEMOIN=/var/se3/unattended/install/wsusoffline/WsusOffline-Versions.txt
@@ -264,10 +169,9 @@ fi
 if [ "$TESTTEMOIN" == "$TESTNEWTEMOIN" ]; then
 	echo "La version de wsusoffline presente est identique a celle du svn."
 else
-	echo "Une nouvelle version de wsusoffline est disponible sur le svn.... Veuillez patienter."
-	echo "Sauf 'ERREUR' signalee dans l'objet, ce mail est envoye a titre d'information, et dans ce cas, aucune action de votre part n'est necessaire." >$MAIL
+	echo "Une mise a jour de wsusoffline est disponible sur le svn.... Veuillez patienter." >$MAIL
 	echo "" >>$MAIL
-	echo "Une nouvelle version de wsusoffline est disponible sur le svn." >>$MAIL
+	echo "Sauf 'ERREUR' signalee dans l'objet, ce mail est envoye a titre d'information, et dans ce cas, aucune action de votre part est necessaire." >$MAIL
 	echo "" >>$MAIL
 	echo "Debut de la mise a jour :" >>$MAIL
 	echo "" >>$MAIL
@@ -285,7 +189,7 @@ else
 		echo "Tentative de decompression vers /var/se3/unattended/install/wsusoffline" >>$MAIL
 		if ( ! unzip -o /var/se3/unattended/install/wsusoffline.zip -d /var/se3/unattended/install/ 2>>$MAIL 1>/dev/null ) ; then
 			echo "" >>$MAIL
-			echo "ERREUR : unzip -o /var/se3/unattended/install/wsusoffline.zip" >>$MAIL
+			echo "ERREUR : /usr/bin/unzip -o /var/se3/unattended/install/wsusoffline.zip" >>$MAIL
 			echo "" >>$MAIL
 			echo "Sans intervention de votre part, une nouvelle tentative sera executee des demain a partir de 20h45" >>$MAIL
 			SENDMAIL "WsusOffline ERREUR : une nouvelle version de wsusoffline est disponible mais la decompression du fichier wsusoffline.zip a echoue."
@@ -333,7 +237,7 @@ else
 	if [ ! -d /var/se3/unattended/install/packages/wsusoffline ] ; then
 		echo "" >>$MAIL
 		echo "Creation du dossier /var/se3/unattended/install/packages/wsusoffline :" >>$MAIL
-		mkdir /var/se3/unattended/install/packages/wsusoffline >>$MAIL 2>&1
+		mkdir -p /var/se3/unattended/install/packages/wsusoffline >>$MAIL 2>&1
 		if [ ! -d /var/se3/unattended/install/packages/wsusoffline ] ; then
 			echo "" >>$MAIL
 			echo "ERREUR : Le dossier n'a pas pu etre cree." >>$MAIL
@@ -526,7 +430,6 @@ else
 	if [ ! "$SIZEFILE" == "0" ]; then
 		echo "" >>$MAIL
 		echo "OK : Telechargement du raccourci sur le bureau des admins permettant de modifier les maj deployees" >>$MAIL
-		# SENDMAIL "WsusOffline : Les sources du programme wpkg-message ont ete telecharges."
 		chown admin:admins "/home/templates/admins/Bureau/WsusOffline modifier les Maj Microsoft deployees.lnk" >>$MAIL
 		chmod 770 "/home/templates/admins/Bureau/WsusOffline modifier les Maj Microsoft deployees.lnk" >>$MAIL
 	else
@@ -584,7 +487,7 @@ else
 	if [ ! -d /var/se3/unattended/install/wpkg/rapports/wsusoffline ] ; then
 		echo "" >>$MAIL
 		echo "Creation du dossier des rapports de wsusoffline dans /var/se3/unattended/install/wpkg/rapports/wsusoffline :" >>$MAIL
-		mkdir /var/se3/unattended/install/wpkg/rapports/wsusoffline >>$MAIL 2>&1
+		mkdir -p /var/se3/unattended/install/wpkg/rapports/wsusoffline >>$MAIL 2>&1
 		if [ ! -d /var/se3/unattended/install/wpkg/rapports/wsusoffline ] ; then
 			echo "" >>$MAIL
 			echo "ERREUR : Le dossier n'a pas pu etre cree." >>$MAIL
@@ -601,7 +504,7 @@ else
 	[ -e $TEMOIN ] && rm -f $TEMOIN
 	mv $NEWTEMOIN $TEMOIN
 	VersionWsusOffline=`cat /var/se3/unattended/install/wsusoffline/client/cmd/DoUpdate.cmd | grep WSUSOFFLINE_VERSION= | cut -d \= -f2`
-	SENDMAIL "WsusOffline : Mise a jour $VersionWsusOffline telechargee automatiquement."
+	SENDMAIL "WsusOffline : Mise a jour version $VersionWsusOffline telechargee automatiquement."
 fi
 
 ####### Mise a jour des droits sur les dossiers WPKG pour contourner un probleme d'acl non correctes apres le telechargement du xml de wsusoffline
@@ -668,9 +571,12 @@ TEST=`cat $MAIL | grep "successfully downloaded"`
 if [ ! "$TEST" == "" ]; then
 	VersionWsusOffline=`cat /var/se3/unattended/install/wsusoffline/client/cmd/DoUpdate.cmd | grep WSUSOFFLINE_VERSION= | cut -d \= -f2`
 	TailleDossierMaj=`du -sh /var/se3/unattended/install/wsusoffline | cut -d/ -f1`
-	SENDMAIL "WsusOffline $VersionWsusOffline : Maj telechargees. Taille du dossier des Maj : $TailleDossierMaj."
+	echo "$PATH" >>$MAIL
+	SENDMAIL "WsusOffline $VersionWsusOffline : Nouvelles Maj Microsoft telechargees. Taille du dossier des Maj : $TailleDossierMaj."
 else
-	echo "Pas de nouvelles mises a jour telechargees. Pas d'envoi de mail a l'admin."
+	#echo "Pas de nouvelles mises a jour telechargees. Pas d'envoi de mail a l'admin."
+	echo "$PATH" >>$MAIL
+	SENDMAIL "WsusOffline $VersionWsusOffline : Pas de nouvelles Maj Microsoft telechargees."
 	[ -e $MAIL ] && rm -f $MAIL
 fi
 
