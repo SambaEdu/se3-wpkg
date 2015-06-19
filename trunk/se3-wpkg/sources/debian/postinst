@@ -87,7 +87,7 @@ case "$1" in
 	
 	RAPPORTDIR="/var/se3/unattended/install/wpkg/rapports"
 	if [ -e "$RAPPORTDIR" ];then
-	  find $RAPPORTDIR/ -mtime +365 -delete 2> /dev/null
+	  find $RAPPORTDIR/ -maxdepth 1 -mtime +365 -delete 2>/dev/null
 	fi
 	;;
 
