@@ -1537,7 +1537,7 @@ if [ ! -e "/var/remote_adm/.ssh/id_rsa.pub" ]; then
    cd -
 fi
 # Contrôle (et creation si besoin) d'une cle ssh pour l'utilisateur root
-if [ ! -e "/root/.ssh/id_rsa.pub" ]; then
+if [ ! -e "/root/.ssh/id_rsa" ]; then
    if [ ! -d "/root/.ssh" ] ; then
       mkdir -p "/var/remote_adm/.ssh"
    fi
