@@ -61,33 +61,10 @@ case "$1" in
 		echo "INSERT into params (name,value,srv_id,descr,cat) VALUES (\"wpkg\",\"1\",\"\",\"Activation ou désactivation de wpkg\",6) " | mysql -h $dbhost $dbname -u $dbuser -p$dbpass -N
 	fi
 	
-	###### Ajout des scripts wsusoffline ####
-	if [ ! -e /var/se3/unattended/install/wsusoffline ] ; then
-		echo "Telechargement des scripts wsusoffline"
-		WSUSOFFLINEROOT=http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages/files/wsusoffline
-		wget $WSUSOFFLINEROOT/wsusoffline.zip -O /var/se3/unattended/install/wsusoffline.zip >/dev/null
-		# unzip est present car installe par se3-wpkg
-		if [ -e /var/se3/unattended/install/wsusoffline.zip ]; then
-			if ( ! unzip -o /var/se3/unattended/install/wsusoffline.zip -d /var/se3/unattended/install/ >/dev/null ) ; then
-				echo "Erreur unzip -o /var/se3/unattended/install/wsusoffline.zip"
-			else
-				# mise en place initiale du fichier temoin
-				echo "Mise en place initiale du fichier temoin."
-				TEMOIN=/var/se3/unattended/install/wsusoffline/WsusOffline-Versions.txt
-				wget -o $TEMOIN $WSUSOFFLINEROOT/WsusOffline-Versions.txt >/dev/null
-				echo "Reglage des droits sur les fichiers wsusoffline."
-				chmod -R ug+rwx /var/se3/unattended/install/wsusoffline
-				chown -R admin:admins /var/se3/unattended/install/wsusoffline
-			fi
-			rm -f /var/se3/unattended/install/wsusoffline.zip
-		else
-			echo "Fichier wsusoffline.zip absent : le telechargement a echoue."
-		fi
-	fi
-	
-	RAPPORTDIR="/var/se3/unattended/install/wpkg/rapports"
-	if [ -e "$RAPPORTDIR" ];then
-	  find $RAPPORTDIR/ -maxdepth 1 -mtime +365 -delete 2>/dev/null
+	##### Suppression des rapports vieux de plus de 1 an
+	RAPPORTSWPKG="/var/se3/unattended/install/wpkg/rapports"
+	if [ -e "$RAPPORTSWPKG" ];then
+	  find $RAPPORTSWPKG/ -maxdepth 1 -mtime +365 -delete 2>/dev/null
 	fi
 	;;
 
