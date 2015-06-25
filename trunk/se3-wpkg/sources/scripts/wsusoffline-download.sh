@@ -16,28 +16,29 @@
 #  Modifie par : Jean-Remi Couturier - Academie de Clermont-Ferrand
 #    juin 2015
 #    jean-remi.couturier@ac-clermont.fr
-#  Corrections apportees :
-#    Modification du test TESTFREESPACE - 10 Go minimum
-#       Test effectue sur /var/se3/unattended/install/wsusoffline/client,
-#       On peut ainsi copier le dossier /var/se3/unattended/install/wsusoffline/client sur un autre disque si on manque de place,
-#       Puis le monter en lieu et place de l'actuel /var/se3/unattended/install/wsusoffline/client.
-#    Si le xml a ete accidentellement ou volontairement supprime de WPKG :
-#       on supprime le fichier "/var/se3/unattended/install/wsusoffline/WsusOffline-Versions.txt", pour forcer la reinstallation complete
-#    Forcer wget a telecharger le fichier temoin "WsusOffline-Versions.txt" sans passer par le proxy (pour ne pas recuperer la copie mise en cache)
-#    Si le fichier tag "WsusOffline-Versions.txt" a change sur le svn, telechargement et/ou installation de la derniere version des fichiers :
-#       - wsusoffline.zip
-#       - UpdateGenerator.ini
-#       - default.txt
-#       - install.cmd
-#       - offlineupdate.cmd
-#       - cmd64.exe
-#       - wpkgMessage.exe
-#       - wpkgMessage.ini
-#       - wpkg-message.zip
-#       - WsusOffline modifier les Maj Microsoft deployees.lnk
-#       - Installation de la derniere version stable du xml (sans ajout ou modification des associations avec des parcs)
-#    Si l'installation echoue, envoi d'un mail a l'admin, et sans intervention, une nouvelle tentative d'installation a lieu des le lendemain a 20h45.
-#    Mise a jour des droits sur les dossiers WPKG pour contourner un probleme d'acl non correctes apres le telechargement du xml de wsusoffline
+#    Corrections apportees :
+#       Modification du test TESTFREESPACE - 10 Go minimum
+#          Test effectue sur /var/se3/unattended/install/wsusoffline/client,
+#          On peut ainsi copier le dossier /var/se3/unattended/install/wsusoffline/client sur un autre disque si on manque de place,
+#          Puis le monter en lieu et place de l'actuel /var/se3/unattended/install/wsusoffline/client.
+#       Si le xml a ete accidentellement ou volontairement supprime de WPKG :
+#          on supprime le fichier "/var/se3/unattended/install/wsusoffline/WsusOffline-Versions.txt", pour forcer la reinstallation complete
+#       Forcer wget a telecharger le fichier temoin "WsusOffline-Versions.txt" sans passer par le proxy (pour ne pas recuperer la copie mise en cache)
+#       Si le fichier tag "WsusOffline-Versions.txt" a change sur le svn, telechargement et/ou installation de la derniere version des fichiers :
+#          - wsusoffline.zip
+#          - UpdateGenerator.ini
+#          - default.txt
+#          - install.cmd
+#          - offlineupdate.cmd
+#          - cmd64.exe
+#          - wpkgMessage.exe
+#          - wpkgMessage.ini
+#          - wpkg-message.zip
+#          - WsusOffline modifier les Maj Microsoft deployees.lnk
+#          - Installation de la derniere version stable du xml (sans ajout ou modification des associations avec des parcs)
+#       Si l'installation echoue, envoi d'un mail a l'admin, et sans intervention, une nouvelle tentative d'installation a lieu des le lendemain a 20h45.
+#       Mise a jour des droits sur les dossiers WPKG pour contourner un probleme d'acl non correctes apres le telechargement du xml de wsusoffline
+#       Suppression des rapports de plus de 1 an
 #    
 
 
@@ -61,8 +62,6 @@ RNE=`/usr/share/se3/includes/config.inc.sh -mlv | grep ldap_base_dn | cut -d\= -
 # parametre proxy a trouver dans se3db : pas trouve a part avec le .pac
 ipproxy=$(grep "http_proxy=" /etc/profile | head -n 1 | sed -e "s#.*//##;s/\"//")
 # ipproxy=$(/usr/share/se3/includes/config.inc.sh -cv | grep "proxy_url" | cut -d"/" -f3 | grep -v "proxy_url")
-
-PARAMS=/var/se3/unattended/install/wsusoffline/UpdateGenerator.ini
 
 CORRESPONDANCE()
 {
@@ -143,8 +142,6 @@ if [ $? != 0 ]; then
 	echo "  On supprime le fichier temoin /var/se3/unattended/install/wsusoffline/WsusOffline-Versions.txt pour forcer la reinstallation complete" >>$MAIL
 	rm -f /var/se3/unattended/install/wsusoffline/WsusOffline-Versions.txt >/dev/null 2>&1
 	SENDMAIL "WsusOffline : Reinstallation du xml qui est absent de WPKG."
-else
-	echo ""
 fi
 
 WSUSOFFLINEROOT=http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages/files/wsusoffline
@@ -470,7 +467,7 @@ else
 	chown www-se3:admins /var/se3/unattended/install/wpkg/tmp/wsusoffline.xml >>$MAIL 2>&1
 	chmod 775 /var/se3/unattended/install/wpkg/tmp/wsusoffline.xml >>$MAIL 2>&1
 	echo "" >>$MAIL
-	echo "Installation du xml de wsusoffline dans WPKG sans association avec des parcs :" >>$MAIL
+	echo "Installation du xml de wsusoffline dans WPKG sans modification des associations avec les parcs :" >>$MAIL
 	/var/www/se3/wpkg/bin/installPackage.sh /var/se3/unattended/install/wpkg/tmp/wsusoffline.xml 0 admin 0 1 >>$MAIL 2>&1
 	if [ $? != 0 ]; then
 		echo "" >>$MAIL
@@ -481,8 +478,8 @@ else
 	else
 		echo "" >>$MAIL
 		echo "OK : Installation du xml de wsusoffline." >>$MAIL
-		echo ""
-		echo "Si cela n'est pas deja fait, depuis l'interface de WPKG, veuillez selectionner les parcs sur lesquels vous souhaitez deployer les mises a jour Microsoft."
+		echo "" >>$MAIL
+		echo "Si cela n'est pas deja fait, depuis l'interface de WPKG, veuillez selectionner les parcs sur lesquels vous souhaitez deployer les mises a jour Microsoft." >>$MAIL
 	fi
 	if [ ! -d /var/se3/unattended/install/wpkg/rapports/wsusoffline ] ; then
 		echo "" >>$MAIL
@@ -511,71 +508,115 @@ fi
 ####### (repris depuis /var/cache/se3_install/wpkg-install.sh)
 # www-se3 a tous les droits sur /var/se3/unattended/install
 # C'est peut-etre trop. A voir...
-echo Mise a jour des droits sur les dossiers WPKG :
+echo ""
+echo "Mise a jour des droits sur les dossiers WPKG :"
 ADMINSE3="adminse3"
 chown -R www-se3:admins /var/se3/unattended/install
 setfacl -R -m u:www-se3:rwx -m d:u:www-se3:rwx /var/se3/unattended/install
 setfacl -R -m u:$ADMINSE3:rwx -m d:u:$ADMINSE3:rwx /var/se3/unattended/install/wpkg/rapports
 setfacl -R -m u::rwx -m g::rx -m o::rx -m d:m:rwx -m d:u::rwx -m d:g::rx -m d:o::rx /var/se3/unattended/install
-echo OK
+echo "OK"
 
+####### Suppression des rapports vieux de plus de 1 an #########
+RAPPORTSWSUS=/var/se3/unattended/install/wpkg/rapports/wsusoffline
+if [ -e "$RAPPORTSWSUS" ];then
+	echo ""
+	echo "Suppression des rapports vieux de plus de 1 an :"
+	find $RAPPORTSWSUS/ -maxdepth 1 -mtime +365 -delete 2>/dev/null
+	echo "OK"
+fi
 
 ####### Utilisation du fichier UpdateGenerator.ini et de DownloadUpdates.sh pour recuperer les mises a jour #########
-[ ! -e $PARAMS ] && "echo Fichier $PARAMS absent." && exit 0
-echo "Analyse du fichier $PARAMS."
-
 echo "Debut du telechargement des mises a jour microsoft : $date." >$MAIL
-
-cat $PARAMS | while read line
-do
-	if [ "`echo $line | grep -E "^\[" | grep -E "\]"`" == "" ]; then
-		#[ "$DEBUG" == "1" ] && echo "Ce n'est pas le debut d'une section : $line"
-		PARAMETRE=`echo "$line" | cut -f1 -d "="`
-		VALEUR=`echo "$line" | cut -f2 -d "="`
-		if [ ! "`echo "$VALEUR" | grep "Enabled"`" == "" ]; then
-			echo "OS=CORRESPONDANCE $SECTION $PARAMETRE"
-			OS=`CORRESPONDANCE "$SECTION" "$PARAMETRE"`
-			[ "$OS" == "" ] && OS="OtherSection"
-			echo "nom court de l'OS : $OS"
-			# si l'os est office ou options ou autre micellianous : alors gerer le cas en evitant de passer des mauvais arguments.
-			if [ "$PARAMETRE" == "glb" ]; then
-				# glb : global ou fra a passer en parametre ?...
-				LANG="fra"
-			else
-				LANG=$PARAMETRE
-			fi
-			if [ "$ipproxy" == "" ]; then
-				PROXY=""
-			else
-				PROXY="/proxy http://$ipproxy"
-			fi
-			if [ ! "$OS" == "OtherSection" ]; then
-				echo "Section ignoree : $SECTION."
-			#else
-				echo "Dans la section $SECTION, un parametre est active : $PARAMETRE = $VALEUR"
-				echo "Telechargement des mises a jour pour l'OS $OS et la langue $LANG..."
-				echo "/var/se3/unattended/install/wsusoffline/sh/DownloadUpdates.sh $OS $LANG /msse $PROXY" >>$MAIL
-				TESTFREESPACE
-				/var/se3/unattended/install/wsusoffline/sh/DownloadUpdates.sh $OS $LANG /msse $PROXY >>$MAIL 2>&1
-			fi
-		fi
+if [ ! -e /var/se3/unattended/install/wsusoffline/sh/DownloadUpdates.sh ]; then
+	echo "" >>$MAIL
+	echo "ERREUR : /var/se3/unattended/install/wsusoffline/sh/DownloadUpdates.sh est absent" >>$MAIL
+	echo "" >>$MAIL
+	echo "WsusOffline sera entierement re-telecharge des demain a partir de 20h45" >>$MAIL
+	echo "" >>$MAIL
+	echo "Pour forcer cette action, on supprime le fichier temoin : WsusOffline-Versions.txt" >>$MAIL
+	echo "" >>$MAIL
+	rm -fv /var/se3/unattended/install/wsusoffline/WsusOffline-Versions.txt >>$MAIL 
+	SENDMAIL "WsusOffline ERREUR : Le script DownloadUpdates.sh est absent." 
+	exit 1
+fi
+	
+PARAMS=/var/se3/unattended/install/wsusoffline/UpdateGenerator.ini
+if [ ! -e $PARAMS ]; then
+	echo "" >>$MAIL
+	echo "Telechargement du fichier de configuration UpdateGenerator.ini :" >>$MAIL
+	wget $WSUSOFFLINEROOT/UpdateGenerator.ini? -O /var/se3/unattended/install/wsusoffline/UpdateGenerator.ini >>$MAIL 2>&1
+	if [ -e /var/se3/unattended/install/wsusoffline/UpdateGenerator.ini ]; then
+		SIZEFILE=`ls -la /var/se3/unattended/install/wsusoffline/UpdateGenerator.ini | awk '{print $5}'`
 	else
-		#[ "$DEBUG" == "1" ] && echo "C'est le debut d'une section : $line"
-		SECTION=`echo "$line" | cut -f2 -d "[" | cut -f1 -d "]"`
-		#[ "$DEBUG" == "1" ] && echo "Section : $SECTION"
+		SIZEFILE="0"
 	fi
-done
+	# echo "SIZEFILE=$SIZEFILE"
+	if [ ! "$SIZEFILE" == "0" ]; then
+		echo "" >>$MAIL
+		echo "OK : Telechargement de UpdateGenerator.ini" >>$MAIL
+		rm -f /var/se3/unattended/install/UpdateGenerator.ini
+		# SENDMAIL "WsusOffline : Une nouvelle version du fichier de configuration UpdateGenerator.ini a ete telechargee." 
+	else
+		echo "" >>$MAIL
+		echo "ERREUR : Telechargement du fichier UpdateGenerator.ini" >>$MAIL
+		echo "" >>$MAIL
+		echo "Sans intervention de votre part, une nouvelle tentative sera executee des demain a partir de 20h45" >>$MAIL
+		SENDMAIL "WsusOffline ERREUR : La nouvelle version du fichier de configuration UpdateGenerator.ini n'a pas pu etre telechargee." 
+		exit 1
+	fi
+else
+	echo ""
+	echo "Analyse du fichier $PARAMS :"
+	cat $PARAMS | while read line
+	do
+		if [ "`echo $line | grep -E "^\[" | grep -E "\]"`" == "" ]; then
+			#[ "$DEBUG" == "1" ] && echo "Ce n'est pas le debut d'une section : $line"
+			PARAMETRE=`echo "$line" | cut -f1 -d "="`
+			VALEUR=`echo "$line" | cut -f2 -d "="`
+			if [ ! "`echo "$VALEUR" | grep "Enabled"`" == "" ]; then
+				echo "OS=CORRESPONDANCE $SECTION $PARAMETRE"
+				OS=`CORRESPONDANCE "$SECTION" "$PARAMETRE"`
+				[ "$OS" == "" ] && OS="OtherSection"
+				echo "nom court de l'OS : $OS"
+				# si l'os est office ou options ou autre micellianous : alors gerer le cas en evitant de passer des mauvais arguments.
+				if [ "$PARAMETRE" == "glb" ]; then
+					# glb : global ou fra a passer en parametre ?...
+					LANG="fra"
+				else
+					LANG=$PARAMETRE
+				fi
+				if [ "$ipproxy" == "" ]; then
+					PROXY=""
+				else
+					PROXY="/proxy http://$ipproxy"
+				fi
+				if [ ! "$OS" == "OtherSection" ]; then
+					echo "Section ignoree : $SECTION."
+				#else
+					echo "Dans la section $SECTION, un parametre est active : $PARAMETRE = $VALEUR"
+					echo "Telechargement des mises a jour pour l'OS $OS et la langue $LANG..."
+					echo "/var/se3/unattended/install/wsusoffline/sh/DownloadUpdates.sh $OS $LANG /msse $PROXY" >>$MAIL
+					TESTFREESPACE
+					/var/se3/unattended/install/wsusoffline/sh/DownloadUpdates.sh $OS $LANG /msse $PROXY >>$MAIL 2>&1
+				fi
+			fi
+		else
+			#[ "$DEBUG" == "1" ] && echo "C'est le debut d'une section : $line"
+			SECTION=`echo "$line" | cut -f2 -d "[" | cut -f1 -d "]"`
+			#[ "$DEBUG" == "1" ] && echo "Section : $SECTION"
+		fi
+	done
+fi
 
 # Envoi d'un mail a l'admin en cas de nouvelles mises a jour trouvees.
 TEST=`cat $MAIL | grep "successfully downloaded"`
 if [ ! "$TEST" == "" ]; then
 	VersionWsusOffline=`cat /var/se3/unattended/install/wsusoffline/client/cmd/DoUpdate.cmd | grep WSUSOFFLINE_VERSION= | cut -d \= -f2`
 	TailleDossierMaj=`du -sh /var/se3/unattended/install/wsusoffline | cut -d/ -f1`
-	echo "$PATH" >>$MAIL
 	SENDMAIL "WsusOffline $VersionWsusOffline : Nouvelles Maj Microsoft telechargees. Taille du dossier des Maj : $TailleDossierMaj."
 else
 	#echo "Pas de nouvelles mises a jour telechargees. Pas d'envoi de mail a l'admin."
-	echo "$PATH" >>$MAIL
 	SENDMAIL "WsusOffline $VersionWsusOffline : Pas de nouvelles Maj Microsoft telechargees."
 	[ -e $MAIL ] && rm -f $MAIL
 fi
