@@ -527,9 +527,8 @@ if [ -e "$RAPPORTSWSUS" ];then
 fi
 
 ####### Utilisation du fichier UpdateGenerator.ini et de DownloadUpdates.sh pour recuperer les mises a jour #########
-echo "Debut du telechargement des mises a jour microsoft : $date." >$MAIL
 if [ ! -e /var/se3/unattended/install/wsusoffline/sh/DownloadUpdates.sh ]; then
-	echo "" >>$MAIL
+	echo "" >$MAIL
 	echo "ERREUR : /var/se3/unattended/install/wsusoffline/sh/DownloadUpdates.sh est absent" >>$MAIL
 	echo "" >>$MAIL
 	echo "WsusOffline sera entierement re-telecharge des demain a partir de 20h45" >>$MAIL
@@ -543,8 +542,11 @@ fi
 	
 PARAMS=/var/se3/unattended/install/wsusoffline/UpdateGenerator.ini
 if [ ! -e $PARAMS ]; then
+	echo "" >$MAIL
+	echo "ERREUR : /var/se3/unattended/install/wsusoffline/UpdateGenerator.ini est absent" >>$MAIL
 	echo "" >>$MAIL
-	echo "Telechargement du fichier de configuration UpdateGenerator.ini :" >>$MAIL
+	echo "Il va etre re-telecharge :" >>$MAIL
+	echo "" >>$MAIL
 	wget $WSUSOFFLINEROOT/UpdateGenerator.ini? -O /var/se3/unattended/install/wsusoffline/UpdateGenerator.ini >>$MAIL 2>&1
 	if [ -e /var/se3/unattended/install/wsusoffline/UpdateGenerator.ini ]; then
 		SIZEFILE=`ls -la /var/se3/unattended/install/wsusoffline/UpdateGenerator.ini | awk '{print $5}'`
@@ -554,9 +556,9 @@ if [ ! -e $PARAMS ]; then
 	# echo "SIZEFILE=$SIZEFILE"
 	if [ ! "$SIZEFILE" == "0" ]; then
 		echo "" >>$MAIL
-		echo "OK : Telechargement de UpdateGenerator.ini" >>$MAIL
+		echo "OK : Le telechargement du fichier a reussi." >>$MAIL
 		rm -f /var/se3/unattended/install/UpdateGenerator.ini
-		# SENDMAIL "WsusOffline : Une nouvelle version du fichier de configuration UpdateGenerator.ini a ete telechargee." 
+		SENDMAIL "WsusOffline : Une nouvelle version du fichier de configuration UpdateGenerator.ini a ete telechargee." 
 	else
 		echo "" >>$MAIL
 		echo "ERREUR : Telechargement du fichier UpdateGenerator.ini" >>$MAIL
@@ -565,61 +567,60 @@ if [ ! -e $PARAMS ]; then
 		SENDMAIL "WsusOffline ERREUR : La nouvelle version du fichier de configuration UpdateGenerator.ini n'a pas pu etre telechargee." 
 		exit 1
 	fi
-else
-	echo ""
-	echo "Analyse du fichier $PARAMS :"
-	cat $PARAMS | while read line
-	do
-		if [ "`echo $line | grep -E "^\[" | grep -E "\]"`" == "" ]; then
-			#[ "$DEBUG" == "1" ] && echo "Ce n'est pas le debut d'une section : $line"
-			PARAMETRE=`echo "$line" | cut -f1 -d "="`
-			VALEUR=`echo "$line" | cut -f2 -d "="`
-			if [ ! "`echo "$VALEUR" | grep "Enabled"`" == "" ]; then
-				echo "OS=CORRESPONDANCE $SECTION $PARAMETRE"
-				OS=`CORRESPONDANCE "$SECTION" "$PARAMETRE"`
-				[ "$OS" == "" ] && OS="OtherSection"
-				echo "nom court de l'OS : $OS"
-				# si l'os est office ou options ou autre micellianous : alors gerer le cas en evitant de passer des mauvais arguments.
-				if [ "$PARAMETRE" == "glb" ]; then
-					# glb : global ou fra a passer en parametre ?...
-					LANG="fra"
-				else
-					LANG=$PARAMETRE
-				fi
-				if [ "$ipproxy" == "" ]; then
-					PROXY=""
-				else
-					PROXY="/proxy http://$ipproxy"
-				fi
-				if [ ! "$OS" == "OtherSection" ]; then
-					echo "Section ignoree : $SECTION."
-				#else
-					echo "Dans la section $SECTION, un parametre est active : $PARAMETRE = $VALEUR"
-					echo "Telechargement des mises a jour pour l'OS $OS et la langue $LANG..."
-					echo "/var/se3/unattended/install/wsusoffline/sh/DownloadUpdates.sh $OS $LANG /msse $PROXY" >>$MAIL
-					TESTFREESPACE
-					/var/se3/unattended/install/wsusoffline/sh/DownloadUpdates.sh $OS $LANG /msse $PROXY >>$MAIL 2>&1
-				fi
+fi
+
+echo "Debut du telechargement des mises a jour microsoft : $date." >$MAIL
+echo ""
+echo "Analyse du fichier $PARAMS :"
+cat $PARAMS | while read line
+do
+	if [ "`echo $line | grep -E "^\[" | grep -E "\]"`" == "" ]; then
+		#[ "$DEBUG" == "1" ] && echo "Ce n'est pas le debut d'une section : $line"
+		PARAMETRE=`echo "$line" | cut -f1 -d "="`
+		VALEUR=`echo "$line" | cut -f2 -d "="`
+		if [ ! "`echo "$VALEUR" | grep "Enabled"`" == "" ]; then
+			echo "OS=CORRESPONDANCE $SECTION $PARAMETRE"
+			OS=`CORRESPONDANCE "$SECTION" "$PARAMETRE"`
+			[ "$OS" == "" ] && OS="OtherSection"
+			echo "nom court de l'OS : $OS"
+			# si l'os est office ou options ou autre micellianous : alors gerer le cas en evitant de passer des mauvais arguments.
+			if [ "$PARAMETRE" == "glb" ]; then
+				# glb : global ou fra a passer en parametre ?...
+				LANG="fra"
+			else
+				LANG=$PARAMETRE
 			fi
-		else
+			if [ "$ipproxy" == "" ]; then
+				PROXY=""
+			else
+				PROXY="/proxy http://$ipproxy"
+			fi
+			if [ ! "$OS" == "OtherSection" ]; then
+				echo "Section ignoree : $SECTION."
+			#else
+				echo "Dans la section $SECTION, un parametre est active : $PARAMETRE = $VALEUR"
+				echo "Telechargement des mises a jour pour l'OS $OS et la langue $LANG..."
+				echo "/var/se3/unattended/install/wsusoffline/sh/DownloadUpdates.sh $OS $LANG /msse $PROXY" >>$MAIL
+				TESTFREESPACE
+				/var/se3/unattended/install/wsusoffline/sh/DownloadUpdates.sh $OS $LANG /msse $PROXY >>$MAIL 2>&1
+			fi
+		fi
+	else
 			#[ "$DEBUG" == "1" ] && echo "C'est le debut d'une section : $line"
 			SECTION=`echo "$line" | cut -f2 -d "[" | cut -f1 -d "]"`
 			#[ "$DEBUG" == "1" ] && echo "Section : $SECTION"
-		fi
-	done
-fi
+	fi
+done
 
 # Envoi d'un mail a l'admin en cas de nouvelles mises a jour trouvees.
 TEST=`cat $MAIL | grep "successfully downloaded"`
+VersionWsusOffline=`cat /var/se3/unattended/install/wsusoffline/client/cmd/DoUpdate.cmd | grep WSUSOFFLINE_VERSION= | cut -d \= -f2`
+TailleDossierMaj=`du -sh /var/se3/unattended/install/wsusoffline | cut -d/ -f1`
 if [ ! "$TEST" == "" ]; then
-	VersionWsusOffline=`cat /var/se3/unattended/install/wsusoffline/client/cmd/DoUpdate.cmd | grep WSUSOFFLINE_VERSION= | cut -d \= -f2`
-	TailleDossierMaj=`du -sh /var/se3/unattended/install/wsusoffline | cut -d/ -f1`
 	SENDMAIL "WsusOffline $VersionWsusOffline : Nouvelles Maj Microsoft telechargees. Taille du dossier des Maj : $TailleDossierMaj."
 else
-	#echo "Pas de nouvelles mises a jour telechargees. Pas d'envoi de mail a l'admin."
 	SENDMAIL "WsusOffline $VersionWsusOffline : Pas de nouvelles Maj Microsoft telechargees."
 	[ -e $MAIL ] && rm -f $MAIL
 fi
-
 
 
