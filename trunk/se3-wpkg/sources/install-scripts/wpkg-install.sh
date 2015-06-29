@@ -1666,3 +1666,11 @@ setfacl -R -m u:www-se3:rwx -m d:u:www-se3:rwx /var/se3/unattended/install
 setfacl -R -m u:$ADMINSE3:rwx -m d:u:$ADMINSE3:rwx /var/se3/unattended/install/wpkg/rapports
 setfacl -R -m u::rwx -m g::rx -m o::rx -m d:m:rwx -m d:u::rwx -m d:g::rx -m d:o::rx /var/se3/unattended/install
 
+
+##### Suppression des rapports vieux de plus de 1 an
+RAPPORTSWPKG="/var/se3/unattended/install/wpkg/rapports"
+if [ -e "$RAPPORTSWPKG" ];then
+	echo "Recherche et suppression des anciens rapports"
+	find $RAPPORTSWPKG/ -type f -maxdepth 1 -mtime +90 -delete 2>/dev/null
+fi
+exit 0
