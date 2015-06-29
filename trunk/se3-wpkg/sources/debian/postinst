@@ -61,11 +61,7 @@ case "$1" in
 		echo "INSERT into params (name,value,srv_id,descr,cat) VALUES (\"wpkg\",\"1\",\"\",\"Activation ou désactivation de wpkg\",6) " | mysql -h $dbhost $dbname -u $dbuser -p$dbpass -N
 	fi
 	
-	##### Suppression des rapports vieux de plus de 1 an
-	RAPPORTSWPKG="/var/se3/unattended/install/wpkg/rapports"
-	if [ -e "$RAPPORTSWPKG" ];then
-	  find $RAPPORTSWPKG/ -maxdepth 1 -mtime +365 -delete 2>/dev/null
-	fi
+	
 	;;
 
     abort-upgrade|abort-remove|abort-deconfigure)
