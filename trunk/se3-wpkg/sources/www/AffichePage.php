@@ -1,6 +1,11 @@
 <?php
+
+
 // ## $Id$ ##
+//
+//
 //$DEBUG=1;
+
 foreach($_GET AS $key => $value) {
 	${$key} = $value;
 }
@@ -44,7 +49,7 @@ if ( $wpkgUser && ($login != "")) {
 		default:
 			header("HTTP/1.1 505 Exec error");
 			header("Status: 505 Erreur d'execution"); 
-			echo "Parametre page non défini !";
+			echo "Parametre page non dï¿½fini !";
 	}
 	$Maintenant = strftime ( "%D_%T" );
 	exec ( "$wpkgwebdir/bin/wpkgXml.sh '$login'", $output, $return_value);

@@ -1,6 +1,10 @@
 <?php
+
+
 // ## $Id$ ## 
-// Définit le fichier $wpkgroot/ini/$computer.ini qui fixe les paramètres d'exécution de wpkg pour ce poste.
+// 
+// 
+// DÃ©finit le fichier $wpkgroot/ini/$computer.ini qui fixe les paramÃ¨tres d'exÃ©cution de wpkg pour ce poste.
 header("Pragma: no-cache");
 header("Cache-Control: no-cache, must-revalidate");
 $wpkgUser = false;
@@ -8,20 +12,20 @@ include "inc/wpkg.auth.php";
 $ini = "";
 if ( ! $wpkgUser ) {
 	include entete.inc.php; ?>
-		<h2>Déploiement d'applications</h2>
-		<div class=error_msg>Vous n'avez pas les droits nécessaires à l'utilisation de cette fonction !</div>
+		<h2>DÃ©ploiement d'applications</h2>
+		<div class=error_msg>Vous n'avez pas les droits nÃ©cessaires Ã  l'utilisation de cette fonction !</div>
 <?  include pdp.inc.php;
 	exit;
 } else{ ?>
 <html>
 	<head>
-		<meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 		<META HTTP-EQUIV="Cache-Control" CONTENT="no-cache"> 
 		<meta http-equiv="Pragma" content="no-cache" />
 	</head>
 	<body>
 <?	if ($_GET["Poste"] === '') {
-		Erreur("poste non défini");
+		Erreur("poste non dÃ©fini");
 	} else {
 		$Poste = $_GET["Poste"];
 		echo "<h3>Configuration du client wpkg sur le poste '$Poste' </h3>";
@@ -39,7 +43,7 @@ if ( ! $wpkgUser ) {
 		if ( $Param === 'DELETE' ) {
 			if (file_exists($inifile)) {
 				if (@unlink($inifile)) {
-					$msgOperation .= "Ficher '$inifile' effacé.";
+					$msgOperation .= "Ficher '$inifile' effacÃ©.";
 				} else {
 					$msgOperation .= "Erreur de suppression de  '$inifile'.<br>";
 				}
@@ -58,17 +62,17 @@ if ( ! $wpkgUser ) {
 					fclose ($handle);
 				}
 			} else {
-				$msgOperation .= "Fichier '$inifile' créé.<br>";
-				// A défaut de fichier ini, initialisation avec des valeurs par défaut
-				$ini  = "debug=true ' Permet d'avoir des logs plus détaillés.\r\n";
-				$ini .= "logdebug=false ' Pour avoir des logs en temps réel sur le serveur.\r\n";
-				$ini .= "force=false ' Pour tester la présence ou l'absence effective de chaque appli sur le poste.\r\n";
-				$ini .= "forceinstall=false ' Pour installer ou désinstaller les applications même si les tests 'check' sont vérifiés.\r\n";
-				$ini .= "nonotify=false ' Pour ne pas avertir l'utilisateur logué des opérations de wpkg.\r\n";
-				//$ini .= "norunningstate=false ' Pour que wpkg n'écrive pas running=true dans la base de registre lorsqu'il s'exécute.\r\n";
-				$ini .= "dryrun=false ' Pour que wpkg simule une exécution mais n'installe ou ne désinstalle rien.\r\n";
-				$ini .= "nowpkg=false ' Pour ne pas exécuter wpkg sur le poste.\r\n";
-				$ini .= "noforcedremove=false ' Pour ne pas retirer les applis zombies de la base de données du poste si les commandes de remove échouent.\r\n";
+				$msgOperation .= "Fichier '$inifile' crÃ©Ã©.<br>";
+				// A dÃ©faut de fichier ini, initialisation avec des valeurs par dÃ©faut
+				$ini  = "debug=true ' Permet d'avoir des logs plus dÃ©taillÃ©s.\r\n";
+				$ini .= "logdebug=false ' Pour avoir des logs en temps rÃ©el sur le serveur.\r\n";
+				$ini .= "force=false ' Pour tester la prÃ©sence ou l'absence effective de chaque appli sur le poste.\r\n";
+				$ini .= "forceinstall=false ' Pour installer ou dÃ©sinstaller les applications mÃªme si les tests 'check' sont vÃ©rifiÃ©s.\r\n";
+				$ini .= "nonotify=false ' Pour ne pas avertir l'utilisateur loguÃ© des opÃ©rations de wpkg.\r\n";
+				//$ini .= "norunningstate=false ' Pour que wpkg n'Ã©crive pas running=true dans la base de registre lorsqu'il s'exÃ©cute.\r\n";
+				$ini .= "dryrun=false ' Pour que wpkg simule une exÃ©cution mais n'installe ou ne dÃ©sinstalle rien.\r\n";
+				$ini .= "nowpkg=false ' Pour ne pas exÃ©cuter wpkg sur le poste.\r\n";
+				$ini .= "noforcedremove=false ' Pour ne pas retirer les applis zombies de la base de donnÃ©es du poste si les commandes de remove Ã©chouent.\r\n";
 			}
 			
 			if ( $ini != '') {
@@ -115,7 +119,7 @@ if ( ! $wpkgUser ) {
 					}
 					
 				}
-				echo "<tr><td align='center' colspan='3'><button style='font-size:small;' onclick=\"posteini('$Poste', 'DELETE', '' );\">Rétablir la configuration par défaut</button></td></tr>\n";
+				echo "<tr><td align='center' colspan='3'><button style='font-size:small;' onclick=\"posteini('$Poste', 'DELETE', '' );\">Rï¿½tablir la configuration par dï¿½faut</button></td></tr>\n";
 				echo "</table>\n";
 				// echo "Param=$Param, ParamFound=$ParamFound<br/><br/>";
 				if (($Param != '') && ($Valeur != '')) {
@@ -123,14 +127,14 @@ if ( ! $wpkgUser ) {
 					$r .= $L;
 				}
 				
-				// Réécriture du fichier 
+				// RÃ©Ã©criture du fichier 
 				if (!$handle = fopen($inifile, 'w')) {
-					$msgOperation .= "Impossible d'ouvrir le fichier '$inifile' en écriture.";
+					$msgOperation .= "Impossible d'ouvrir le fichier '$inifile' en Ã©criture.";
 				} else {
 					if (fwrite($handle, $r) === false) {
-						$msgOperation .= "Impossible d'écrire dans le fichier ($inifile)";
+						$msgOperation .= "Impossible d'Ã©crire dans le fichier ($inifile)";
 					} else {
-						if ($ValueParamChanged) $msgOperation .= "Ficher '$inifile' mis à jour.";
+						if ($ValueParamChanged) $msgOperation .= "Ficher '$inifile' mis Ã  jour.";
 					}
 					fclose($handle);
 				}

@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl = "http://www.w3.org/1999/XSL/Transform" version = "1.0" >
 	<xsl:output method="html" version="1.0" encoding="iso-8859-1" indent="yes"/>
 	<!-- ## $Id$ ##
-			S'applique à /var/se3/unattended/install/wpkg/packages.xml
+			S'applique Ã  /var/se3/unattended/install/wpkg/packages.xml
 			et retourne un html pour le div 'Effacer une appli'   -->
 
 	<xsl:param name="idPackage"></xsl:param>
@@ -15,21 +15,21 @@
 			</head>
 			<body>
 				<p>
-				Supprimer une application du serveur n'est pas anodin. D'autres applications peuvent dépendre de <xsl:value-of select="$idPackage" />...
+				Supprimer une application du serveur n'est pas anodin. D'autres applications peuvent dÃ©pendre de <xsl:value-of select="$idPackage" />...
 				</p>
 				<p>
-				Si elle est actuellement installée sur des postes, il faut impérativement la décocher de tous les postes et parcs auxquels elle est associée. Elle sera alors désinstallée de ceux-ci au prochain démarrage. Si la désinstallation échoue, l'application restera sur le poste : plus aucune tentative de désinstallation ne sera effectuée. Elle n'apparaîtra plus comme une application 'zombie' (versions antérieures de wpkg).
+				Si elle est actuellement installÃ©e sur des postes, il faut impÃ©rativement la dÃ©cocher de tous les postes et parcs auxquels elle est associÃ©e. Elle sera alors dÃ©sinstallÃ©e de ceux-ci au prochain dÃ©marrage. Si la dÃ©sinstallation Ã©choue, l'application restera sur le poste : plus aucune tentative de dÃ©sinstallation ne sera effectuÃ©e. Elle n'apparaÃ®tra plus comme une application 'zombie' (versions antÃ©rieures de wpkg).
 				</p>
 				<p>
-					Attendez plutôt que l'application soit désinstallée de tous les postes avant de la supprimer. En cas d'échec de la désinstallation, vous pourrez modifier le package en mettant à jour son fichier xml.
-					Pensez alors à changer le n° de version (revision) pour que la mise à jour soit effectuée sur les postes.
+					Attendez plutÃ´t que l'application soit dÃ©sinstallÃ©e de tous les postes avant de la supprimer. En cas d'Ã©chec de la dÃ©sinstallation, vous pourrez modifier le package en mettant Ã  jour son fichier xml.
+					Pensez alors Ã  changer le nÂ° de version (revision) pour que la mise Ã  jour soit effectuÃ©e sur les postes.
 				</p>
 				<form method="post" action="index.php" >
 					<input name="SupprimerAppli" type="hidden" value="{$idPackage}" />
 					<xsl:if test="$CePackage/download/@saveto" >
 						<p>
-							Si vous êtes vraiment sûr de vouloir supprimer cette application, les fichiers qui ont été téléchargés, lors de son installation, peuvent également être supprimés du serveur.
-							Pour cela sélectionnez ceux que vous voulez effacer.
+							Si vous Ãªtes vraiment sÃ»r de vouloir supprimer cette application, les fichiers qui ont Ã©tÃ© tÃ©lÃ©chargÃ©s, lors de son installation, peuvent Ã©galement Ãªtre supprimÃ©s du serveur.
+							Pour cela sÃ©lectionnez ceux que vous voulez effacer.
 						</p>
 						<xsl:for-each select="$CePackage/download/@saveto" >
 							<xsl:choose>

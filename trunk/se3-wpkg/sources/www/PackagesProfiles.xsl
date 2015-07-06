@@ -1,9 +1,12 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-<!--  Création du tableau Packages, Profiles pour indiquer les associations 
-		S'applique à wpkg.xml
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<!--  CrÃ©ation du tableau Packages, Profiles pour indiquer les associations 
+		S'applique Ã  wpkg.xml
 		
 	## $Id$ ##
 -->
+
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<xsl:output method="html" encoding="utf-8" />
 	<xsl:param name="login" select="''" />
@@ -68,9 +71,9 @@
 			</pre>
 		</xsl:if>
 		<div style="position:relative;left:0px;top:0px;width:{$HLigneTitre + $LTable}px;height:{$LColTitre + $HTable}px;z-index:0;">
-			<!-- Affiche la 1ère ligne (Titres des colonnes = Profiles) -->
+			<!-- Affiche la 1Ã¨re ligne (Titres des colonnes = Profiles) -->
 			<xsl:call-template name="TitresProfiles" />
-			<!-- div contenant la 1ère colonne (liste des id de package) -->
+			<!-- div contenant la 1Ã¨re colonne (liste des id de package) -->
 			<div id="PosX" style="position:absolute;left:0px;top:{$HLigneTitre}px;">
 				<div id="ClipY" style="overflow: hidden;position:absolute;top:0px;left:0px;width:{$LColTitre + 5}px;height:{($nbPackages)*$Hcase}px;">
 					<div id="ScrollY" style="position:absolute;top:0px;left:0px;width:{$LColTitre + 5}px;height:{($nbPackages)*$Hcase}px;">
@@ -91,7 +94,7 @@
 				</input>
 			</div>
 			
-			<!-- Affichage des cases cochées ou non selon l'affectation -->
+			<!-- Affichage des cases cochÃ©es ou non selon l'affectation -->
 			<!-- div contenant toutes les cases ( associations ) -->
 			<div style="position:absolute;left:{$LColTitre+5}px;top:{$HLigneTitre+1}px;border:none;height:{$HTable}px;width:{$LTable}px;">
 				<div id="PosXY" style="position:absolute;top:0px;left:0px;">
@@ -99,8 +102,8 @@
 						<div id="ScrollXY" style="position:absolute;top:0px;left:0px;">
 							<xsl:for-each select="$TousLesParc">
 								<xsl:sort select="translate(@id, $ucletters, $lcletters)" order="{$sortProfiles}" />
-								<!-- seuls les profiles ne dépendant pas de 'TousLesPostes' sont affichés.
-										En clair : seuls les parcs sont indiqués ( les profils des postes sont masqués ) -->
+								<!-- seuls les profiles ne dÃ©pendant pas de 'TousLesPostes' sont affichÃ©s.
+										En clair : seuls les parcs sont indiquÃ©s ( les profils des postes sont masquÃ©s ) -->
 								<xsl:call-template name="PackagesDeCeProfile">
 									<xsl:with-param name="idProfile" select="@id" />
 									<xsl:with-param name="iProfile" select="position()" />
@@ -114,7 +117,7 @@
 	</xsl:template>
 	
 	<xsl:template name="PackagesDeCeProfile">
-		<!-- Affiche les cases cochées ou non pour les Packages activés de ce profile -->
+		<!-- Affiche les cases cochÃ©es ou non pour les Packages activÃ©s de ce profile -->
 		<xsl:param name="idProfile" />
 		<xsl:param name="iProfile" />
 		<xsl:variable name="ProfileEnCours" select="key('ProfileFromId', $idProfile)"/>
@@ -123,9 +126,9 @@
 			<xsl:sort select="translate(@id, $ucletters, $lcletters)" order="{$sortPackages}" />
 			<xsl:variable name="idPackage" select="@id"/>
 			<xsl:variable name="iPackage" select="position()"/>
-			<!-- Protection de ', remplacé par ¤ -->
+			<!-- Protection de ', remplacÃ© par Â¤ -->
 			<xsl:variable name="idCase" select="concat($idProfile, ':', $idPackage)"/>
-			<!--  Affiche une case qui indique l'état activé ou non de cette appli pour ce profil -->
+			<!--  Affiche une case qui indique l'Ã©tat activÃ© ou non de cette appli pour ce profil -->
 			<xsl:element name="div">
 				<xsl:attribute name="class">
 					<xsl:choose>
@@ -141,7 +144,7 @@
 					<xsl:text>
 						/* background-color:#F0F8FF; */
 						</xsl:text>
-							<!-- A remplacer par des images ou icônes -->
+							<!-- A remplacer par des images ou icÃ´nes -->
 							<xsl:choose>
 								<xsl:when test="key('ProfilePackage', $idCase)">
 									<!-- installer -->
@@ -177,15 +180,15 @@
 	
 	<xsl:template name="TitresProfiles">
 		<!-- Ligne Titre des lignes (Nom des profiles) -->
-		<!-- div contenant la 1ère ligne Titres (liste des id de profiles) -->
+		<!-- div contenant la 1Ã¨re ligne Titres (liste des id de profiles) -->
 		<div id="PosY" style="position:absolute;left:{$LColTitre + 4}px;top:-10px;height:{$HLigneTitre + 10}px;z-index:2;">
-			<!-- div 'Liste des parcs' à décaler verticalement à chaque scroll pour qu'il soit toujours visible -->
+			<!-- div 'Liste des parcs' Ã  dÃ©caler verticalement Ã  chaque scroll pour qu'il soit toujours visible -->
 			<div id="ClipX" style="overflow: hidden;position:absolute;top:0px;left:0px;width:{$LTable}px;height:{$HLigneTitre + 10}px;">
 				<div id="ScrollX" style="position:relative;top:0px;left:0px;width:{$LTable}px;height:{$HLigneTitre + 10}px;">
 					<xsl:for-each select="$TousLesParc">
 						<xsl:sort select="translate(@id, $ucletters, $lcletters)" order="{$sortProfiles}" />
-						<!-- seuls les profiles ne dépendant pas de '_TousLesPostes' sont affichés.
-									En clair : seuls les parcs sont indiqués ( les profils des postes sont masqués ) -->
+						<!-- seuls les profiles ne dÃ©pendant pas de '_TousLesPostes' sont affichÃ©s.
+									En clair : seuls les parcs sont indiquÃ©s ( les profils des postes sont masquÃ©s ) -->
 						<xsl:choose >
 							<xsl:when test = "$Navigateur='ie'" >
 								<xsl:call-template name="CaseTitreProfileIE">
@@ -216,7 +219,7 @@
 		<!-- Affiche un Titre d'une colonne (Profile) pour FireFox -->
 		<xsl:param name="iPack" />
 		<xsl:param name="idProfile" />
-		<!-- Je ne sais pas afficher du texte vertical avec firefox donc j'ai fait un truc un peu compliqué :
+		<!-- Je ne sais pas afficher du texte vertical avec firefox donc j'ai fait un truc un peu compliquÃ© :
 					 Affichage en escalier sur 4 Id -->
 		<xsl:element name="div">
 			<!-- div VerticalGauche -->
@@ -291,7 +294,7 @@
 	</xsl:template>
 
 	<xsl:template name="caseTitrePackage">
-		<!-- Affiche un Titre de package dans la 1ère colonne -->
+		<!-- Affiche un Titre de package dans la 1Ã¨re colonne -->
 		<xsl:param name="iPackage" />
 		<xsl:param name="idPackage" />
 		<xsl:element name="div">

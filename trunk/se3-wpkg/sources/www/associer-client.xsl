@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl = "http://www.w3.org/1999/XSL/Transform" version = "1.0" >
    <xsl:output method="xml" version="1.0" encoding="utf-8" indent="yes" />
 	<!-- Ajoute ou retire une application d'un profile
-			S'applique à wpkg.xml 
-			Est utilisé par le client pour mettre à jour wpkg.xml
+			S'applique Ã  wpkg.xml 
+			Est utilisÃ© par le client pour mettre Ã  jour wpkg.xml
 			
 		## $Id$ ##
 	-->
@@ -38,7 +38,7 @@
 	<xsl:template match="/wpkg/profiles/profile">
 		<xsl:choose>
 			<xsl:when test="@id = $idProfile">
-				<!-- recupère les packages associés depuis profiles.xml -->
+				<!-- recupÃ¨re les packages associÃ©s depuis profiles.xml -->
 				<xsl:element name="profile">
 					<xsl:apply-templates select="@*" />
 					<xsl:apply-templates select="comment()|processing-instruction()" />

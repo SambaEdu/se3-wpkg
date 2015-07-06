@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 
-<!--  Affichage détaillé de l'état d'un poste
-		S'applique à wpkg.xml
+<!--  Affichage dÃ©taillÃ© de l'Ã©tat d'un poste
+		S'applique Ã  wpkg.xml
 		
 		## $Id$ ##
 -->
@@ -20,30 +20,30 @@
 	<xsl:variable name="PACKAGES" select="/wpkg/packages"/>
 	<xsl:variable name="HOSTS" select="/wpkg/hosts"/>
 	
-	<!-- Liste des postes autorisés en lecture par l'utilisateur -->
+	<!-- Liste des postes autorisÃ©s en lecture par l'utilisateur -->
 	<xsl:variable name="ListPostes" select="$PROFILES/profile[depends/@profile-id = '_TousLesPostes']"/>
 	<xsl:variable name="RapportDuPoste" select="$HOSTS/host[@name = $idHost]/rapport"/>
 	
-	<!-- Profile à partir de l'@id -->
+	<!-- Profile Ã  partir de l'@id -->
 	<xsl:key name="ProfileFromHostid" match="/wpkg/profiles/profile" use="@id" />
 	
-	<!-- Package à partir de l'@id -->
+	<!-- Package Ã  partir de l'@id -->
 	<xsl:key name="PackageFromId" match="/wpkg/packages/package" use="@id" />
 	<xsl:key name="RapportRevision" match="/wpkg/hosts/host/rapport/package" use="concat(../@id, ':', @id)" />
 	
 	<xsl:variable name="profileHost" select="key('ProfileFromHostid', $idHost)" />
 	<xsl:variable name="canWrite" select="$profileHost[@canWrite = '1']"/>
-	<!-- Nombre de packages à installer demandés pour idHost -->
+	<!-- Nombre de packages Ã  installer demandÃ©s pour idHost -->
 	<!-- <xsl:variable name="DemandePackages" select="$PROFILES/profile/package[(generate-id() = generate-id(key('keyPack',@package-id)[(../@id = $idHost) or (../@id = $profileHost/depends/@profile-id)]))]" /> -->
 	<xsl:variable name="PackagesFromRapport" select="$RapportDuPoste/package" />
 	<xsl:variable name="PackagesNotInRapport" select="$PACKAGES/package[not(@id = $RapportDuPoste/package/@id)]" />
-	<!-- Liste des profils dont dépend l'Host -->
+	<!-- Liste des profils dont dÃ©pend l'Host -->
 	<!-- xsl:key name="profileDependant" match="/wpkg/profiles/profile" use="depends/@profile-id" / -->
 	
 	<xsl:variable name="ToTalProfile" select="key('ProfileFromHostid', $profileHost/depends/@profile-id) | $profileHost" />
-	<!-- Package dont l'install est demandée -->
+	<!-- Package dont l'install est demandÃ©e -->
 	<xsl:variable name="DemandPackages" select="key('PackageFromId', $ToTalProfile/package/@package-id)" />
-    <!-- Packages à installer à cause des dépendances de packages maxi 3 niveaux de profondeur -->
+    <!-- Packages Ã  installer Ã  cause des dÃ©pendances de packages maxi 3 niveaux de profondeur -->
 	<xsl:variable name="PackageDepends1" select="key('PackageFromId', $DemandPackages/depends/@package-id)" />
 	<xsl:variable name="PackageDepends2" select="key('PackageFromId', $PackageDepends1/depends/@package-id)" />
 	<xsl:variable name="PackageDepends3" select="key('PackageFromId', $PackageDepends2/depends/@package-id)" />
@@ -85,8 +85,8 @@ DemandPackages = </xsl:text>
 			</pre>
 		</xsl:if>
 		<xsl:element name="div">
-			<!-- Sélection d'un autre poste -->
-			<h3>Poste à afficher : 
+			<!-- SÃ©lection d'un autre poste -->
+			<h3>Poste Ã  afficher : 
 				<select class="SelectH3" id="idHost" name="idHost" >
 					<xsl:attribute name="onchange">
 						<xsl:value-of select="'defHost(this.value);'" />
@@ -110,7 +110,7 @@ DemandPackages = </xsl:text>
 		</xsl:element>
 		<xsl:choose>
 			<xsl:when test="$idHost = ''">
-				<!-- Pas de poste sélectionné -->
+				<!-- Pas de poste sÃ©lectionnÃ© -->
 			</xsl:when>
 			<xsl:otherwise>
 				
@@ -121,12 +121,12 @@ DemandPackages = </xsl:text>
 					<table class="postes">
 						<tr>
 							<th>Poste</th>
-							<th title="Nbre d'appli. installées / Nbre d'appli. souhaitées" >Nbre d'appli.</th>
-							<th title="Cliquer sur la date du rapport pour voir le fichier de log d'exécution de ce poste">Date du dernier rapport</th>
+							<th title="Nbre d'appli. installÃ©es / Nbre d'appli. souhaitÃ©es" >Nbre d'appli.</th>
+							<th title="Cliquer sur la date du rapport pour voir le fichier de log d'exÃ©cution de ce poste">Date du dernier rapport</th>
 							<th>Adresse MAC</th>
 							<th>Adresse IP</th>
 							<th>Appartient aux parcs</th>
-							<th title="(re)démarrer le poste par le réseau">(Re)démarrer</th>
+							<th title="(re)dÃ©marrer le poste par le rÃ©seau">(Re)dÃ©marrer</th>
 						</tr>
 						<tr>
 							<td style="font-weight: bold;"><xsl:value-of select="$idHost" /></td>
@@ -165,13 +165,13 @@ DemandPackages = </xsl:text>
 											<!-- Fichier log disponible -->
 											<td>
 												<span class="tdlien" title="{$RapportDuPoste/@logfile}" onclick="javascript:window.open(&apos;index.php?logfile={$RapportDuPoste/@logfile}&apos;, &apos;_blank&apos;);">
-													<xsl:value-of select="$RapportDuPoste/@date" /> à <xsl:value-of select="$RapportDuPoste/@time" />
+													<xsl:value-of select="$RapportDuPoste/@date" /> Ã  <xsl:value-of select="$RapportDuPoste/@time" />
 												</span>
 											</td>
 										</xsl:when>
 										<xsl:otherwise>
 											<td title="Pas de fichier de log disponible.">
-												<xsl:value-of select="$RapportDuPoste/@date" /> à <xsl:value-of select="$RapportDuPoste/@time" />
+												<xsl:value-of select="$RapportDuPoste/@date" /> Ã  <xsl:value-of select="$RapportDuPoste/@time" />
 											</td>
 										</xsl:otherwise>
 									</xsl:choose>
@@ -213,7 +213,7 @@ DemandPackages = </xsl:text>
 							<td valign="top" align="center">
 								<xsl:if test="$RapportDuPoste/@ip and $RapportDuPoste/@mask">
 									<table border="0"><tr style="border:0;">
-									<td style="border:0;"><button style="font-size:smaller;" title="Démarrer '{$idHost}'" onclick="startHost('{$idHost}', '{$RapportDuPoste/@ip}', '{$RapportDuPoste/@mask}' , '{$RapportDuPoste/@mac}' );">(Re)Boot !</button></td>
+									<td style="border:0;"><button style="font-size:smaller;" title="DÃ©marrer '{$idHost}'" onclick="startHost('{$idHost}', '{$RapportDuPoste/@ip}', '{$RapportDuPoste/@mask}' , '{$RapportDuPoste/@mac}' );">(Re)Boot !</button></td>
 									<xsl:if test="key('RapportRevision', concat($idHost, ':consoleWpkg'))/@status = 'Installed'">
 										<td id="consoleWpkg" style="border:0;"/>
 										<script id="initConsoleWpkg" type="text/javascript" >
@@ -231,12 +231,12 @@ document.getElementById("consoleWpkg").innerHTML = "&lt;img title='Console WPKG'
 					</table>
 				</xsl:element>
 				<div id="posteparam">
-					<a style="font-size:small;" onclick="posteini('{$idHost}');">Définir la valeur des options passées au client wpkg</a>
+					<a style="font-size:small;" onclick="posteini('{$idHost}');">DÃ©finir la valeur des options passÃ©es au client wpkg</a>
 					<!--font size="2">
-						<button style="font-size:x-small;" title="Infos de déboggage" onclick="posteini('{$idHost}', 'debug', '-' );">/debug</button>Pour avoir des log plus détaillées. 
-						<button style="font-size:x-small;" title="Déboggage temps réel" onclick="posteini('{$idHost}', 'logdebug', '-' );">/logdebug</button>Met à jour le fichier de log sur le serveur en temps réel. 
-						<button style="font-size:x-small;" title="Vérifier l'état" onclick="posteini('{$idHost}', 'force', '-' );">/force</button> Vérifie l'état installé ou non des applis.<br/>
-						<button title="Changer pour ce poste" onclick="posteini('{$idHost}', 'DELETE', '-' );">Supprimer</button> Supprime les options particulière à ce poste.
+						<button style="font-size:x-small;" title="Infos de dÃ©boggage" onclick="posteini('{$idHost}', 'debug', '-' );">/debug</button>Pour avoir des log plus dÃ©taillÃ©es. 
+						<button style="font-size:x-small;" title="DÃ©boggage temps rÃ©el" onclick="posteini('{$idHost}', 'logdebug', '-' );">/logdebug</button>Met Ã  jour le fichier de log sur le serveur en temps rÃ©el. 
+						<button style="font-size:x-small;" title="VÃ©rifier l'Ã©tat" onclick="posteini('{$idHost}', 'force', '-' );">/force</button> VÃ©rifie l'Ã©tat installÃ© ou non des applis.<br/>
+						<button title="Changer pour ce poste" onclick="posteini('{$idHost}', 'DELETE', '-' );">Supprimer</button> Supprime les options particuliÃ¨re Ã  ce poste.
 					</font -->
 				</div>
 				<xsl:element name="div" >
@@ -250,13 +250,13 @@ document.getElementById("consoleWpkg").innerHTML = "&lt;img title='Console WPKG'
 						<div id="divTableau">
 							<table class="postes">
 								<thead id="headTableau">
-									<!-- Tableau des applis installées sur ce poste -->
+									<!-- Tableau des applis installÃ©es sur ce poste -->
 									<tr>
 										<th style="cursor:ne-resize;" onclick="tri(1,event);" >Application</th>
-										<th style="cursor:ne-resize;" onclick="tri(2,event);" title="&apos;Installée&apos; ou &apos;Non installée&apos;.   En rouge si l'état ne correspond pas à la demande">Etat</th>
+										<th style="cursor:ne-resize;" onclick="tri(2,event);" title="&apos;InstallÃ©e&apos; ou &apos;Non installÃ©e&apos;.   En rouge si l'Ã©tat ne correspond pas Ã  la demande">Etat</th>
 										<th style="cursor:ne-resize;" onclick="tri(3,event);" >Version</th>
-										<th style="cursor:ne-resize;" onclick="tri(4,event);" title="L'installation nécessite-t-elle un reboot ?">Reboot</th>
-										<th style="cursor:ne-resize;" onclick="tri(5,event);" title="Parcs, poste ou appli. à l'origine de la demande d'installation">Install. demandée pour</th>
+										<th style="cursor:ne-resize;" onclick="tri(4,event);" title="L'installation nÃ©cessite-t-elle un reboot ?">Reboot</th>
+										<th style="cursor:ne-resize;" onclick="tri(5,event);" title="Parcs, poste ou appli. Ã  l'origine de la demande d'installation">Install. demandÃ©e pour</th>
 										<th style="cursor:ne-resize;" onclick="tri(6,event);" title="Installation d'une application uniquement sur &apos;{$idHost}&apos;">Installer sur ce poste</th>
 									</tr>
 								</thead>
@@ -285,10 +285,10 @@ document.getElementById("consoleWpkg").innerHTML = "&lt;img title='Console WPKG'
 								<xsl:variable name="status" >
 									<xsl:choose>
 										<xsl:when test="@status = 'Installed'">
-											<xsl:text>Installé</xsl:text>
+											<xsl:text>InstallÃ©</xsl:text>
 										</xsl:when>
 										<xsl:when test="@status = 'Not Installed'">
-											<xsl:text>Non installé</xsl:text>
+											<xsl:text>Non installÃ©</xsl:text>
 										</xsl:when>
 										<xsl:when test="not(@status)">
 											<xsl:text>Inconnu</xsl:text>
@@ -327,28 +327,28 @@ document.getElementById("consoleWpkg").innerHTML = "&lt;img title='Console WPKG'
 											<xsl:text>ghostwhite</xsl:text>
 										</xsl:when>
 										<xsl:when test="(not(@status = 'Installed')) and (not($isInstallRequested))">
-											<!-- appli NON installée avec demande identique bleu grisclair -->
+											<!-- appli NON installÃ©e avec demande identique bleu grisclair -->
 											<xsl:text>#dee2e5</xsl:text>
 										</xsl:when>
 										<xsl:when test="(@status = 'Installed') and ($isInstallRequested)">
-											<!-- appli installée avec demande identique -->
+											<!-- appli installÃ©e avec demande identique -->
 											<xsl:choose>
 												<xsl:when test="@revision = $Package/@revision">
-													<!-- N° de version OK -->
+													<!-- NÂ° de version OK -->
 													<xsl:text>#b3cce5</xsl:text>
 												</xsl:when>
 												<xsl:otherwise>
-													<!-- appli installée dans une autre version -->
+													<!-- appli installÃ©e dans une autre version -->
 													<xsl:text>#ffd07a</xsl:text>
 												</xsl:otherwise>
 											</xsl:choose>
 										</xsl:when>
 										<xsl:when test="@status = 'Installed'">
-											<!-- appli installée avec install non demandée -->
+											<!-- appli installÃ©e avec install non demandÃ©e -->
 											<xsl:text>#FFA500</xsl:text>
 										</xsl:when>
 										<xsl:when test="@status = 'Not Installed'">
-											<!-- appli non installée et install demandée #FF7F50-->
+											<!-- appli non installÃ©e et install demandÃ©e #FF7F50-->
 											<xsl:text>#FFA500</xsl:text>
 										</xsl:when>
 										<xsl:otherwise>
@@ -418,19 +418,19 @@ document.getElementById("consoleWpkg").innerHTML = "&lt;img title='Console WPKG'
 		<xsl:text>&lt;/div&gt;</xsl:text>
 	</xsl:if>
 	<xsl:text> &lt;/td&gt;&lt;/tr&gt; &lt;!--','</xsl:text>
-<!-- Clé de tri1 idPackage-->
+<!-- ClÃ© de tri1 idPackage-->
 <xsl:value-of select="translate(@id, $ucletters, $lcletters)" /><xsl:text>','</xsl:text>
-<!-- Clé de tri2 Etat -->
+<!-- ClÃ© de tri2 Etat -->
 <xsl:value-of select="$status" /><xsl:text>',</xsl:text>
-<!-- Clé de tri3 Revision (numérique) -->
+<!-- ClÃ© de tri3 Revision (numÃ©rique) -->
 <xsl:choose><xsl:when test="$revision = ''">0</xsl:when><xsl:otherwise><xsl:value-of select="0 + $revision" /></xsl:otherwise></xsl:choose><xsl:text>,'</xsl:text>
-<!-- Clé de tri4 reboot -->
+<!-- ClÃ© de tri4 reboot -->
 <xsl:value-of select="$reboot" /><xsl:text>','</xsl:text>
-<!-- Clé de tri5 install. demandée par -->
+<!-- ClÃ© de tri5 install. demandÃ©e par -->
 <xsl:value-of select="string($profilsImplyPackageHost)" /><xsl:text>','</xsl:text>
-<!-- Clé de tri6 install host only-->
+<!-- ClÃ© de tri6 install host only-->
 <xsl:value-of select="$requestInstallHostOnly" /><xsl:text>',</xsl:text>
-<!-- Numéro de la ligne -->
+<!-- NumÃ©ro de la ligne -->
 <xsl:value-of select="position() - 1" /><xsl:text>,'--&gt;');&#xa;</xsl:text>
 							</xsl:for-each>
 						</script>
@@ -442,12 +442,12 @@ document.getElementById("consoleWpkg").innerHTML = "&lt;img title='Console WPKG'
 	</xsl:template>
 	
 	<xsl:template name="profilsImplyPackageHost" >
-		<!-- Retourne les profils qui ont réclamé l'installation de ce package sur cet host -->
-		<xsl:param name="tmpProfile" /> <!-- initialement : profile du poste, puis profils dont dépend l'host -->
-		<xsl:param name="tmpPackage" /> <!-- Id de l'appli cherchée -->
+		<!-- Retourne les profils qui ont rÃ©clamÃ© l'installation de ce package sur cet host -->
+		<xsl:param name="tmpProfile" /> <!-- initialement : profile du poste, puis profils dont dÃ©pend l'host -->
+		<xsl:param name="tmpPackage" /> <!-- Id de l'appli cherchÃ©e -->
 		<xsl:param name="withLink" select="false()"/> <!-- Faut-il ajouter un lien vers le profile (Non si idProfile=idHost) -->
 		<xsl:if test="$tmpProfile/package[@package-id = $tmpPackage]">
-			<!-- Ce profile réclame l'installation de l'appli -->
+			<!-- Ce profile rÃ©clame l'installation de l'appli -->
 			<xsl:choose>
 				<xsl:when test="$withLink">
 					<xsl:text>&lt;span class="postes" title="Parc &amp;#39;</xsl:text><xsl:value-of select="$tmpProfile/@id" /><xsl:text>&amp;#39;" onclick="defProfile(&amp;quot;</xsl:text><xsl:value-of select="$tmpProfile/@id" /><xsl:text>&amp;quot;);" &gt;</xsl:text>
@@ -471,8 +471,8 @@ document.getElementById("consoleWpkg").innerHTML = "&lt;img title='Console WPKG'
 	</xsl:template>
 	
 	<xsl:template name="packagesImplyPackage" >
-		<!-- Retourne les packages qui ont réclamé l'installation de ce package sur cet host (dépendances de packages) -->
-		<xsl:param name="tmpPackage" /> <!-- Id de l'appli cherchée -->
+		<!-- Retourne les packages qui ont rÃ©clamÃ© l'installation de ce package sur cet host (dÃ©pendances de packages) -->
+		<xsl:param name="tmpPackage" /> <!-- Id de l'appli cherchÃ©e -->
 		<xsl:param name="withLink" select="false()"/> <!-- Faut-il ajouter un lien vers le package  -->
 		<xsl:variable name="packagesImply" select="$ToTalPackageDepends[@id = $tmpPackage]" />
 		<xsl:if test="$packagesImply">

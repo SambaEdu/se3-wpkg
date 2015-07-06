@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 
-<!--  Définition d'un package avec affichage de l'état des postes 
-		S'applique à profiles.xml
+<!--  DÃ©finition d'un package avec affichage de l'Ã©tat des postes 
+		S'applique Ã  profiles.xml
 		
 		## $Id$ ##
 -->
@@ -31,7 +31,7 @@
 	<xsl:variable name="ListProfilesCanRead" select="$PROFILES/profile[not(depends/@profile-id = '_TousLesPostes')]"/>
 	<xsl:variable name="ListProfilesCanWrite" select="$ListProfilesCanRead[@canWrite = '1']"/>
 	
-	<!-- Liste des postes autorisés en lecture par l'utilisateur -->
+	<!-- Liste des postes autorisÃ©s en lecture par l'utilisateur -->
 	<xsl:variable name="ListPostes" select="$PROFILES/profile[depends/@profile-id = '_TousLesPostes']"/>
 	<xsl:variable name="ListPostesDeCeProfil" select="$ListPostes[depends/@profile-id = $idProfile]"/>
 	<xsl:variable name="canWrite" select="$CeProfile/@canWrite = '1'"/>
@@ -50,8 +50,8 @@
 			</pre>
 		</xsl:if>
 		<xsl:element name="div">
-			<!-- Sélection d'un autre package -->
-			<h3>Application à afficher :
+			<!-- SÃ©lection d'un autre package -->
+			<h3>Application Ã  afficher :
 				<select class="SelectH3" id="idPackage" name="idPackage" onchange="defPackage(this.value);">
 					<xsl:if test="$idPackage = ''">
 						<option class="SelectH3" value="" selected="">Choisir l'application ...</option>
@@ -77,11 +77,11 @@
 						<xsl:element name="div" >
 							<table class="postes">
 								<tr>
-									<th title="Ce fichier contient la définition de l'application.&#13;Il peut être utilisé pour la réimporter.">Fichier xml de l'appli.</th>
-									<th title="Numéro de version de cette application">Version</th>
-									<th title="Orde d'installation : priority élevé =&gt; installation en premier.">priorité</th>
-									<th title="Faut-il redémarrer le poste, en cas de besoin, après l'installation de cette application ?">reboot</th>
-									<th title="Applications nécessaires à l'installation de &apos;{$idPackage}&apos;">dépend de</th>
+									<th title="Ce fichier contient la dÃ©finition de l'application.&#13;Il peut Ãªtre utilisÃ© pour la rÃ©importer.">Fichier xml de l'appli.</th>
+									<th title="NumÃ©ro de version de cette application">Version</th>
+									<th title="Orde d'installation : priority Ã©levÃ© =&gt; installation en premier.">prioritÃ©</th>
+									<th title="Faut-il redÃ©marrer le poste, en cas de besoin, aprÃ¨s l'installation de cette application ?">reboot</th>
+									<th title="Applications nÃ©cessaires Ã  l'installation de &apos;{$idPackage}&apos;">dÃ©pend de</th>
 									<th title="Applications ayant besoin de &apos;{$idPackage}&apos;">requis par</th>
 									<xsl:if test="$isWpkgAdmin">
 										<th title="Supprimer l'application &apos;{$idPackage}&apos; du serveur">Supprimer</th>
@@ -138,7 +138,7 @@
 								</tr>
 							</table>
 							<div id="MessageSupprimer" class="MessageSupprimer" >
-								<!-- Chargé dynamiquement à l'adresse index.php?displayDelPackage={$idPackage}	-->
+								<!-- ChargÃ© dynamiquement Ã  l'adresse index.php?displayDelPackage={$idPackage}	-->
 							</div>
 						</xsl:element>
 						<xsl:if test="$CePackage/@configuration">
@@ -154,8 +154,8 @@
 						</xsl:if>
 					</xsl:when>
 					<xsl:otherwise>
-						<!-- L'appli $idPackage a été supprimée -->
-						<div class="TitreNom" style="color:#DC143C;" >L'application '<xsl:value-of select="$idPackage" />' a été supprimée du serveur</div>
+						<!-- L'appli $idPackage a Ã©tÃ© supprimÃ©e -->
+						<div class="TitreNom" style="color:#DC143C;" >L'application '<xsl:value-of select="$idPackage" />' a Ã©tÃ© supprimÃ©e du serveur</div>
 						<br />
 					</xsl:otherwise>
 				</xsl:choose>
@@ -200,11 +200,11 @@
 							<xsl:if test="not($idProfile = '')">
 								<td>
 									<!-- Indication de la demande actuelle -->
-									Installation demandée : 
+									Installation demandÃ©e : 
 								</td>
 								<xsl:choose>
 									<xsl:when test="$CeProfile/package[@package-id = $idPackage]">
-										<!-- l'install de $idPackage est demandée sur le parc $idProfile -->
+										<!-- l'install de $idPackage est demandÃ©e sur le parc $idProfile -->
 										<td>
 											<xsl:text>OUI</xsl:text>
 										</td>
@@ -225,7 +225,7 @@
 										</td>
 									</xsl:when>
 									<xsl:otherwise>
-										<!-- l'install de $idPackage n'est pas demandée sur le parc $idProfile -->
+										<!-- l'install de $idPackage n'est pas demandÃ©e sur le parc $idProfile -->
 										<td>
 											<xsl:text>NON</xsl:text>
 										</td>
@@ -254,11 +254,11 @@
 			<xsl:element name="div">
 				<!--xsl:if test="not($idProfile = '') and $CePackage"-->
 				<xsl:if test="not($idProfile = '')">
-					<!-- Appli à installer à cause des dépendances maxi 2 niveaux de profondeur -->
+					<!-- Appli Ã  installer Ã  cause des dÃ©pendances maxi 2 niveaux de profondeur -->
 					<xsl:variable name="ToTalPackageDepends1" select="$PACKAGES/package[depends/@package-id = $idPackage]" />
 					<xsl:variable name="ToTalPackageDepends2" select="key('PackageFromId', $ToTalPackageDepends1/depends/@package-id)" />
 					<xsl:variable name="ToTalPackageDepends" select="$ToTalPackageDepends1 | $ToTalPackageDepends2" />
-					<!-- Appli $idPackage ET Parc $idProfile sélectionnés -->
+					<!-- Appli $idPackage ET Parc $idProfile sÃ©lectionnÃ©s -->
 					<xsl:variable name="nbPostes" select="count($PROFILES/profile[depends/@profile-id = $idProfile])" />
 					<div style="font-size:small;" >
 						<xsl:choose>
@@ -274,13 +274,13 @@
 						</xsl:choose>
 						<b><xsl:value-of select="$idProfile" /></b><br></br> 
 					</div>
-					<!-- Liste des poste concernés par ce profile (=Parc) -->
+					<!-- Liste des poste concernÃ©s par ce profile (=Parc) -->
 					<div id="divTableau">
 						<table class="postes">
 							<thead id="headTableau">
 								<tr>
 									<th style="cursor:ne-resize;" onclick="tri(1,event);">Poste</th>
-									<th style="cursor:ne-resize;" onclick="tri(2,event);" title="&apos;Installée&apos; ou &apos;Non installée&apos;.   En rouge si l'état ne correspond pas à la demande">
+									<th style="cursor:ne-resize;" onclick="tri(2,event);" title="&apos;InstallÃ©e&apos; ou &apos;Non installÃ©e&apos;.   En rouge si l'Ã©tat ne correspond pas Ã  la demande">
 										<xsl:choose>
 											<xsl:when test="$idPackage = ''">Etat de ?</xsl:when>
 											<xsl:otherwise>Etat de <xsl:value-of select="$idPackage" /></xsl:otherwise>
@@ -288,7 +288,7 @@
 									</th>
 									<th style="cursor:ne-resize;" onclick="tri(3,event);">Version</th>
 									<th style="cursor:ne-resize;" onclick="tri(4,event);">Reboot</th>
-									<th style="cursor:ne-resize;" onclick="tri(5,event);" title="Cliquer sur la date du rapport pour voir le fichier de log d'exécution de ce poste">Date du dernier rapport</th>
+									<th style="cursor:ne-resize;" onclick="tri(5,event);" title="Cliquer sur la date du rapport pour voir le fichier de log d'exÃ©cution de ce poste">Date du dernier rapport</th>
 									<th style="cursor:ne-resize;" onclick="tri(6,event);">Adresse MAC</th>
 									<th style="cursor:ne-resize;" onclick="tri(7,event);">Adresse IP</th>
 									<xsl:if test="$CePackage">
@@ -307,7 +307,7 @@
 							<xsl:variable name="CePoste" select="key('rapportFromHostid', $idPoste)"/>
 							<xsl:variable name="CePackageDuPoste" select="$CePoste/package[@id = $idPackage]"/>
 							<xsl:variable name="profileDeCetHost" select="key('ProfileFromId', $idPoste)"/>
-							<!-- Liste des profils dont dépend l'Host -->
+							<!-- Liste des profils dont dÃ©pend l'Host -->
 							<xsl:variable name="ToTalPackProfile" select="key('ProfileFromId', ($profileDeCetHost/depends/@profile-id) | $idPoste)/package/@package-id" />
 							<xsl:variable name="ToTalPackage" select="$ToTalPackageDepends[@id = $ToTalPackProfile]" />
 							<!-- xsl:text>// </xsl:text><xsl:value-of select="concat('ToTalPackageDepends:', count($ToTalPackageDepends), 'ToTalPackProfile:', count($ToTalPackProfile), ', ToTalPackage:', count($ToTalPackage))" /><xsl:text>&#xa;</xsl:text -->
@@ -325,10 +325,10 @@
 											<xsl:text>Inconnu</xsl:text>
 										</xsl:when>
 										<xsl:when test="$packageEnCours/@status = 'Installed'">
-											<xsl:text>Installé</xsl:text>
+											<xsl:text>InstallÃ©</xsl:text>
 										</xsl:when>
 										<xsl:when test="$packageEnCours/@status = 'Not Installed'">
-											<xsl:text>Non installé</xsl:text>
+											<xsl:text>Non installÃ©</xsl:text>
 										</xsl:when>
 										<xsl:otherwise>
 											<xsl:value-of select="$packageEnCours/@status" />
@@ -342,34 +342,34 @@
 										<!-- appli au status inconnu -->
 										<xsl:text>ghostwhite</xsl:text>
 									</xsl:when>
-									<xsl:when test="$status = 'Non installé'">
+									<xsl:when test="$status = 'Non installÃ©'">
 										<xsl:choose>
 											<xsl:when test="not($isInstallRequested)">
-												<!-- appli NON installée avec demande identique bleu grisclair -->
+												<!-- appli NON installÃ©e avec demande identique bleu grisclair -->
 												<xsl:text>#dee2e5</xsl:text>
 											</xsl:when>
 											<xsl:otherwise>
-												<!-- appli non installée  #FF7F50-->
+												<!-- appli non installÃ©e  #FF7F50-->
 												<xsl:text>#FFA500</xsl:text>
 											</xsl:otherwise>
 										</xsl:choose>
 									</xsl:when>
-									<xsl:when test="$status = 'Installé'">
+									<xsl:when test="$status = 'InstallÃ©'">
 										<xsl:choose>
 											<xsl:when test="$isInstallRequested">
 												<xsl:choose>
 													<xsl:when test="$CePackageDuPoste/@revision = $CePackage/@revision">
-														<!-- N° de version OK -->
+														<!-- NÂ° de version OK -->
 														<xsl:text>#b3cce5</xsl:text>
 													</xsl:when>
 													<xsl:otherwise>
-														<!-- appli installée dans une autre version -->
+														<!-- appli installÃ©e dans une autre version -->
 														<xsl:text>#ffd07a</xsl:text>
 													</xsl:otherwise>
 												</xsl:choose>
 											</xsl:when>
 											<xsl:otherwise>
-												<!-- appli installée -->
+												<!-- appli installÃ©e -->
 												<xsl:text>#FFA500</xsl:text>
 											</xsl:otherwise>
 										</xsl:choose>
@@ -430,13 +430,13 @@
 						<xsl:text>" onclick="javascript:window.open(&amp;quot;index.php?logfile=</xsl:text>
 						<xsl:value-of select="$CePoste/@logfile" />
 						<xsl:text>&amp;quot;, &amp;quot;_blank&amp;quot;);"&gt;</xsl:text>
-						<xsl:value-of select="$CePoste/@date" /><xsl:text> à </xsl:text><xsl:value-of select="$CePoste/@time" />
+						<xsl:value-of select="$CePoste/@date" /><xsl:text> Ã  </xsl:text><xsl:value-of select="$CePoste/@time" />
 						<xsl:text>&lt;/span&gt;</xsl:text>
 					<xsl:text>&lt;/td&gt;</xsl:text>
 				</xsl:when>
 				<xsl:otherwise>
 					<xsl:text>&lt;td title="Pas de fichier de log disponible."&gt;</xsl:text>
-					<xsl:value-of select="$CePoste/@date" /><xsl:text> à </xsl:text><xsl:value-of select="$CePoste/@time" />
+					<xsl:value-of select="$CePoste/@date" /><xsl:text> Ã  </xsl:text><xsl:value-of select="$CePoste/@time" />
 					<xsl:text>&lt;/td&gt;</xsl:text>
 				</xsl:otherwise>
 			</xsl:choose>
@@ -483,25 +483,25 @@
 		<xsl:text>&lt;/td&gt;</xsl:text>
 	</xsl:if>
 	<xsl:text>&lt;/tr&gt; &lt;!--','</xsl:text>
-<!-- Clé de tri1 idPoste-->
+<!-- ClÃ© de tri1 idPoste-->
 <xsl:value-of select="$idPoste" /><xsl:text>','</xsl:text>
 <xsl:choose>
 	<xsl:when test="$CePoste">
-		<!-- Clé de tri2 Etat appli -->
+		<!-- ClÃ© de tri2 Etat appli -->
 		<xsl:value-of select="$status" /><xsl:text>','</xsl:text>
-		<!-- Clé de tri3 Revision (numérique) -->
+		<!-- ClÃ© de tri3 Revision (numÃ©rique) -->
 		<xsl:choose>
 			<xsl:when test="$CePackageDuPoste/@revision">
 				<xsl:value-of select="$CePackageDuPoste/@revision" />
 			</xsl:when>
 		</xsl:choose><xsl:text>','</xsl:text>
-		<!-- Clé de tri4 reboot -->
+		<!-- ClÃ© de tri4 reboot -->
 		<xsl:value-of select="$CePackageDuPoste/@reboot" /><xsl:text>','</xsl:text>
-		<!-- Clé de tri5 DateRapport -->
+		<!-- ClÃ© de tri5 DateRapport -->
 		<xsl:value-of select="$CePoste/@datetime" /><xsl:text>','</xsl:text>
-		<!-- Clé de tri6 add MAC -->
+		<!-- ClÃ© de tri6 add MAC -->
 		<xsl:value-of select="$CePoste/@mac" /><xsl:text>','</xsl:text>
-		<!-- Clé de tri7 add Ip-->
+		<!-- ClÃ© de tri7 add Ip-->
 		<xsl:value-of select="$CePoste/@ip" /><xsl:text>',</xsl:text>
 	</xsl:when>
 	<xsl:otherwise>
@@ -509,10 +509,10 @@
 	</xsl:otherwise>
 </xsl:choose>
 <xsl:if test="$CePackage">
-	<!-- Clé de tri8 install host only-->
+	<!-- ClÃ© de tri8 install host only-->
 	<xsl:text>'</xsl:text><xsl:value-of select="$requestInstallHostOnly" /><xsl:text>',</xsl:text>
 </xsl:if>
-<!-- Numéro de la ligne -->
+<!-- NumÃ©ro de la ligne -->
 <xsl:value-of select="position() - 1" /><xsl:text>,'--&gt;');&#xa;</xsl:text>
 
 						</xsl:for-each>

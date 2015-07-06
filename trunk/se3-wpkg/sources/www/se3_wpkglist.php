@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
+
 <packages>
 	<package id='copssh' xml='copssh.xml' url='http://www.crdp.ac-caen.fr/forum/files/copssh_138.xml' md5sum='68b698c33d26cefe2c5789b635fdab8c' date='2008-04-08T09:49:20+0000' topic_id='22'/>
 	<package id='foxitReader' xml='foxitReader.xml' url='http://www.crdp.ac-caen.fr/forum/files/foxitreader_197.xml' md5sum='c406882442dd95c62f9664f15d86f6f7' date='2008-04-01T22:34:27+0000' topic_id='28'/>

@@ -1,4 +1,6 @@
 <?php
+
+
 //  $Id$
 
 $login = "";
@@ -6,7 +8,7 @@ $wpkgUser = false;
 include "inc/wpkg.auth.php";
 
 if ( $wpkgUser && ($login != "")) {
-	// Mise à jour de tmp/wpkg.$login.xml en cas de besoin
+	// Mise Ã  jour de tmp/wpkg.$login.xml en cas de besoin
 	exec ( "$wpkgwebdir/bin/wpkgXml.sh '$login'", $output, $return_value);
 	if ( $return_value == 0 ) {
 		get_xml("tmp/wpkg.$login.xml");

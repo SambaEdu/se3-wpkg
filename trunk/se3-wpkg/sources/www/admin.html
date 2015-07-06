@@ -3,8 +3,8 @@
 <head>
 <meta http-equiv="content-style-type" content="text/css">
 <link  href='../style.css' rel='StyleSheet' type='text/css'>
-<meta http-equiv="content-type" content="text/html; charset=iso-8859-1">
-<title>Déploiement d'applications</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>DÃ©ploiement d'applications</title>
 <link  href='se3-wpkg.css' rel='StyleSheet' type='text/css'>
 <script language="javascript" src="testConfigWpkg.php"></script>
 <script language="javascript" src="WindowsUpdate.js"></script>
@@ -33,14 +33,14 @@
 	var PackagesProfiles="PackagesProfiles.xsl";
 	// transformation bidon (en fait c'est du html fixe) pour afficher la page upload des applis
 	var AjoutPackage="AjoutPackage.xsl";
-	// transformation pour afficher la définition d'un profile
+	// transformation pour afficher la dÃ©finition d'un profile
 	var AfficheProfile="AfficheProfile.xsl";
 	//var ProfileEnCours="_TousLesPostes";
 	var ProfileEnCours="";
-	// transformation pour afficher la définition d'un package
+	// transformation pour afficher la dÃ©finition d'un package
 	var AffichePackage="AffichePackage.xsl";
 	var PackageEnCours="";
-	// transformation pour afficher le détail d'un poste (host)
+	// transformation pour afficher le dÃ©tail d'un poste (host)
 	var AfficheHost="AfficheHost.xsl";
 	var HostEnCours="", ipHost;
 	
@@ -63,13 +63,13 @@
 	var sortProfiles='ascending'; //ordre de tri des Parcs sur la page 'Associations Appli.<->Parcs'
 	
 	var busy = 0; // cursor busy
-	var noReloadWpkgXml = false; //pour empêcher la relecture de wpkg.xml
+	var noReloadWpkgXml = false; //pour empÃªcher la relecture de wpkg.xml
 	var AssocierOperation, AssocierIdProfile, AssocierIdPackage;
 	var aXmlDoc = new Array();  //  wpkg.php (contient hosts, packages, rapports) , profiles.php, timeStamps.php, wpkglist.php, wpkgtesting.php
 	//var aUrl = new Array('wpkg.php', 'profiles.php', 'timeStamps.php', 'wpkglist.php', 'wpkgtesting.php');  //  wpkg.php (contient hosts, packages, rapports) , profiles.php, timeStamps.php, wpkglist.php, wpkgtesting.php
 	var aLastModified = new Array();  //  date de modif des fichiers
-	var aIsModified = new Array();  //  aXmlDoc a été mis à jour
-	var aXmlNeeded = new Array();  //  array des xml nécessaires à la construction de wpkgDoc
+	var aIsModified = new Array();  //  aXmlDoc a Ã©tÃ© mis Ã  jour
+	var aXmlNeeded = new Array();  //  array des xml nÃ©cessaires Ã  la construction de wpkgDoc
 	
 	var decalX=0, decalY=0, H, L, X, Y; // scrolling de la page PackagesProfiles
 	
@@ -80,7 +80,7 @@
 	///////////////////////////////////
 	function FirstLoad(evt){
 		//processParameters();
-		// Teste si la configuration de wpkg a été effectuée par l'admin
+		// Teste si la configuration de wpkg a Ã©tÃ© effectuÃ©e par l'admin
 		var i, j;
 		var s="", t, lien;
 		var destPage;
@@ -137,18 +137,18 @@
 	}
 	function testUpdatedXml() {
 		//var forceRefresh = documentEnCours.getElementById("forceRefresh").checked;
-		// Appelé à partir de AjoutPackage.xsl
+		// AppelÃ© Ã  partir de AjoutPackage.xsl
 		MAJPackages = 1;
 		//alert("In testUpdatedXml() MAJPackages=" + MAJPackages + ", forceRefresh=" + forceRefresh);
 		var target = documentEnCours.getElementById("transform");
-		target.innerHTML = "Accès au serveur svn.tice.ac-caen.fr. Veuillez patienter ...";
-		// Mise à jour des applis du forum
+		target.innerHTML = "AccÃ¨s au serveur svn.tice.ac-caen.fr. Veuillez patienter ...";
+		// Mise Ã  jour des applis du forum
 		var http = null; 
 		if(window.nav=='firefox') // Firefox 
 			http = new XMLHttpRequest(); 
 		else if(window.nav=='ie') // Internet Explorer 
 			http = new ActiveXObject("Microsoft.XMLHTTP"); 
-		else { // XMLHttpRequest non supporté par le navigateur 
+		else { // XMLHttpRequest non supportÃ© par le navigateur 
 			alert("Votre navigateur ne supporte pas les objets XMLHTTPRequest..."); 
 			return false; 
 		} 
@@ -200,7 +200,7 @@
 		var idScriptTableau = document.getElementById('ScriptTableau');
 		if ( idScriptTableau != null ) {
 			var InitTableau = idScriptTableau.innerHTML;
-			// initialise le tableau en exécutant le script
+			// initialise le tableau en exÃ©cutant le script
 			eval(InitTableau);
 			//alert("In updateTableau : typeof Tableau=" + (typeof Tableau) + "\nTableau.length=" + Tableau.length);
 			if ( Tableau.length > 0 ) {
@@ -210,7 +210,7 @@
 						var r = '<table class="postes"><thead id="headTableau">' + headTableau + '</thead><tbody id="bodyTableau">' + Tableau.join("") + '</tbody></table>';
 						try {
 							document.getElementById('divTableau').innerHTML =  r;
-							nChamps = Tableau[0].length - 2; // indice du champ n°
+							nChamps = Tableau[0].length - 2; // indice du champ nÂ°
 						} catch (e) {
 							alert( "Erreur updateTableau : innerText : r=\n" + r + "\n" +e + "\n" + e.description);
 						}
@@ -224,12 +224,12 @@
 						
 						idTableau.innerHTML = Tableau.join("");
 						//alert("updateTableau : Tableau.length=" + Tableau.length);
-						nChamps = Tableau[0].length - 2; // indice du champ n°
+						nChamps = Tableau[0].length - 2; // indice du champ nÂ°
 					}
 				}
 				if ( (typeof ordre) == 'object' ) {
 					//alert("In updateTableau ordre.length=" + ordre.length + "\nordre=" + ordre + "\nnChamps=" + nChamps);
-					tri(nChamps+1); // tri pour rétablir l'ordre du tableau avant le rafraichissement de la page
+					tri(nChamps+1); // tri pour rÃ©tablir l'ordre du tableau avant le rafraichissement de la page
 				} else {
 					// alert("In updateTableau typeof ordre=" + (typeof ordre));
 					l = Tableau.length;
@@ -249,7 +249,7 @@
 	
 	}
 	function processParameters() {
-		// lit les paramètres passés lors de l'appel de la page html
+		// lit les paramÃ¨tres passÃ©s lors de l'appel de la page html
 		var destPage = PageEnCours;
 		var parameters = location.search.substring(1).split("&");
 		
@@ -263,17 +263,17 @@
 		return destPage;
 	}
 	function to_utf8 (doc) {
-		// Function inutilisée
+		// Function inutilisÃ©e
 		if (window.nav=='firefox') {
 			// Navigateur type Firefox
 			//window.nav='firefox'
 			var processor;
 			//alert("typeof(doc)=" + typeof(doc));
 			var xslt= document.implementation.createDocument("", "", null);
-			//alert("xsl=" +xsl + ", xslt défini!");
+			//alert("xsl=" +xsl + ", xslt dÃ©fini!");
 			xslt.async=false;
 			xslt.load(to_utf8.xsl);
-			if (Debug) alert(xsl + " chargé ! , typeof(xslt)=" + typeof(xslt));
+			if (Debug) alert(xsl + " chargÃ© ! , typeof(xslt)=" + typeof(xslt));
 			processor = new XSLTProcessor();
 			try {
 				processor.importStylesheet(xslt);
@@ -316,7 +316,7 @@
 		XmlHttp.send(null);
 	}
 	function PP(evt, idSrc, redraw) {
-		// appellé lors d'un click sur une case du Tableau profiles/packages (de la page PackageProfile)
+		// appellÃ© lors d'un click sur une case du Tableau profiles/packages (de la page PackageProfile)
 		// ou lors d'un clic sur une case 'Installer sur ce poste' (de la page AfficheHost ou AffichePackage)
 		// idSrc de la forme : "idProfile:idPackage"
 		if (typeof redraw == "undefined") redraw = false;
@@ -332,8 +332,8 @@
 		var status;
 		PackageEnCours=idPackage;
 		status = eltsrc.style.zIndex;
-		// zIndex = 3 : Non installé
-		// zIndex = 4 : installé
+		// zIndex = 3 : Non installÃ©
+		// zIndex = 4 : installÃ©
 		
 		var checked = (status==4 ) ? true : false;
 		//alert("in PP idPackage=" + idPackage + "\nidProfile=" + idProfile + "\nredraw=" + redraw + "\nchecked=" + checked);
@@ -375,25 +375,25 @@
 		ChangePageEnCours('PackagesProfiles');
 	}
 	function defPackage(idPackage) {
-		// Affichage de la page de définition du Package
+		// Affichage de la page de dÃ©finition du Package
 		PackageEnCours=idPackage;
 		ChangePageEnCours('AffichePackage');
 		//setTimeout("document.getElementById('idPackage').focus();", 200);
 	}
 	function defParcPackage(idPackage) {
-		// Affichage de la page de définition du Package
+		// Affichage de la page de dÃ©finition du Package
 		PackageEnCours=idPackage;
 		ChangePageEnCours('AffichePackage');
 		setTimeout("document.getElementById('idParcPackage').focus();", 200);
 	}
 	function defProfile(idProfile) {
-		// Affichage de la page de définition du Profile
+		// Affichage de la page de dÃ©finition du Profile
 		ProfileEnCours=idProfile;
 		ChangePageEnCours('AfficheProfile');
 		//setTimeout("document.getElementById('idProfile').focus();", 200);
 	}
 	function defHost(idHost) {
-		// Affichage de la page de détail d'un poste
+		// Affichage de la page de dÃ©tail d'un poste
 		HostEnCours=idHost;
 		ChangePageEnCours('AfficheHost');
 		//setTimeout("document.getElementById('idHost').focus();", 200);
@@ -421,18 +421,18 @@
 			ArrBroadcast[i] = eval( "(" + ArrAddIp[i] + " | ( ~ " + ArrMasque[i] + ")  & 0xFF )" );
 		}
 		Broadcast = ArrBroadcast.join(".");
-		// alert("Envoi d'une trame réseau pour démarrer le poste '" + NomPoste + "'.\n" + "\nwakeonlan -i " + Broadcast + " " + Mac);
+		// alert("Envoi d'une trame rÃ©seau pour dÃ©marrer le poste '" + NomPoste + "'.\n" + "\nwakeonlan -i " + Broadcast + " " + Mac);
 		getHttp( "restart-client.php?Poste=" + NomPoste + "&Broadcast=" + Broadcast + "&Mac=" + Mac  + "&Ip=" + AddIp );
 		
 	}
 	function getHttp( url, content) {
-		// envoi une requête http et affiche le résultat dans une alert
+		// envoi une requÃªte http et affiche le rÃ©sultat dans une alert
 		var http = null; 
 		if(window.nav=='firefox') // Firefox 
 			http = new XMLHttpRequest(); 
 		else if(window.nav=='ie') // Internet Explorer 
 			http = new ActiveXObject("Microsoft.XMLHTTP"); 
-		else { // XMLHttpRequest non supporté par le navigateur 
+		else { // XMLHttpRequest non supportÃ© par le navigateur 
 			alert("Votre navigateur ne supporte pas les objets XMLHTTPRequest..."); 
 			return false; 
 		} 
@@ -493,7 +493,7 @@
 					}
 				}
 			} else {
-				// tri pour remettre le résultat du dernier tri
+				// tri pour remettre le rÃ©sultat du dernier tri
 				//alert("In tri : KeyActuel=" + KeyActuel + ", nChamps=" + nChamps + " typeof ordre=" + typeof ordre);
 				try {
 					Tableau.sort(triTableau);
@@ -513,7 +513,7 @@
 					eltsrc.style.cursor = "ne-resize";
 				}
 			} else {
-				// tri pour remettre le résultat du dernier tri
+				// tri pour remettre le rÃ©sultat du dernier tri
 				Tableau.sort(triTableau);
 			}
 		}
@@ -571,7 +571,7 @@
 			http = new XMLHttpRequest(); 
 		else if(window.nav=='ie') // Internet Explorer 
 			http = new ActiveXObject("Microsoft.XMLHTTP"); 
-		else { // XMLHttpRequest non supporté par le navigateur 
+		else { // XMLHttpRequest non supportÃ© par le navigateur 
 			alert("Votre navigateur ne supporte pas les objets XMLHTTPRequest..."); 
 			return false; 
 		} 
@@ -619,20 +619,20 @@
 						var NomPackage = idPackage;
 						if ( http.status == "200" ) {
 							src.style.borderColor = "#8080A0";
-							// Mise à jour du doc Xml
+							// Mise Ã  jour du doc Xml
 							updateCmdWait ( --nCmdWait );
 							if (localRedraw && (nCmdWait == 0)) {
 								//alert("in associer  Appel ChangePageEnCours(" + PageEnCours + ")");
 								ChangePageEnCours(localPageEnCours, true);
 							}
-							//alert("Les données ont été sauvegardées!\nhttp.status=" + http.status + "\n" + http.responseText+ "\nAppli=" + Appli + "\nParc=" + Parc+ "\nOperation=" + Operation +"\nnCmdWait=" + nCmdWait); 
+							//alert("Les donnÃ©es ont Ã©tÃ© sauvegardÃ©es!\nhttp.status=" + http.status + "\n" + http.responseText+ "\nAppli=" + Appli + "\nParc=" + Parc+ "\nOperation=" + Operation +"\nnCmdWait=" + nCmdWait); 
 						} else {
-							// Refus de la modif => on remet comme c'était
+							// Refus de la modif => on remet comme c'Ã©tait
 							
 							if ( http.status == "403" ) {
-								alert("Vous n'êtes pas autorisé à effectuer cette opération.\n\n" + http.responseText + "\nLa modification demandée a été refusée.\n"); 
+								alert("Vous n'Ãªtes pas autorisÃ© Ã  effectuer cette opÃ©ration.\n\n" + http.responseText + "\nLa modification demandÃ©e a Ã©tÃ© refusÃ©e.\n"); 
 							} else {
-								alert("Erreur : Les données n'ont pas été sauvegardées!\nhttp.status=" + http.status + "\n" + http.responseText); 
+								alert("Erreur : Les donnÃ©es n'ont pas Ã©tÃ© sauvegardÃ©es!\nhttp.status=" + http.status + "\n" + http.responseText); 
 							}
 							//alert("typeof CePackage = " + (typeof CePackage) + "\nsrc.style.zIndex = " + src.style.zIndex + "\nsrc.style.zIndex=" + src.style.zIndex + "\nAppli=" + Appli + "\nParc=" + Parc+ "\nOperation=" + Operation);
 							// Rafraichissement de la page
@@ -693,7 +693,7 @@
 		}
 	}
 	function updateCmdWait (nCmdWait) {
-		// Indique si les données du serveur sont à jour
+		// Indique si les donnÃ©es du serveur sont Ã  jour
 		if (nCmdWait == 0 ) {
 			documentEnCours.getElementById("Etat").src = "img/etat_ok.gif";
 			//ChangePageEnCours(PageEnCours, false);
@@ -721,7 +721,7 @@
 		} else if(window.nav=='ie') { // Internet Explorer 
 			http = new ActiveXObject("Microsoft.XMLHTTP");
 			url += "&Navigateur=ie" + "&stamp=" + Math.round(100000*Math.random( ));			
-		} else { // XMLHttpRequest non supporté par le navigateur 
+		} else { // XMLHttpRequest non supportÃ© par le navigateur 
 			alert("Votre navigateur ne supporte pas les objets XMLHTTPRequest..."); 
 			return false; 
 		}
@@ -799,12 +799,12 @@
 		http.send(null); 
 	}
 	function onclickSelectMajAppli(appliIsChk, numero, forumEnCours, autreforumExiste) {
-		// Mise à jour des checkboxes du tableau pour actualisation OK si un tri est demandé
+		// Mise Ã  jour des checkboxes du tableau pour actualisation OK si un tri est demandÃ©
 		//alert("appliIsChk=" + appliIsChk + ", numero=" + numero + "\nTableau[numero][0]=" + Tableau[numero][0] + "\n" + Tableau[numero][1]);
 		//alert("appliIsChk=" + appliIsChk + ", numero=" + numero + "\nforumEnCours=" + forumEnCours + "\nautreforumExiste=" + autreforumExiste);
 		if (appliIsChk) {
 			if ( autreforumExiste == 'test' || autreforumExiste == 'stable') {
-				alert("Attention : cette application est également disponible en version '" + autreforumExiste + "'\nSoyez sûr que la version que vous installez est bien celle que vous souhaitez");
+				alert("Attention : cette application est Ã©galement disponible en version '" + autreforumExiste + "'\nSoyez sÃ»r que la version que vous installez est bien celle que vous souhaitez");
 			}
 			Tableau[numero][0] = Tableau[numero][0].replace('<input ', '<input checked="true" ');
 			Tableau[numero][1] = true;
@@ -823,8 +823,8 @@
 	function aurevoir (event) {
 
 		if ( ! nCmdWait == 0 ) {
-			return "Les données saisies n'ont pas été complètement sauvegardées !\n" +
-					"\nVoulez-vous quand même quitter cette page ?\n" ;
+			return "Les donnÃ©es saisies n'ont pas Ã©tÃ© complÃ¨tement sauvegardÃ©es !\n" +
+					"\nVoulez-vous quand mÃªme quitter cette page ?\n" ;
 		}
 	}
 	window.onunload = quitter;
@@ -940,7 +940,7 @@
 <div id="idDivDebug" style="background-color:#FFA07A;display:none;">
 	<table>
 		<tr>
-			<td><font size="1">Ce bandeau sera supprimé.<br>quand tout sera au point... </font></td>
+			<td><font size="1">Ce bandeau sera supprimÃ©.<br>quand tout sera au point... </font></td>
 			<td > &nbsp; </td>
 			<td >Options : </td>
 			<td>
@@ -952,24 +952,24 @@
 	<hr>
 </div>
 <div id="liensUpdateParcs" style="display:none;">
-	<a style="font-size:xx-small;" title="A virer dès que la mise à jour sera effectuée dans l'interface de gestion des parcs" href="index.php?updateProfiles=1">Mettre à jour les fichiers hosts.xml et profiles.xml pour prendre en compte les modifications des parcs</a><br>
-	<a style="font-size:xx-small;" title="A virer dès que la mise à jour sera effectuée dans l'interface de gestion des parcs" href="index.php?updateDroits=1">Mettre à jour le fichier droits.xml pour prendre en compte les modifications de délégation de parcs</a>
+	<a style="font-size:xx-small;" title="A virer dÃ¨s que la mise Ã  jour sera effectuÃ©e dans l'interface de gestion des parcs" href="index.php?updateProfiles=1">Mettre Ã  jour les fichiers hosts.xml et profiles.xml pour prendre en compte les modifications des parcs</a><br>
+	<a style="font-size:xx-small;" title="A virer dÃ¨s que la mise Ã  jour sera effectuÃ©e dans l'interface de gestion des parcs" href="index.php?updateDroits=1">Mettre Ã  jour le fichier droits.xml pour prendre en compte les modifications de dÃ©lÃ©gation de parcs</a>
 </div>
-<h1 align="center">Déploiement d'applications <font size="3">( sur Win2000, WinXP, Vista et Win7 )</font></h1>
+<h1 align="center">DÃ©ploiement d'applications <font size="3">( sur Win2000, WinXP, Vista et Win7 )</font></h1>
 <div id="Onglets" style="border-bottom:3px solid black;height:37px;width:100%;">
 	<script type = "text/javascript">
 		if ( (typeof(lsusInstalled) != "undefined") && lsusInstalled ) {
-			document.write("<div style='position:absolute;left:690px;z-index:1;cursor:pointer;' onclick='ChangePageEnCours(&#34;WindowsUpdate&#34;);'><img id='WindowsUpdate' alt='Mises à jour Microsoft' src='img/WindowsUpdate0.gif'></div>");
+			document.write("<div style='position:absolute;left:690px;z-index:1;cursor:pointer;' onclick='ChangePageEnCours(&#34;WindowsUpdate&#34;);'><img id='WindowsUpdate' alt='Mises Ã  jour Microsoft' src='img/WindowsUpdate0.gif'></div>");
 		}
 	</script>
-	<div style="position:absolute;left:568px;z-index:1;cursor:pointer;" onclick="ChangePageEnCours('AfficheHost');"><img id="AfficheHost" alt="Afficher les données d'un poste" src="img/AfficheHost0.gif"></div>
-	<div style="position:absolute;left:446px;z-index:1;cursor:pointer;" onclick="ChangePageEnCours('AffichePackage');"><img id="AffichePackage" alt="Afficher les données d'une application" src="img/AffichePackage0.gif"></div>
-	<div style="position:absolute;left:324px;z-index:1;cursor:pointer;" onclick="ChangePageEnCours('AfficheProfile');"><img id="AfficheProfile" alt="Afficher les données d'un parc" src="img/AfficheProfile0.gif"></div>
+	<div style="position:absolute;left:568px;z-index:1;cursor:pointer;" onclick="ChangePageEnCours('AfficheHost');"><img id="AfficheHost" alt="Afficher les donnÃ©es d'un poste" src="img/AfficheHost0.gif"></div>
+	<div style="position:absolute;left:446px;z-index:1;cursor:pointer;" onclick="ChangePageEnCours('AffichePackage');"><img id="AffichePackage" alt="Afficher les donnÃ©es d'une application" src="img/AffichePackage0.gif"></div>
+	<div style="position:absolute;left:324px;z-index:1;cursor:pointer;" onclick="ChangePageEnCours('AfficheProfile');"><img id="AfficheProfile" alt="Afficher les donnÃ©es d'un parc" src="img/AfficheProfile0.gif"></div>
 	<div style="position:absolute;left:202px;z-index:1;cursor:pointer;" onclick="ChangePageEnCours('AjoutPackage');"><img id="AjoutPackage" alt="Ajouter une application" src="img/AjoutPackage0.gif"></div>
 	<div style="position:absolute;left:80px;z-index:2;cursor:pointer;" onclick="ChangePageEnCours('PackagesProfiles');"><img id="PackagesProfiles" alt="Associer les Applications aux Parcs" src="img/PackagesProfiles.gif"></div>
 	
-	<div style="position:absolute;width:35px;left:68px;font-size:xx-small;padding-top:8px;z-index:9;" title="Etat de synchronisation des données sur le serveur">
-		<img id="Etat" src="img/etat_ok.gif"></img><span> </span><span title="Nombre de requêtes en attente" id="nCmdWait"></span>
+	<div style="position:absolute;width:35px;left:68px;font-size:xx-small;padding-top:8px;z-index:9;" title="Etat de synchronisation des donnÃ©es sur le serveur">
+		<img id="Etat" src="img/etat_ok.gif"></img><span> </span><span title="Nombre de requÃªtes en attente" id="nCmdWait"></span>
 	</div>
 	<div id="ImgBusy" style="display:none;position:absolute;width:35px;left:62px;font-size:xx-small;padding-top:2px;z-index:10;" title="Calcul en cours...">
 		<img src="img/busy.gif"></img>
