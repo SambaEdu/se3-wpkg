@@ -3,7 +3,7 @@
 //
 // ## $Id$ ##
 
-// Compatibilit� register_globals = Off
+// Compatibilité register_globals = Off
 foreach($_POST AS $key => $value) {
 	${$key} = $value;
 }
@@ -154,7 +154,7 @@ if (! $login ) {
 			}
 		} elseif ( $_GET['UpdateApplis'] == "1" ) {
 			if ( adminWpkg() ) {
-				# Installation d'applis � partir du d�pot officiel
+				# Installation d'applis à partir du dépot officiel
 				if (isset($urlWawadebMD5)) {
 					$urlMD5 = isset($urlWawadebMD5) ? $_POST['urlWawadebMD5'] : '';
 					$pasDeDownload = $_POST['noDownload'];
@@ -192,7 +192,7 @@ if (! $login ) {
 				}
 			}
 		} else {
-			# Par d�faut redirection sur admin.html
+			# Par défaut redirection sur admin.html
 			header("Location: http://" . $_SERVER['HTTP_HOST'] . rtrim(dirname($_SERVER['PHP_SELF']), '/\\') . "/admin.html");
 		}
 	}
@@ -345,7 +345,7 @@ function associer ($iCmd, $operation, $package, $profile) {
 
 function SupprAppli ( $idAppli, $delFiles) {
 	global $wpkgwebdir, $login;
-	# echo "Ex�cution de : bash $wpkgwebdir/bin/deletePackage.sh '$idAppli' '$delFiles'<br>";
+	# echo "Exécution de : bash $wpkgwebdir/bin/deletePackage.sh '$idAppli' '$delFiles'<br>";
 	echo "<h3>Suppression de l'application '$idAppli'</h3>\n";
 	echo "<pre>";
 	passthru ( "bash $wpkgwebdir/bin/deletePackage.sh '$login' '$idAppli' '$delFiles' 2>&1", $status);

@@ -4,21 +4,21 @@ include "inc/wpkg.auth.php";
 
 if ( ! $wpkgUser ) {
     include entete.inc.php; ?>
-        <h2>DÈploiement d'applications</h2>
-        <div class=error_msg>Vous n'avez pas les droits nÈcessaires ‡ l'utilisation de cette fonction !</div>
+        <h2>D√©ploiement d'applications</h2>
+        <div class=error_msg>Vous n'avez pas les droits n√©cessaires √† l'utilisation de cette fonction !</div>
 <?  include pdp.inc.php;
     exit;
 } else{
-    if ($_GET["Poste"] == '') Erreur("poste non dÈfini");
-    elseif  ($_GET["Broadcast"] == '') Erreur("Broadcast non dÈfini");
-    elseif  ($_GET["Mac"] == '') Erreur("Mac non dÈfini");
-    elseif  ($_GET["Ip"] == '') Erreur("Ip non dÈfini");
+    if ($_GET["Poste"] == '') Erreur("poste non d√©fini");
+    elseif  ($_GET["Broadcast"] == '') Erreur("Broadcast non d√©fini");
+    elseif  ($_GET["Mac"] == '') Erreur("Mac non d√©fini");
+    elseif  ($_GET["Ip"] == '') Erreur("Ip non d√©fini");
 	else {
 		// envoi d'une trame wakeonlan
 	    exec ( "/usr/bin/wakeonlan -i '".$_GET["Broadcast"]."' '" . $_GET["Mac"] . "' 2>&1", $output, $status );
 		$msg="wakeonlan  -i '".$_GET["Broadcast"]."' '" . $_GET["Mac"] . "'\n";
 		
-		// Pour le cas o˘ le poste Ètait dÈj‡ dÈmarrÈ
+		// Pour le cas o√π le poste √©tait d√©j√† d√©marr√©
 		exec ( "net rpc shutdown -r -f -C 'Redemarrage pour wpkg' -S ".$_GET["Poste"]." -U '".$_GET["Poste"]."\adminse3%$xppass' 2>&1", $output, $status );
 		if ( $status == 0 ) {
 			print "Redemarrge du '$Poste' : OK\n\n";
@@ -67,7 +67,7 @@ if ( ! $wpkgUser ) {
 					}
 					$msg .= "\n";
 					header("HTTP/1.1 505 Forbidden");
-					header("Status: 505 Erreur d'execution"); 
+					header("Status: 505 Erreur d'ex√©cution"); 
 					echo "$msg";
 					return false;
 				}

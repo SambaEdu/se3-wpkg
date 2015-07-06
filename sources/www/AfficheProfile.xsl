@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 
-<!--  Définition d'un profile avec affichage de l'état des postes de ce profile 
-		S'applique à wpkg.xml
+<!--  DÃ©finition d'un profile avec affichage de l'Ã©tat des postes de ce profile 
+		S'applique Ã  wpkg.xml
 		
 		## $Id$ ##
 -->
@@ -43,8 +43,8 @@
 		</xsl:if>
 		<xsl:element name="div">
 			<xsl:attribute name="id">Resultat</xsl:attribute>
-			<!-- Sélection d'un autre profile -->
-			<h2>Parc à afficher : 
+			<!-- SÃ©lection d'un autre profile -->
+			<h2>Parc Ã  afficher : 
 				<select class="SelectH3" id="idProfile" name="idProfile" >
 					<xsl:attribute name="onchange">
 						<xsl:value-of select="'defProfile(this.value);'" />
@@ -79,11 +79,11 @@
 		<xsl:element name="div">
 			<xsl:choose>
 				<xsl:when test="$idProfile = ''">
-					<!-- Pas de Parc sélectionné -->
-					<xsl:text> Pas de Parc sélectionné </xsl:text>
+					<!-- Pas de Parc sÃ©lectionnÃ© -->
+					<xsl:text> Pas de Parc sÃ©lectionnÃ© </xsl:text>
 				</xsl:when>
 				<xsl:otherwise>
-					<!-- Parc $idProfile sélectionné -->
+					<!-- Parc $idProfile sÃ©lectionnÃ© -->
 					<xsl:variable name="CeProfile" select="key('ProfileFromId', $idProfile)" />
 					<xsl:variable name="nbPostes" select="count($ListPostes)" />
 					<div style="font-size:small;" >
@@ -99,15 +99,15 @@
 							</xsl:otherwise>
 						</xsl:choose>
 					</div>
-					<!-- Liste des postes concernés par ce profile (=Parc) -->
+					<!-- Liste des postes concernÃ©s par ce profile (=Parc) -->
 					<div id="divTableau">
-						<!-- Nom du profile et dépendances -->
+						<!-- Nom du profile et dÃ©pendances -->
 						<table class="postes">
 							<thead id="headTableau">
 								<tr>
 									<th style="cursor:ne-resize;" onclick="tri(1,event);">Poste</th>
-									<th style="cursor:ne-resize;" onclick="tri(2,event);" title="Nbre d'appli. installées / Nbre d'appli. souhaitées" >Nbre d'appli.</th>
-									<th style="cursor:ne-resize;" onclick="tri(3,event);" title="Correspondance entre l'état souhaité et actuel du poste">Synchro.</th>
+									<th style="cursor:ne-resize;" onclick="tri(2,event);" title="Nbre d'appli. installÃ©es / Nbre d'appli. souhaitÃ©es" >Nbre d'appli.</th>
+									<th style="cursor:ne-resize;" onclick="tri(3,event);" title="Correspondance entre l'Ã©tat souhaitÃ© et actuel du poste">Synchro.</th>
 									<th style="cursor:ne-resize;" onclick="tri(4,event);">Date du dernier rapport</th>
 									<th style="cursor:ne-resize;" onclick="tri(5,event);">Adresse MAC</th>
 									<th style="cursor:ne-resize;" onclick="tri(6,event);">Adresse IP</th>
@@ -126,7 +126,7 @@
 							<!-- Profile de idHost -->
 							<xsl:variable name="profileHost" select="key('ProfileFromId', $idPoste)" />
 							<xsl:variable name="profileDependsId" select="key('ProfileFromId', ($idPoste | $profileHost/depends/@profile-id))/package/@package-id" />
-							<!-- Nombre de packages à installer demandés pour idHost -->
+							<!-- Nombre de packages Ã  installer demandÃ©s pour idHost -->
 
 							<!-- xsl:variable name="PackagesToHost" select="$PACKAGES/package[@id = $PROFILES/profile/package[(generate-id() = generate-id(key('keyPack',@package-id)[(../@id = $idPoste) or (../@id = $profileHost/depends/@profile-id)]))]/@package-id]" / -->
 							<xsl:variable name="PackagesToHost" select="key('PackageFromId', $profileDependsId)" />
@@ -205,12 +205,12 @@
 				<xsl:text>" onclick="javascript:window.open(&amp;quot;index.php?logfile=</xsl:text>
 <xsl:value-of select="$CePoste/@logfile" />
 				<xsl:text>&amp;quot;, &amp;quot;_blank&amp;quot;);"&gt;</xsl:text>
-<xsl:value-of select="$CePoste/@date" /><xsl:text> à </xsl:text><xsl:value-of select="$CePoste/@time" />
+<xsl:value-of select="$CePoste/@date" /><xsl:text> Ã  </xsl:text><xsl:value-of select="$CePoste/@time" />
 				<xsl:text>&lt;/span&gt;</xsl:text>
 			</xsl:when>
 			<xsl:otherwise>
 			<!-- Pas de fichier log disponible -->
-<xsl:value-of select="$CePoste/@date" /><xsl:text> à </xsl:text><xsl:value-of select="$CePoste/@time" />
+<xsl:value-of select="$CePoste/@date" /><xsl:text> Ã  </xsl:text><xsl:value-of select="$CePoste/@time" />
 			</xsl:otherwise>
 		</xsl:choose>
 		<xsl:text>&lt;/td&gt;&lt;td&gt;</xsl:text>
@@ -226,9 +226,9 @@
 </xsl:choose>
 <xsl:text>&lt;/tr&gt; &lt;!--','</xsl:text>
 
-<!-- Clé de tri1 idHost -->
+<!-- ClÃ© de tri1 idHost -->
 <xsl:value-of select="$idPoste" /><xsl:text>',</xsl:text>
-<!-- Clé de tri2 Nb appli ou msg erreur-->
+<!-- ClÃ© de tri2 Nb appli ou msg erreur-->
 <xsl:choose>
 	<xsl:when test="$CePoste/erreur">
 		<xsl:text>-1,'</xsl:text>
@@ -237,15 +237,15 @@
 		<xsl:value-of select="$nPackagesInstalled" /><xsl:text>,'</xsl:text>
 	</xsl:otherwise>
 </xsl:choose>
-<!-- Clé de tri3 Synchro. -->
+<!-- ClÃ© de tri3 Synchro. -->
 <xsl:value-of select="$Synchro" /><xsl:text>','</xsl:text>
-<!-- Clé de tri4 DateRapport -->
+<!-- ClÃ© de tri4 DateRapport -->
 <xsl:value-of select="$CePoste/@datetime" /><xsl:text>','</xsl:text>
-<!-- Clé de tri5 add MAC -->
+<!-- ClÃ© de tri5 add MAC -->
 <xsl:value-of select="$CePoste/@mac" /><xsl:text>','</xsl:text>
-<!-- Clé de tri6 add IP -->
+<!-- ClÃ© de tri6 add IP -->
 <xsl:value-of select="$CePoste/@ip" /><xsl:text>',</xsl:text>
-<!-- Numéro de la ligne -->
+<!-- NumÃ©ro de la ligne -->
 <xsl:value-of select="position() - 1" /><xsl:text>,'--&gt;');&#xa;</xsl:text>
 
 						</xsl:for-each>

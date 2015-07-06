@@ -1,14 +1,16 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
+
+
 <!-- < ?xml version="1.0" encoding="windows-1252"? > -->
 
-<!--  Affichage de la page d'ajout de package unique ou du tableau des MAJ des xml à partir du forum
+<!--  Affichage de la page d'ajout de package unique ou du tableau des MAJ des xml Ã  partir du forum
 
 	## $Id$ ##
 -->
 
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<xsl:output method="html" encoding="iso-8859-1" />
-	<!-- passage de paramètres à partir du javascript (admin.html) -->
+	<!-- passage de paramÃ¨tres Ã  partir du javascript (admin.html) -->
 	<xsl:param name="Navigateur" ><xsl:text>inconnu</xsl:text></xsl:param>
 	<xsl:param name="wpkgAdmin" ><xsl:text>0</xsl:text></xsl:param>
 	<xsl:param name="wpkgUser" ><xsl:text>0</xsl:text></xsl:param>
@@ -19,10 +21,10 @@
 	<xsl:param name="urlUpload" select="'index.php?upload=1'"/>
 
 	<!-- url fournissant les packages officiels pour se3 
-			pas besoin d'un serveur sécurisé car le md5sum des fichiers appli.xml 
-			est ensuite controlé sur le serveur se3 avant l'installation -->
+			pas besoin d'un serveur sÃ©curisÃ© car le md5sum des fichiers appli.xml 
+			est ensuite controlÃ© sur le serveur se3 avant l'installation -->
 	<xsl:param name="urlWawadeb" select="'http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages/stable'" />
-	<!-- url fournissant le xml des packages du forum (nom de variable à changer!). -->
+	<!-- url fournissant le xml des packages du forum (nom de variable Ã  changer!). -->
 	<xsl:param name="urlWawadebMD5" select="'http://wawadeb.crdp.ac-caen.fr/unattended/se3_wpkglist.php'" />
 
 	<xsl:param name="Local" select="false()" />
@@ -51,10 +53,10 @@
 			<xsl:when test="$MAJPackages = '1'" >
 				<!-- xsl:choose>
 					<xsl:when test="$urlWawadebMD5 = 'http://wawadeb.crdp.ac-caen.fr/unattended/se3_wpkglist.php?branch=testing'">
-						<h2 style="color:#FF7F50;">Mise à jour des applications - Paquets WPKG a tester</h2>
+						<h2 style="color:#FF7F50;">Mise Ã  jour des applications - Paquets WPKG a tester</h2>
 					</xsl:when>
 					<xsl:otherwise -->
-						<h2>Mise à jour des applications</h2>
+						<h2>Mise Ã  jour des applications</h2>
 					<!-- /xsl:otherwise>
 				</xsl:choose -->
 				<xsl:choose>
@@ -64,22 +66,22 @@
 					<xsl:otherwise>
 						<!-- xsl:choose>
 							<xsl:when test="$urlWawadebMD5 = 'http://wawadeb.crdp.ac-caen.fr/unattended/se3_wpkglist.php?branch=testing'">
-								Les mises à jour proposées ici sont celles des <a href="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages/testing" target="_blank">Paquets WPKG a tester</a> du SVN du CRDP de Basse-Normandie.
+								Les mises Ã  jour proposÃ©es ici sont celles des <a href="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages/testing" target="_blank">Paquets WPKG a tester</a> du SVN du CRDP de Basse-Normandie.
 							</xsl:when>
 							<xsl:otherwise>
-								Les mises à jour proposées ici sont celles des <a href="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages/stable" target="_blank">Paquets WPKG Stables</a> du SVN du CRDP de Basse-Normandie.
+								Les mises Ã  jour proposÃ©es ici sont celles des <a href="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages/stable" target="_blank">Paquets WPKG Stables</a> du SVN du CRDP de Basse-Normandie.
 							</xsl:otherwise>
 						</xsl:choose -->
-						Les mises à jour proposées ici sont celles des paquets WPKG du <a href="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages/stable" target="_blank">SVN du CRDP de Basse-Normandie</a>.
+						Les mises Ã  jour proposÃ©es ici sont celles des paquets WPKG du <a href="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages/stable" target="_blank">SVN du CRDP de Basse-Normandie</a>.
 						
 						<form name="formUpdateXml" method="post" action="index.php?UpdateApplis=1" enctype="multipart/form-data">
 							<table align="center">
 								<tr>
 									<td>
-										Si vous avez déjà placé les fichiers nécessaires aux applications, sur le serveur: <br/>
-										<input name="noDownload" value="1" type="checkbox"></input>Ne pas télécharger les fichiers d'installation des applications.<br></br><br></br>
-										Pour ne pas contrôler les applications téléchargées : <br></br>
-										<input name="ignoreWawadebMD5" onclick="if(this.checked) alert('Soyez sûr du contenu du fichier xml que vous allez installer sur le serveur!\nAucun contrôle ne sera effectué !\n\nLa sécurité de votre réseau est en jeu !!');" value="1" type="checkbox"></input>Ignorer le contrôle MD5.<br></br><br></br>
+										Si vous avez dÃ©jÃ  placÃ© les fichiers nÃ©cessaires aux applications, sur le serveur: <br/>
+										<input name="noDownload" value="1" type="checkbox"></input>Ne pas tÃ©lÃ©charger les fichiers d'installation des applications.<br></br><br></br>
+										Pour ne pas contrÃ´ler les applications tÃ©lÃ©chargÃ©es : <br></br>
+										<input name="ignoreWawadebMD5" onclick="if(this.checked) alert('Soyez sÃ»r du contenu du fichier xml que vous allez installer sur le serveur!\nAucun contrÃ´le ne sera effectuÃ© !\n\nLa sÃ©curitÃ© de votre rÃ©seau est en jeu !!');" value="1" type="checkbox"></input>Ignorer le contrÃ´le MD5.<br></br><br></br>
 										<input size="80" name="urlWawadebMD5" id="urlWawadebMD5" value="{$urlWawadebMD5}" type="hidden"></input>
 									</td>
 								</tr>
@@ -97,7 +99,7 @@
 											<th>md5sum officiel</th>
 											<th>md5sum local</th>
 											-->
-											<th style="cursor:ne-resize;" onclick="tri(6,event);">Installé le</th>
+											<th style="cursor:ne-resize;" onclick="tri(6,event);">InstallÃ© le</th>
 											<th style="cursor:ne-resize;" onclick="tri(7,event);">Par</th>
 										</tr>
 									</thead>
@@ -120,15 +122,15 @@
 												<xsl:text>A jour</xsl:text>
 											</xsl:when>
 											<xsl:when test="($opXml/@op = 'add')">
-												<!-- appli installée et md5 différents -->
-												<xsl:text>XML du SVN </xsl:text><xsl:value-of select="$forumEnCours" /><xsl:text> différent</xsl:text>
+												<!-- appli installÃ©e et md5 diffÃ©rents -->
+												<xsl:text>XML du SVN </xsl:text><xsl:value-of select="$forumEnCours" /><xsl:text> diffÃ©rent</xsl:text>
 											</xsl:when>
 											<xsl:when test="$PACKAGES/package[@id = $idsXml/@id]">
-												<!-- appli installée avant version se3-wpkg_0.2-0_i386.deb : xml inconnu -->
-												<xsl:text>XML utilisé inconnu</xsl:text>
+												<!-- appli installÃ©e avant version se3-wpkg_0.2-0_i386.deb : xml inconnu -->
+												<xsl:text>XML utilisÃ© inconnu</xsl:text>
 											</xsl:when>
 											<xsl:otherwise>
-												<xsl:text>Non installé</xsl:text>
+												<xsl:text>Non installÃ©</xsl:text>
 											</xsl:otherwise>
 										</xsl:choose>
 									</xsl:variable>
@@ -138,11 +140,11 @@
 												<xsl:text>black</xsl:text>
 											</xsl:when>
 											<xsl:when test="($opXml/@op = 'add')">
-												<!-- appli installée et md5 différents (Maj dispo) -->
+												<!-- appli installÃ©e et md5 diffÃ©rents (Maj dispo) -->
 												<xsl:text>#000099</xsl:text>
 											</xsl:when>
 											<xsl:when test="$PACKAGES/package[@id = $idsXml/@id]">
-												<!-- appli installée avant version se3-wpkg_0.2-0_i386.deb : xml inconnu -->
+												<!-- appli installÃ©e avant version se3-wpkg_0.2-0_i386.deb : xml inconnu -->
 												<xsl:text>#FF7F50</xsl:text>
 											</xsl:when>
 											<xsl:otherwise>
@@ -153,19 +155,19 @@
 									<xsl:variable name="BGcouleur" >
 										<xsl:choose>
 											<xsl:when test="($opXml/@op = 'add') and (@md5sum = $opXml/@md5sum)">
-												<!-- appli installée et à jour  bleu -->
+												<!-- appli installÃ©e et Ã  jour  bleu -->
 												<xsl:text>#b3cce5</xsl:text>
 											</xsl:when>
 											<xsl:when test="($opXml/@op = 'add')">
-												<!-- appli installée et md5 différents (Maj dispo) orange -->
+												<!-- appli installÃ©e et md5 diffÃ©rents (Maj dispo) orange -->
 												<xsl:text>#FFA500</xsl:text>
 											</xsl:when>
 											<xsl:when test="$PACKAGES/package[@id = $idsXml/@id]">
-												<!-- appli installée avant version se3-wpkg_0.2-0_i386.deb : xml inconnu -->
+												<!-- appli installÃ©e avant version se3-wpkg_0.2-0_i386.deb : xml inconnu -->
 												<xsl:text>#FF7F50</xsl:text>
 											</xsl:when>
 											<xsl:otherwise>
-												<!-- appli non installée -->
+												<!-- appli non installÃ©e -->
 												<xsl:text>ghostwhite</xsl:text>
 											</xsl:otherwise>
 										</xsl:choose>
@@ -175,17 +177,17 @@
 <xsl:text>&lt;td style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" /><xsl:text>;" </xsl:text>
 <xsl:choose>
 	<xsl:when test="($opXml/@op = 'add') and (@md5sum = $opXml/@md5sum)">
-			<xsl:text>title="Le xml officiel est le même que le votre" &gt;&lt;input </xsl:text>
+			<xsl:text>title="Le xml officiel est le mÃªme que le votre" &gt;&lt;input </xsl:text>
 		</xsl:when>
 		<xsl:when test="($opXml/@op = 'add')">
-			<!-- appli installée et md5 différents -->
-			<!-- xsl:text>title="Le xml officiel est différent du votre" &gt;&lt;input checked="true" </xsl:text -->
-			<xsl:text>title="Le xml officiel est différent du votre" &gt;&lt;input </xsl:text>
+			<!-- appli installÃ©e et md5 diffÃ©rents -->
+			<!-- xsl:text>title="Le xml officiel est diffÃ©rent du votre" &gt;&lt;input checked="true" </xsl:text -->
+			<xsl:text>title="Le xml officiel est diffÃ©rent du votre" &gt;&lt;input </xsl:text>
 		</xsl:when>
 		<xsl:when test="$PACKAGES/package[@id = $idsXml/@id]">
-			<!-- appli installée avant version se3-wpkg_0.2-0_i386.deb : xml inconnu -->
-			<!-- xsl:text>title="Fichier xml utilisé pour l&amp;apos;installation inconnu" &gt;&lt;input checked="true" </xsl:text -->
-			<xsl:text>title="Fichier xml utilisé pour l&amp;apos;installation inconnu" &gt;&lt;input </xsl:text>
+			<!-- appli installÃ©e avant version se3-wpkg_0.2-0_i386.deb : xml inconnu -->
+			<!-- xsl:text>title="Fichier xml utilisÃ© pour l&amp;apos;installation inconnu" &gt;&lt;input checked="true" </xsl:text -->
+			<xsl:text>title="Fichier xml utilisÃ© pour l&amp;apos;installation inconnu" &gt;&lt;input </xsl:text>
 		</xsl:when>
 		<xsl:otherwise>
 			<xsl:text>&gt;&lt;input </xsl:text>
@@ -196,7 +198,7 @@
 <xsl:text>&lt;td align="center" style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" /><xsl:text>;" &gt;</xsl:text>
 <!-- <xsl:choose>
 	<xsl:when test="@topic_id > 0"> -->
-		<xsl:text>&lt;a style="background-color:transparent;" title="Cliquer pour accéder au fichier journal du svn" target="_blank" href="</xsl:text><xsl:value-of select="@svn_link" />
+		<xsl:text>&lt;a style="background-color:transparent;" title="Cliquer pour accÃ©der au fichier journal du svn" target="_blank" href="</xsl:text><xsl:value-of select="@svn_link" />
 		<xsl:choose>
 			<xsl:when test="(@forum = 'stable') or (@forum = 'test')">
 				<xsl:text>"  &gt;&lt;img border="0" style="background-color:transparent;" src="img/forum_message.gif" width="12px" height="13px"&gt; </xsl:text><xsl:value-of select="@forum" /><xsl:text> &lt;/a&gt;</xsl:text>
@@ -216,7 +218,7 @@
 <xsl:text>&lt;td style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" /><xsl:text>;" &gt;</xsl:text>
 <xsl:choose>
 	<xsl:when test="$opXml/@op = 'del'">
-		<xsl:text>&lt;div style="color:red;" title="Cette application a été désinstallée." &gt;' + dateFromIso8601('</xsl:text><xsl:value-of select="$opXml/@date" /><xsl:text>') + '&lt;/div&gt;</xsl:text>
+		<xsl:text>&lt;div style="color:red;" title="Cette application a Ã©tÃ© dÃ©sinstallÃ©e." &gt;' + dateFromIso8601('</xsl:text><xsl:value-of select="$opXml/@date" /><xsl:text>') + '&lt;/div&gt;</xsl:text>
 	</xsl:when>
 	<xsl:otherwise>
 		<xsl:text>' + dateFromIso8601('</xsl:text><xsl:value-of select="$opXml/@date" /><xsl:text>') + '</xsl:text>
@@ -224,12 +226,12 @@
 </xsl:choose>
 <xsl:text>&lt;/td&gt;&lt;td style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" /><xsl:text>;" &gt;</xsl:text><xsl:value-of select="$opXml/@user" /><xsl:text>&lt;/td&gt;</xsl:text>
 <xsl:text>&lt;/tr&gt; &lt;!--',</xsl:text>
-<!-- Clé de tri1 checked-->
+<!-- ClÃ© de tri1 checked-->
 <!-- xsl:value-of select="($opXml/@op = 'add') and not(@md5sum = $opXml/@md5sum)" /><xsl:text>','</xsl:text -->
 <xsl:text>false,'</xsl:text>
-<!-- Clé de tri2 FichierXml -->
+<!-- ClÃ© de tri2 FichierXml -->
 <xsl:value-of select="translate($xmlRef, $ucletters, $lcletters)" /><xsl:text>','</xsl:text>
-<!-- Clé de tri3 EX topic_id   forum : stable ou test-->
+<!-- ClÃ© de tri3 EX topic_id   forum : stable ou test-->
 <xsl:value-of select="@forum" /><xsl:text>','</xsl:text>
 <!-- xsl:choose>
 	<xsl:when test="@topic_id > 0">
@@ -253,15 +255,15 @@
 		</xsl:choose>
 	</xsl:otherwise>
 </xsl:choose -->
-<!-- Clé de tri4 DateFichierOfficiel -->
+<!-- ClÃ© de tri4 DateFichierOfficiel -->
 <xsl:value-of select="@date" /><xsl:text>','</xsl:text>
-<!-- Clé de tri5 Etat -->
+<!-- ClÃ© de tri5 Etat -->
 <xsl:value-of select="$etat" /><xsl:text>','</xsl:text>
-<!-- Clé de tri6 InstalléLe -->
+<!-- ClÃ© de tri6 InstallÃ©Le -->
 <xsl:value-of select="$opXml/@date" /><xsl:text>','</xsl:text>
-<!-- Clé de tri7 Par -->
+<!-- ClÃ© de tri7 Par -->
 <xsl:value-of select="$opXml/@user" /><xsl:text>',</xsl:text>
-<!-- Numéro de la ligne -->
+<!-- NumÃ©ro de la ligne -->
 <xsl:value-of select="position() - 1" /><xsl:text>,'--&gt;');&#xa;</xsl:text>
 
 								</xsl:for-each>
@@ -270,11 +272,11 @@
 							<xsl:choose>
 								<xsl:when test="not($wpkgAdmin = '1')" >
 									
-									<div class="error_msg"><input name="Installer" disabled="true" value=" Installer les applications sélectionnées " type="submit" ></input> Vous n'êtes pas autorisé à ajouter de nouvelles applications sur ce serveur.</div>
-									<p>Demandez à l'administrateur de le faire pour vous !</p>
+									<div class="error_msg"><input name="Installer" disabled="true" value=" Installer les applications sÃ©lectionnÃ©es " type="submit" ></input> Vous n'Ãªtes pas autorisÃ© Ã  ajouter de nouvelles applications sur ce serveur.</div>
+									<p>Demandez Ã  l'administrateur de le faire pour vous !</p>
 								</xsl:when>
 								<xsl:otherwise >
-									<input name="Installer" value=" Installer les applications sélectionnées " type="submit" ></input>
+									<input name="Installer" value=" Installer les applications sÃ©lectionnÃ©es " type="submit" ></input>
 								</xsl:otherwise>
 							</xsl:choose>
 						</form>
@@ -284,7 +286,7 @@
 								<a href="javascript:void(0);" onclick="urlWawadebMD5='http://wawadeb.crdp.ac-caen.fr/unattended/se3_wpkglist.php';testUpdatedXml();" >Afficher les applications stables</a> disponibles dans le SVN du CRDP de Basse-Normandie : <a href="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages/stable" target="_blank">Paquets WPKG Stables</a>.
 							</xsl:when>
 							<xsl:otherwise>
-								<a href="javascript:void(0);" onclick="urlWawadebMD5='http://wawadeb.crdp.ac-caen.fr/unattended/se3_wpkglist.php?branch=testing';testUpdatedXml();" >Afficher les applications à tester</a> disponibles dans le SVN du CRDP de Basse-Normandie : <a href="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages/testing" target="_blank">Paquets WPKG a tester</a>.
+								<a href="javascript:void(0);" onclick="urlWawadebMD5='http://wawadeb.crdp.ac-caen.fr/unattended/se3_wpkglist.php?branch=testing';testUpdatedXml();" >Afficher les applications Ã  tester</a> disponibles dans le SVN du CRDP de Basse-Normandie : <a href="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages/testing" target="_blank">Paquets WPKG a tester</a>.
 							</xsl:otherwise>
 						</xsl:choose -->
 					</xsl:otherwise>
@@ -311,67 +313,67 @@
 	</xsl:template>
 
 	<xsl:template name="MisesAjour">
-		<h2>Mises à jour</h2>
+		<h2>Mises Ã  jour</h2>
 		<div id="updatedXml">
 			<table>
 				<tr>
-					<td><p>Pour mettre à jour ou installer des paquets WPKG à partir du <a href="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages/stable" target="_blank">SVN du CRDP de Caen</a> : </p></td>
+					<td><p>Pour mettre Ã  jour ou installer des paquets WPKG Ã  partir du <a href="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages/stable" target="_blank">SVN du CRDP de Caen</a> : </p></td>
 					<td>
 						<input value="Afficher les applications disponibles" type="button" onclick="MAJPackages=1;urlWawadebMD5='http://wawadeb.crdp.ac-caen.fr/unattended/se3_wpkglist.php';testUpdatedXml();"></input>
-						<!-- Devenu inutile puisque la nouvelle page listant les applis du svn est regénérée systématiquement
+						<!-- Devenu inutile puisque la nouvelle page listant les applis du svn est regÃ©nÃ©rÃ©e systÃ©matiquement
 						<br/><br/> 
-						<input name="forceRefresh" id="forceRefresh" value="0" type="checkbox" title="Récupérer les données du SVN même si elle ne semble pas avoir été modifiées"></input>forçer le rafraîchissement.<br/>
+						<input name="forceRefresh" id="forceRefresh" value="0" type="checkbox" title="RÃ©cupÃ©rer les donnÃ©es du SVN mÃªme si elle ne semble pas avoir Ã©tÃ© modifiÃ©es"></input>forÃ§er le rafraÃ®chissement.<br/>
 						-->
 					</td>
 				</tr>
 			</table>
-N'oubliez pas, après avoir installé une application de "test", d'écrire sur la liste de diffusion sambaedu, pour indiquer si l'application s'installe correctement ou non sur les postes de votre réseau. Vous contribuerez ainsi à améliorer la qualité des applications proposées.
+N'oubliez pas, aprÃ¨s avoir installÃ© une application de "test", d'Ã©crire sur la liste de diffusion sambaedu, pour indiquer si l'application s'installe correctement ou non sur les postes de votre rÃ©seau. Vous contribuerez ainsi Ã  amÃ©liorer la qualitÃ© des applications proposÃ©es.
 		</div>
 	</xsl:template>
 
 	<xsl:template name="titre">
-			<h2>Ajout d'une application à déployer par le réseau.</h2>
+			<h2>Ajout d'une application Ã  dÃ©ployer par le rÃ©seau.</h2>
 	</xsl:template>
 
 	<xsl:template name="explication">
 		<div>
 			<h3>Information</h3>
 			En dehors du <a href="{$urlWawadeb}" target="_blank">SVN</a>,
-			vous pouvez ajouter une application de votre cru ou inspirée d'applications téléchargées sur internet (voir 'Compléments' plus bas).<br></br>
+			vous pouvez ajouter une application de votre cru ou inspirÃ©e d'applications tÃ©lÃ©chargÃ©es sur internet (voir 'ComplÃ©ments' plus bas).<br></br>
 			<dir>
-				<li >Créer un fichier (*.xml) en vous aidant de la <a href="http://wwdeb.crdp.ac-caen.fr/mediase3/index.php/FaqWpkg#Comment_fabriquer_un_xml_destin.C3.A9_.C3.A0_devenir_officiellement_d.C3.A9ploy.C3.A9.3F" target="_blank">documentation officielle SE3</a> et en vous inspirant de ceux disponibles depuis les liens ci-dessous.</li>
-				<li >Télécharger le fichier (*.xml) de définition d'application :</li>
+				<li >CrÃ©er un fichier (*.xml) en vous aidant de la <a href="http://wwdeb.crdp.ac-caen.fr/mediase3/index.php/FaqWpkg#Comment_fabriquer_un_xml_destin.C3.A9_.C3.A0_devenir_officiellement_d.C3.A9ploy.C3.A9.3F" target="_blank">documentation officielle SE3</a> et en vous inspirant de ceux disponibles depuis les liens ci-dessous.</li>
+				<li >TÃ©lÃ©charger le fichier (*.xml) de dÃ©finition d'application :</li>
 				<dir>
 					<li >Indiquer, dans le formulaire ci-dessous, l'emplacement de ce fichier xml.</li>
 					<li >Cliquer sur 'ajouter cette application'.</li>
-					<li >Votre serveur effectuera les téléchargements nécessaires à l'installation.</li>
+					<li >Votre serveur effectuera les tÃ©lÃ©chargements nÃ©cessaires Ã  l'installation.</li>
 				</dir>
 				<li >Cocher les profils (parcs de machines) sur lesquels vous souhaitez installer ces applications (onglet <a href="javascript:ChangePageEnCoursFromMenu('PackagesProfiles');">Associations Appli.&lt;-&gt;Parcs</a>).</li>
-				<li >Au prochain démarrage des postes appartenant à ces profils, les applications seront installées.</li>
+				<li >Au prochain dÃ©marrage des postes appartenant Ã  ces profils, les applications seront installÃ©es.</li>
 			</dir>
 		</div>
 	</xsl:template>
 
 	<xsl:template name="uploadSe3">
 		<form name="formulaire" method="post" action="{$urlUpload}" enctype="multipart/form-data">
-			<h3>Fichier d'application à ajouter</h3>
+			<h3>Fichier d'application Ã  ajouter</h3>
 			<table align="center">
 				<tr>
 					<td>
-						Si vous avez déjà placé les fichiers nécessaires à l'application, sur le serveur: <br></br>
-						<input name="noDownload" value="1" type="checkbox"></input>Ne pas télécharger les fichiers d'installation de cette application.<br></br><br></br>
-						Pour ajouter une application qui n'est pas répertoriée sur le serveur de référence, cocher cette case : <br></br>
-						<input name="ignoreWawadebMD5" value="1" onclick="if(this.checked) alert('Soyez sûr du contenu du fichier xml que vous allez installer sur le serveur!\nAucun contrôle ne sera effectué !\n\nLa sécurité de votre réseau est en jeu !!');" type="checkbox"></input>Ignorer le contrôle MD5.<br></br><br></br>
+						Si vous avez dÃ©jÃ  placÃ© les fichiers nÃ©cessaires Ã  l'application, sur le serveur: <br></br>
+						<input name="noDownload" value="1" type="checkbox"></input>Ne pas tÃ©lÃ©charger les fichiers d'installation de cette application.<br></br><br></br>
+						Pour ajouter une application qui n'est pas rÃ©pertoriÃ©e sur le serveur de rÃ©fÃ©rence, cocher cette case : <br></br>
+						<input name="ignoreWawadebMD5" value="1" onclick="if(this.checked) alert('Soyez sÃ»r du contenu du fichier xml que vous allez installer sur le serveur!\nAucun contrÃ´le ne sera effectuÃ© !\n\nLa sÃ©curitÃ© de votre rÃ©seau est en jeu !!');" type="checkbox"></input>Ignorer le contrÃ´le MD5.<br></br><br></br>
 					</td>
 				</tr>
 				<tr>
 					<td>
-						Fichier xml de définition de l'application :<br></br>
+						Fichier xml de dÃ©finition de l'application :<br></br>
 						<xsl:choose>
 							<xsl:when test="not($wpkgAdmin = '1')" >
 								<input title="chemin du fichier xml" disabled="true" size="70" name="appliXml" type="file"></input><input value="Ajouter cette application !" disabled="true" type="submit"></input>
-								<div class="error_msg">Vous n'êtes pas autorisé à ajouter de nouvelles applications sur ce serveur.</div>
-								<p>Demandez à l'administrateur de le faire pour vous !</p>
+								<div class="error_msg">Vous n'Ãªtes pas autorisÃ© Ã  ajouter de nouvelles applications sur ce serveur.</div>
+								<p>Demandez Ã  l'administrateur de le faire pour vous !</p>
 							</xsl:when>
 							<xsl:otherwise >
 								<input title="chemin du fichier xml" size="70" name="appliXml" type="file"></input><input value="Ajouter cette application !" type="submit"></input>
@@ -383,22 +385,22 @@ N'oubliez pas, après avoir installé une application de "test", d'écrire sur la l
 			</table>
 			<br></br>
 			<!--
-			Vous pouvez définir ici l'url du fichier de contrôle des applications téléchargées.<br/>
-			L'URL saisie doit être sur un site de confiance. La sécurité de votre réseau en dépend !<br/>
-			Par défaut, seules les applications de la branche stable sont prises en compte !<br/>
+			Vous pouvez dÃ©finir ici l'url du fichier de contrÃ´le des applications tÃ©lÃ©chargÃ©es.<br/>
+			L'URL saisie doit Ãªtre sur un site de confiance. La sÃ©curitÃ© de votre rÃ©seau en dÃ©pend !<br/>
+			Par dÃ©faut, seules les applications de la branche stable sont prises en compte !<br/>
 
 			-->
 			<input size="80" name="urlWawadebMD5" id="urlWawadebMD5" value="{$urlWawadebMD5}" type="hidden"></input><br></br><br></br>
 
 		</form>
 
-		<h3>Compléments</h3>
-		Des fichiers xml de définition d'applications sont disponibles sur internet.<br></br>
-		Le plus souvent, ces fichiers devront d'être adaptés pour fonctionner sur votre réseau.<br></br>
+		<h3>ComplÃ©ments</h3>
+		Des fichiers xml de dÃ©finition d'applications sont disponibles sur internet.<br></br>
+		Le plus souvent, ces fichiers devront d'Ãªtre adaptÃ©s pour fonctionner sur votre rÃ©seau.<br></br>
 		Voici quelques liens :<br></br>
 		<!-- obsolete <a href="http://wpkg.linuxkidd.com/live/packages_list.php">http://wpkg.linuxkidd.com/live/packages_list.php</a><br></br> -->
-		<a href="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages/stable" target="_blank">L'ensemble des XML prévus pour SambaEdu3 : http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages/stable</a><br></br>
-		<a href="http://wpkg.org/index.php/Category:Silent_Installers" target="_blank">XML prévus pour wpkg dont les chemins doivent être adaptés : http://wpkg.org/index.php/Category:Silent_Installers</a><br></br>
+		<a href="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages/stable" target="_blank">L'ensemble des XML prÃ©vus pour SambaEdu3 : http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages/stable</a><br></br>
+		<a href="http://wpkg.org/index.php/Category:Silent_Installers" target="_blank">XML prÃ©vus pour wpkg dont les chemins doivent Ãªtre adaptÃ©s : http://wpkg.org/index.php/Category:Silent_Installers</a><br></br>
 		<!-- inutile ? <a href="http://www.sp.phy.cam.ac.uk/%7Erl201/wpkg/licences.php?action=listsoftware">http://www.sp.phy.cam.ac.uk/~rl201/wpkg/licences.php?action=listsoftware</a> -->
 		
 		 <br></br><br></br>

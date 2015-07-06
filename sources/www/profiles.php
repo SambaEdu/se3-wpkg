@@ -1,5 +1,9 @@
 <?php
+
+
 // ## $Id$ ##
+
+
 include "inc/wpkg.auth.php";
 if ( $wpkgUser && ($login != "")) {
 	$filename = "profiles.xml";
@@ -35,7 +39,7 @@ if ( $wpkgUser && ($login != "")) {
 		header("HTTP/1.1 404 Not found");
 		header("Status: 404 Not found"); 
 		echo "Erreur : Le fichier $PathFichier est introuvable !\n";
-		echo "Sans doute un problème de droits.\n";
+		echo "Sans doute un problÃ¨me de droits.\n";
 		return false;
 	}
 */
