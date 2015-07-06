@@ -1,8 +1,8 @@
 <?php
 
 // inc/wpkg.auth.php
-// GËre l'authentification sur le serveur se3 de l'interface web de wpkg
-// La fonction get_xml retourne le fichier xml demandÈ par l'utilisateur authentifiÈ
+// G√©re l'authentification sur le serveur se3 de l'interface web de wpkg
+// La fonction get_xml retourne le fichier xml demand√© par l'utilisateur authentifi√©
 //
 //  $Id$
 
@@ -33,15 +33,15 @@ $wpkgUser = isWpkgUser($login);
 if ( ! $wpkgUser ) {
     //include "entete.inc.php";
     ?>
-            <h2>DÈploiement d'applications</h2>
-            <div class=error_msg>Vous n'avez pas les droits nÈcessaires ‡ l'utilisation de ce module !</div>
+            <h2>D√©ploiement d'applications</h2>
+            <div class=error_msg>Vous n'avez pas les droits n√©cessaires √† l'utilisation de ce module !</div>
     <?
     include "pdp.inc.php";
     exit;
 }
 
 function isWpkgAdmin($login) {
-    // Droit nÈcessaire pour ajouter ou supprimer une application
+    // Droit n√©cessaire pour ajouter ou supprimer une application
     if (is_admin("computers_is_admin",$login)=="Y") {
         return true;
     } else {
@@ -55,14 +55,14 @@ function isWpkgUser($login) {
         return true;
     } else {
         $query="select login from delegation  where login='$login' and ( niveau='view' or niveau='manage');";
-        $result=mysql_query($query) or die("Impossible d'accÈder ‡ la table");
+        $result=mysql_query($query) or die("Impossible d'acc√©der √† la table");
         $ligne=mysql_num_rows($result);
         return ( $ligne != 0 );
     }
 }
 
 function get_html($xsl, $xml, $param)
-// retourne le rÈsultat de la transformation appliquÈ au fichier xml
+// retourne le rÔøΩsultat de la transformation appliquÔøΩ au fichier xml
 {
     global $DEBUG, $wpkgAdmin, $wpkgUser, $wpkgroot;
 	$parametres = '';
@@ -102,17 +102,17 @@ function get_html($xsl, $xml, $param)
             header("HTTP/1.1 404 Not found");
             header("Status: 404 Not found"); 
             echo "Erreur : Le fichier $xml est introuvable !\n";
-            echo "Sans doute un problËme de droits.\n";
+            echo "Sans doute un probl√®me de droits.\n";
             return false;
         }
     } else {
-        echo "Erreur : vous n'Ítes pas autorisÈ ‡ afficher cette page !\n";
+        echo "Erreur : vous n'√™tes pas autoris√© √† afficher cette page !\n";
         return false;
     }
 }
 
 function get_xml($filename)
-// Retourne le fichier xml demandÈ (profiles.xml, packages.xml ou hosts.xml) si les droits de l'utilisateur en cours le permettent
+// Retourne le fichier xml demand√© (profiles.xml, packages.xml ou hosts.xml) si les droits de l'utilisateur en cours le permettent
 {
     global $DEBUG, $wpkgAdmin, $wpkgUser, $wpkgroot;
     #$nomFichier = $aFilePath[$nPath-1];
@@ -151,18 +151,18 @@ function get_xml($filename)
             header("HTTP/1.1 404 Not found");
             header("Status: 404 Not found"); 
             echo "Erreur : Le fichier $PathFichier est introuvable !\n";
-            echo "Sans doute un problËme de droits.\n";
+            echo "Sans doute un probl√®me de droits.\n";
             return false;
         }
     } else {
-        echo "Erreur : vous n'Ítes pas administrateur wpkg !\n";
+        echo "Erreur : vous n'√™tes pas administrateur wpkg !\n";
         return false;
     }
 }
 
 function get_fichierCP850($filename)
-// Retourne le fichier demandÈ (utilisÈ pour les fichiers rapports/*.log)
-// aprËs conversion CP850/CR-LF..819/CR-LF  ( dos oem -> iso-8859-1 )
+// Retourne le fichier demand√© (utilis√© pour les fichiers rapports/*.log)
+// ap conversion CP850/CR-LF..819/CR-LF  ( dos oem -> iso-8859-1 )
 {
     global $DEBUG, $wpkgAdmin, $wpkgUser, $wpkgroot;
     #$nomFichier = $aFilePath[$nPath-1];
@@ -179,7 +179,7 @@ function get_fichierCP850($filename)
             
             
             header("Content-Transfer-Encoding: 8bit");
-            header("Content-type: text/html; charset=ISO-8859-1"); // IE ne gËre pas bien text/plain :(
+            header("Content-type: text/html; charset=UTF-8"); // IE ne g√©re pas bien text/plain :(
             header("Last-Modified: $DateFichier");
             header("Expires: " . gmdate("D, d M Y H:i:s T", time() + 30));
             header("Pragma: no-cache");
@@ -193,7 +193,7 @@ function get_fichierCP850($filename)
 			fclose ($handle);
 			echo htmlspecialchars($contents, ENT_COMPAT | ENT_HTML401, 'ISO-8859-1');
             //if ( readfile("$PathFichier") ) {
-            // Conversion OEM -> ANSI dÈj‡ faite dans le script (plus de dÈpendance avec recode)
+            // Conversion OEM -> ANSI d√©j√† faite dans le script (plus de d√©pendance avec recode)
             //passthru ( "cat $PathFichier | recode CP850/CR-LF..819/CR-LF", $status);
             // htmlspecialchars(passthru ( "cat $PathFichier", $status));
             echo "\n</pre>\n";
@@ -206,11 +206,11 @@ function get_fichierCP850($filename)
             header("HTTP/1.1 404 Not found");
             header("Status: 404 Not found"); 
             echo "Erreur : Le fichier $PathFichier est introuvable !\n";
-            echo "Sans doute un problËme de droits.\n";
+            echo "Sans doute un probl√®me de droits.\n";
             return false;
         }
     } else {
-        echo "Erreur : vous n'Ítes pas autorisÈ ‡ utiliser cette fonction !\n";
+        echo "Erreur : vous n'√™tes pas autoris√© √† utiliser cette fonction !\n";
         return false;
     }
 }
