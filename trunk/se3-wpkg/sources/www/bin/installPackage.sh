@@ -1,13 +1,13 @@
 #!/bin/bash
 #
 # Configuration des applis contenue dans appli.xml 
-# avec téléchargement des fichiers nécessaires à l'installation
-# et gestion des dépendances entre applications
+# avec tÃ©lÃ©chargement des fichiers nÃ©cessaires Ã  l'installation
+# et gestion des dÃ©pendances entre applications
 #
 # Syntaxe : installPackage.sh appli.xml NoDownload
-#   appli.xml doit être dans $wpkgroot/tmp/
+#   appli.xml doit Ãªtre dans $wpkgroot/tmp/
 #
-## $id$ ##
+## $Id$ ##
 
 Erreur="0"
 wpkgroot="/var/se3/unattended/install/wpkg"
@@ -19,19 +19,19 @@ function Download () {
 	local destFile="$2"
 	local MD5="$3"
 	local pasDeDownload="$4"
-	# $Appli est défini avec l'id de l'Appli
+	# $Appli est dÃ©fini avec l'id de l'Appli
 	echo ""
 	
 	if [ "$pasDeDownload" == "1" ]; then
 		if [ -e "$Z/$destFile" ]; then
-			echo -e "    Le fichier '$Z/$destFile' est présent.\n"
+			echo -e "    Le fichier '$Z/$destFile' est prÃ©sent.\n"
 			PassMD5="1"
 			if [ "$MD5" != "" ]; then
 				if ( md5sum "$Z/$destFile" | grep $MD5 ) ; then
-					echo -e "Le fichier présent est valide (MD5=$MD5).\n";
+					echo -e "Le fichier prÃ©sent est valide (MD5=$MD5).\n";
 				else
 					md5sum "$Z/$destFile"
-					echo -e "  Erreur : le test md5sum ($MD5) a échoué.\n"
+					echo -e "  Erreur : le test md5sum ($MD5) a Ã©chouÃ©.\n"
 					ErreurApp="13"
 					PassMD5="0"
 				fi
@@ -39,59 +39,59 @@ function Download () {
 		else
 			echo "    Erreur : Le fichier '$Z/$destFile' est absent."
 			if [ "$url" != "" ] ; then
-				echo "      Vous avez refusé le téléchargement automatique, l'application ne peut pas être installée."
-				echo "      Vous auriez dû télécharger ce fichier depuis l'adresse : </pre><a href='$url'>$url</a><pre>"
+				echo "      Vous avez refusÃ© le tÃ©lÃ©chargement automatique, l'application ne peut pas Ãªtre installÃ©e."
+				echo "      Vous auriez de tÃ©lÃ©charger ce fichier depuis l'adresse : </pre><a href='$url'>$url</a><pre>"
 			fi
 			ErreurApp="7"
 		fi
 	else
 		if [ "$url" == "" ]; then
 			if [ -e "$Z/$destFile" ]; then
-				echo -e "Présence du fichier $Z/$destFile : OK.\n"
+				echo -e "PrÃ©sence du fichier $Z/$destFile : OK.\n"
 			else
-				echo -e "Erreur : Le fichier $Z/$destFile est absent et l'url de téléchargement n'est pas définie.\n\n"
+				echo -e "Erreur : Le fichier $Z/$destFile est absent et l'url de tÃ©lÃ©chargement n'est pas dÃ©finie.\n\n"
 				ErreurApp="8"
 			fi
 		else
 			if [ -e "$Z/$destFile" ]; then
 				if [ "$MD5" != "" ]; then
 					if ( md5sum "$Z/$destFile" | grep $MD5 ) ; then
-						echo -e "Pas de téléchargement de '$destFile' : il est déjà présent et valide (MD5=$MD5).\n";
+						echo -e "Pas de tÃ©lÃ©chargement de '$destFile' : il est dÃ©jÃ  prÃ©sent et valide (MD5=$MD5).\n";
 						pasDeDownload=1
 					else
-						echo -e "Une ancienne version du fichier $destFile existait déjà. Il va être mis à jour.\n"
+						echo -e "Une ancienne version du fichier $destFile existait dÃ©jÃ . Il va Ãªtre mis Ã  jour.\n"
 					fi
 				fi
 			fi
 			if [ "$pasDeDownload" != "1" ]; then
-				echo -e "Téléchargement de '$url'.\n"
+				echo -e "TÃ©lÃ©chargement de '$url'.\n"
 				destDir="`dirname \"$Z/$destFile\"`"
 				fileName="`basename \"$destFile\"`"
 				mkdir -p "$destDir"
 				if [ ! -d "$destDir" ]; then
-					echo -e "Erreur de création du répertoire '$destDir'.\n"
+					echo -e "Erreur de crÃ©ation du rÃ©pertoire '$destDir'.\n"
 					ErreurApp="9"
 				else
-					# Le fichier est d'abord téléchargé dans $wpkgroot/tmp
-					# puis si c'est OK, déplacé dans $Z/$destFile (avec écrasement éventuel d'une ancienne version de ce fichier)
+					# Le fichier est d'abord tÃ©lÃ©chargÃ© dans $wpkgroot/tmp
+					# puis si c'est OK, dÃ©placÃ© dans $Z/$destFile (avec Ã©crasement Ã©ventuel d'une ancienne version de ce fichier)
 					if ( ! /usr/bin/wget --progress=dot -O "$fileName" "$url" 2>&1 ); then
-						echo -e "  Erreur de téléchargement de $url\n";
+						echo -e "  Erreur de tÃ©lÃ©chargement de $url\n";
 						ErreurApp="12"
 					else
 						PassMD5="1"
 						if [ "$MD5" != "" ]; then
 							if ( md5sum "$fileName" | grep $MD5 ) ; then
-								echo -e "\nLe fichier téléchargé est valide (MD5=$MD5).\n";
+								echo -e "\nLe fichier tÃ©lÃ©chargÃ© est valide (MD5=$MD5).\n";
 							else
 								md5sum "$fileName"
-								echo -e "  Erreur : le test md5sum ($MD5) a échoué.\n"
+								echo -e "  Erreur : le test md5sum ($MD5) a Ã©chouÃ©.\n"
 								ErreurApp="13"
 								PassMD5="0"
 							fi
 						fi
 						if [ "$PassMD5" == "1" ] ; then
 							if ( mv "$fileName" "$Z/$destFile" ) ;then
-								echo -e "  sauvegardé dans '$Z/$destFile'.\n"
+								echo -e "  sauvegardÃ© dans '$Z/$destFile'.\n"
 							else
 								echo -e "  Erreur $? : mv '$fileName' '$Z/$destFile'.\n"
 								ErreurApp="14"
@@ -127,7 +127,7 @@ function AddApplication () {
 	echo "<h2>Ajout de '$Appli' aux applications disponibles.</h2>"
 	if ( xsltproc -o "$wpkgroot/packages.xml" --stringparam Appli "$Appli" "$wpkgwww/bin/mergePackage.xsl" "$wpkgroot/tmp/$appliXml" 2>&1 ) ; then
 		installationsTimeStamp "$Appli"
-		echo "<br>L'application <b>$Appli</b> est maintenant disponible pour le déploiement.<br>"
+		echo "<br>L'application <b>$Appli</b> est maintenant disponible pour le dÃ©ploiement.<br>"
 		InstalledPackage=$(( $InstalledPackage + 1 ))
 	else
 		echo "<br>Erreur $? lors de l'ajout de l'application <b>$Appli</b> :<br>"
@@ -153,7 +153,7 @@ cd $wpkgroot/tmp
 InstalledPackage=0
 nPackage=0
 if [ "$4" == "" ] || [ "$1" == "-h" ] || [ "$1" == "--help" ] ; then
-	echo " Téléchargement des fichiers nécessaires à l'installation d'une appli."
+	echo " TÃ©lÃ©chargement des fichiers nÃ©cessaires Ã  l'installation d'une appli."
 	echo ""
 	echo "Syntaxe : installPackage.sh appli.xml NoDownload login urlMD5 ignoreMD5"
 else
@@ -194,13 +194,13 @@ fi
 cd - >/dev/null
 if [ "$InstalledPackage" == "0" ] ; then
 	if [ "$Erreur" != "3" ] ; then
-		echo "Aucune application installée sur <b>$nPackage</b> que contenait <b>$appliXml</b>.<br>"
+		echo "Aucune application installÃ©e sur <b>$nPackage</b> que contenait <b>$appliXml</b>.<br>"
 	fi
 else
 	if [ "$InstalledPackage" == "1" ] ; then
-		echo "<b>$InstalledPackage</b> application installée sur <b>$nPackage</b> que contenait <b>$appliXml</b>.<br>"
+		echo "<b>$InstalledPackage</b> application installÃ©e sur <b>$nPackage</b> que contenait <b>$appliXml</b>.<br>"
 	else
-		echo "<b>$InstalledPackage</b> applications installées sur <b>$nPackage</b> que contenait <b>$appliXml</b>.<br>"
+		echo "<b>$InstalledPackage</b> applications installÃ©es sur <b>$nPackage</b> que contenait <b>$appliXml</b>.<br>"
 	fi
 fi
 echo "<br/>";

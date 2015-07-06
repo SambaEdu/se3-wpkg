@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl = "http://www.w3.org/1999/XSL/Transform" version = "1.0" >
 	<xsl:output method="xml" version="1.0" encoding="iso-8859-1" indent="yes"/>
-	<!--	 Met à jour tmp/timeStamps.xml 
-			S'applique à /var/se3/unattended/install/wpkg/tmp/timeStamps.xml
+	<!--	 Met Ã  jour tmp/timeStamps.xml 
+			S'applique Ã  /var/se3/unattended/install/wpkg/tmp/timeStamps.xml
 	
 			## $Id$ ##
 	-->
@@ -10,11 +10,11 @@
 	<xsl:param name="Appli" select="''" />  <!-- package id -->
 	<xsl:param name="AppliXml" select="''" />  <!-- Nom du fichier xml contenant la definition de l'appli -->
 	<xsl:param name="TimeStamp" select="''" />  <!-- date actuelle au format 2007-06-05T10:20:25+0200 -->
-	<xsl:param name="md5sum" select="''" />  <!-- md5sum du fichier utilisé pour ajouter l'appli -->
+	<xsl:param name="md5sum" select="''" />  <!-- md5sum du fichier utilisÃ© pour ajouter l'appli -->
 	<xsl:param name="user" select="''" />  <!-- utilisateur qui effectue l'operation -->
 
 	<xsl:template match="/">
-		<xsl:comment><xsl:text> Généré par SambaEdu. Ne pas modifier </xsl:text></xsl:comment>
+		<xsl:comment><xsl:text> GÃ©nÃ©rÃ© par SambaEdu. Ne pas modifier </xsl:text></xsl:comment>
 		<xsl:element name="installations">
 			<xsl:for-each select="/installations/package">
 				<xsl:copy >

@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl = "http://www.w3.org/1999/XSL/Transform" version = "1.0" >
    <xsl:output method="xml" version="1.0" encoding="iso-8859-1" indent="yes"/>
    <!--   ## $Id$ ##
-        Met à jour wpkg.xml
-        s'applique à profiles.xml
+        Met Ã  jour wpkg.xml
+        s'applique Ã  profiles.xml
    -->
     <xsl:param name="user" select="''" />
     <xsl:param name="date" select="''" />
@@ -14,7 +14,7 @@
     <xsl:variable name="RAPPORTS" select="document('/var/se3/unattended/install/wpkg/rapports/rapports.xml')/rapports"/>
     <xsl:variable name="PACKAGES" select="document('/var/se3/unattended/install/wpkg/packages.xml')/packages"/>
     <xsl:variable name="DROITS" select="document('/var/se3/unattended/install/wpkg/droits.xml')/droits"/>
-    <!-- Profils accessibles à cet utilisateur -->
+    <!-- Profils accessibles Ã  cet utilisateur -->
     <xsl:variable name="isAdmin" select="$DROITS/droit[(@parc = '_TousLesPostes') and (@user=$user) and ((@droit='manage') or (@droit='admin'))]"/>
     <xsl:variable name="UserProfiles" select="$DROITS/droit[@user=$user]"/>
     <xsl:variable name="ProfilCanRead" select="$UserProfiles/@parc"/>
@@ -29,7 +29,7 @@
         
             <xsl:comment>
 				<xsl:value-of select="$date" />
-                <xsl:text> Données accessibles à '</xsl:text>
+                <xsl:text> DonnÃ©es accessibles Ã  '</xsl:text>
                 <xsl:value-of select="$user" />
                 <xsl:text>' : </xsl:text>
                 <xsl:for-each select="$ProfilCanRead" >
@@ -58,7 +58,7 @@
                     </xsl:for-each>
                 </xsl:for-each>
             </hosts>
-			<!-- les profiles sont à nouveau dans wpkg.php -->
+			<!-- les profiles sont Ã  nouveau dans wpkg.php -->
             <profiles>
                 <xsl:for-each select="$PROFILES/profile" >
                     <xsl:sort select="@id" />

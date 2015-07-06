@@ -1,12 +1,12 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl = "http://www.w3.org/1999/XSL/Transform" version = "1.0" >
    <xsl:output method="xml" version="1.0" encoding="iso-8859-1" indent="yes" />
    <xsl:param name="fichier">nomdefichierbidon</xsl:param>
    <xsl:variable name="wpkg" select="document('/var/www/se3/wpkg/xml/wpkg.xml')/wpkg"/>
    <!-- 
-	Ajoute les données de $fichier à wpkg.xml (destiné au client de gestion wpkg)
-	les noeuds déja existants de wpkg.xml qui provenaient de $fichier sont mis à jours ou effacés (pas dupliqués)
-	Peut s'utiliser à partir d'un fichier wpkg.xml vide :
+	Ajoute les donnÃ©es de $fichier Ã  wpkg.xml (destinÃ© au client de gestion wpkg)
+	les noeuds dÃ©ja existants de wpkg.xml qui provenaient de $fichier sont mis Ã  jours ou effacÃ©s (pas dupliquÃ©s)
+	Peut s'utiliser Ã  partir d'un fichier wpkg.xml vide :
 		<?xml version="1.0" encoding="iso-8859-1"?>
 		<wpkg />
 	
@@ -15,21 +15,21 @@
    -->
 
 	<xsl:template match="/">
-		<!-- insère le noeud racine ( /wpkg )-->
+		<!-- insÃ¨re le noeud racine ( /wpkg )-->
 		<xsl:element name = "wpkg" >
-			<!-- insère le noeud des hosts ( /wpkg/wpkg )-->
+			<!-- insÃ¨re le noeud des hosts ( /wpkg/wpkg )-->
 			<xsl:element name = "wpkg" >
 				<xsl:copy-of select = "$wpkg/wpkg/host[not(@fichier=$fichier)]" />
 				<xsl:apply-templates select = "wpkg/host" mode="withFichier"/>
 			</xsl:element>
 
-			<!-- insère le noeud des profiles ( /wpkg/profiles )-->
+			<!-- insÃ¨re le noeud des profiles ( /wpkg/profiles )-->
 			<xsl:element name = "profiles" >
 				<xsl:copy-of select = "$wpkg/profiles/profile[not(@fichier=$fichier)]" />
 				<xsl:apply-templates select = "profiles/profile" mode="withFichier"/>
 			</xsl:element>
 
-			<!-- insère le noeud des packages ( /wpkg/packages )-->
+			<!-- insÃ¨re le noeud des packages ( /wpkg/packages )-->
 			<xsl:element name = "packages" >
 				<xsl:copy-of select = "$wpkg/packages/package[not(@fichier=$fichier)]" />
 				<xsl:apply-templates select = "packages/package" mode="withFichier"/>
@@ -48,7 +48,7 @@
 		</xsl:comment>
 -->
 		<xsl:copy>
-			<!-- Mémorise le fichier source des données si ce n'est pas un des 3 fichiers profiles.xml, hosts.xml, packages.xml -->
+			<!-- MÃ©morise le fichier source des donnÃ©es si ce n'est pas un des 3 fichiers profiles.xml, hosts.xml, packages.xml -->
 			<xsl:if test="contains($fichier, '/')">
 				<xsl:attribute name="fichier" ><xsl:value-of select="$fichier" /></xsl:attribute>
 			</xsl:if>
