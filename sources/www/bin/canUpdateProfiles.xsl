@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl = "http://www.w3.org/1999/XSL/Transform" version = "1.0" >
-	<!-- Teste si l'utilisateur $login a le droit de faire de faire les modifs demandées sur profiles.xml.
-			S'applique à profiles.xml  
-			Est appelé par deletePackage.sh
+	<!-- Teste si l'utilisateur $login a le droit de faire de faire les modifs demandÃ©es sur profiles.xml.
+			S'applique Ã  profiles.xml  
+			Est appelÃ© par deletePackage.sh
 			
 			## $Id$ ##
 	-->

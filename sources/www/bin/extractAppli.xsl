@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl = "http://www.w3.org/1999/XSL/Transform" version = "1.0" >
    <xsl:output method="xml" version="1.0" encoding="iso-8859-1" indent="yes"/>
-   <!--     S'applique à /var/se3/unattended/install/wpkg/packages.xml
-            et retourne un xml de l'appli passée en paramètre   -->
+   <!--     S'applique Ã  /var/se3/unattended/install/wpkg/packages.xml
+            et retourne un xml de l'appli passÃ©e en paramÃ¨tre   -->
 
     <xsl:param name="Appli"></xsl:param>
 

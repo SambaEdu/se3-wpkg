@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl = "http://www.w3.org/1999/XSL/Transform" version = "1.0" >
    <xsl:output method="xml" version="1.0" encoding="iso-8859-1" indent="yes"/>
-   <!--     Ajoute les packages définis dans profiles.xml à ceux existant dans profiles.xml.tmp 
+   <!--     Ajoute les packages dÃ©finis dans profiles.xml Ã  ceux existant dans profiles.xml.tmp 
    
 			## $Id$ ##
    -->
@@ -26,7 +26,7 @@
     </xsl:template>
 
     <xsl:template match="/profiles/profile">
-        <!-- recupère les packages associés depuis profiles.xml -->
+        <!-- recupÃ¨re les packages associÃ©s depuis profiles.xml -->
         <xsl:variable name="profilId" select="@id"/>
         <xsl:variable name="packagesDeCeProfil" select="$PROFILES/profile[@id=$profilId]/package"/>
         <xsl:copy>

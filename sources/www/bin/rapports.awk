@@ -1,7 +1,7 @@
 #!/usr/bin/gawk -f
 BEGIN { 
-	print "<?xml version='1.0' encoding='iso-8859-1'?>" 
-	print "<!-- Généré par SambaEdu. Ne pas modifier -->" 
+	print "<?xml version='1.0' encoding='UTF-8'?>" 
+	print "<!-- GÃ©nÃ©rÃ© par SambaEdu. Ne pas modifier -->" 
 	print "<rapports>" 
 }
 {   sub("\r", "");

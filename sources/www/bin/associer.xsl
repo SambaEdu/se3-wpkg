@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl = "http://www.w3.org/1999/XSL/Transform" version = "1.0" >
    <xsl:output method="xml" version="1.0" encoding="iso-8859-1" indent="yes" />
-	<!-- Ajoute ou retire une application d'un profile si les droits de l'utilisateur le permettent et crée profiles.xml modifié.
-			S'applique à profiles.xml 
-			Est appelé par associer.sh
+	<!-- Ajoute ou retire une application d'un profile si les droits de l'utilisateur le permettent et crÃ©e profiles.xml modifiÃ©.
+			S'applique Ã  profiles.xml 
+			Est appelÃ© par associer.sh
 			
 		## $Id$ ##
 	-->
@@ -51,7 +51,7 @@
 	</xsl:template>
 
 	<xsl:template match="/profiles/profile">
-		<!-- recupère les packages associés depuis profiles.xml -->
+		<!-- recupÃ¨re les packages associÃ©s depuis profiles.xml -->
 		<xsl:variable name="profilId" select="@id"/>
 		<xsl:variable name="packagesDeCeProfil" select="$PROFILES/profile[@id = $profilId]/package"/>
 		<xsl:choose>

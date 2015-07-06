@@ -1,13 +1,15 @@
 #!/bin/bash
 #
 # Suppression d'une appli contenue dans appli.xml 
-# après vérification des dépendances
-# Effacement des fichiers d'install sélectionnés
+# aprÃ¨s vÃ©rification des dÃ©pendances
+# Effacement des fichiers d'install sÃ©lectionnÃ©s
 #
 # Syntaxe : deletePackage.sh appli '1 3 4 5'
-#   les numéros sont ceux des fichiers à supprimer
+#   les numÃ©ros sont ceux des fichiers Ã  supprimer
 #
-## $id ##
+
+
+## $id$ ##
 
 Erreur="0"
 wpkgroot="/var/se3/unattended/install/wpkg"
@@ -33,7 +35,7 @@ if [ "$1" == "" ] || [ "$1" == "-h" ] || [ "$1" == "--help" ] ; then
 	echo " Suppression d'une appli ."
 	echo ""
 	echo "Syntaxe : deletePackage.sh login appli '1 3 4 5'"
-	echo "   les numéros sont ceux des fichiers à supprimer."
+	echo "   les numÃ©ros sont ceux des fichiers Ã  supprimer."
 else
 	login="$1";
 	appli="$2";
@@ -57,7 +59,7 @@ else
 fi
 cd -
 if [ "$Erreur" == "0" ]; then
-	echo "L'application '<b>$appli</b>' a été supprimée du serveur.<br>"
+	echo "L'application '<b>$appli</b>' a Ã©tÃ© supprimÃ©e du serveur.<br>"
 else
 	echo "Erreur $Erreur lors de la suppression de l'application '<b>$appli</b>'.<br>"
 fi

@@ -7,7 +7,7 @@
 #
 ## $Id$ ##
 #
-#   Met à jour profiles.xml dans /var/se3/unattended/install/wpkg
+#   Met Ã  jour profiles.xml dans /var/se3/unattended/install/wpkg
 #   en Ajoutant ou Retirant un package d'un profile avec prise en compte des droits
 #
 
@@ -25,7 +25,7 @@ wpkgwebdir="/var/www/se3/wpkg"
 
 PROFILES_XML="$wpkgroot/profiles.xml";
 
-# Attend que $wpkgwebdir/bin/associer.lock ne soit plus présent
+# Attend que $wpkgwebdir/bin/associer.lock ne soit plus prÃ©sent
 while [ -e $wpkgwebdir/bin/associer.lock ] ; do
 	sleep 1
 done
@@ -55,6 +55,6 @@ fi
 #remet la date de $wpkgroot/profiles.xml 
 #touch -r $wpkgroot/profiles.timestamp $wpkgroot/profiles.xml 
 
-# libération du lock
+# libÃ©ration du lock
 rm "$wpkgwebdir/bin/associer.lock"
 exit $erreur

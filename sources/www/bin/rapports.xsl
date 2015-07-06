@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 
-<!--  Met à jour rapports.xml à partir du fichier xml fourni
+<!--  Met Ã  jour rapports.xml Ã  partir du fichier xml fourni
 		
 		## $Id$ ##
 -->
@@ -10,7 +10,7 @@
 	<xsl:variable name="NewRapportsId" select="/rapports/rapport/@id"/>
 	<xsl:variable name="RAPPORT" select="document('/var/se3/unattended/install/wpkg/rapports/rapports.xml')/rapports/rapport"/>
 	<xsl:template match="/">
-		 <xsl:comment ><xsl:value-of select="concat('Généré par SambaEdu. Ne pas modifier. ', count($RAPPORT), ' - ', count($NewRapportsId))" /></xsl:comment>
+		 <xsl:comment ><xsl:value-of select="concat('GÃ©nÃ©rÃ© par SambaEdu. Ne pas modifier. ', count($RAPPORT), ' - ', count($NewRapportsId))" /></xsl:comment>
 		<rapports>
 			<xsl:for-each select="/rapports/rapport">
 				<xsl:copy-of select="." />

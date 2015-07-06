@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Creation de wpkg/rapports/rapports.xml à partir des fichiers wpkg/rapports/*.txt
+# Creation de wpkg/rapports/rapports.xml Ã  partir des fichiers wpkg/rapports/*.txt
 #
 #  ## $Id$ ##
 
@@ -37,23 +37,23 @@ fi
 
 
 if [ ! -e $RAPPORTXML ] ; then
-    echo "Création d'un fichier vide rapports.xml."
+    echo "CrÃ©ation d'un fichier vide rapports.xml."
     echo '<?xml version="1.0" encoding="iso-8859-1"?>' > $RAPPORTXML
-    echo '<!-- Généré par SambaEdu. Ne pas modifier -->' >> $RAPPORTXML
+    echo '<!-- GÃ©nÃ©rÃ© par SambaEdu. Ne pas modifier -->' >> $RAPPORTXML
     echo '<rapports />' >> $RAPPORTXML
     NewRapports=1
 fi
 Nnew=`ls -rt1 *.txt rapports.xml | grep -v wsusoffline  | grep -v unattended | awk '{if ($0 == "rapports.xml") {N=0}else{N=N+1}}END{print N}'`
 if [ "$Nnew" == "0" ]; then
-    echo "rapports.xml était à jour."
+    echo "rapports.xml Ã©tait Ã  jour."
 else
-    echo "$Nnew rapports à prendre en compte."
+    echo "$Nnew rapports Ã  prendre en compte."
 fi
 if [ ! "$Nnew" == "0" -o "$NewRapports" == "1" ] ;then
-    echo "Mise à jour de rapports.xml."
+    echo "Mise Ã  jour de rapports.xml."
 	# Si NewRapports=0, on met a jour rapports.xml seulement avec les nouveaux fichiers txt. Sinon, c'est qu'il s'agit de l'initialisation : on met a jour a partir de tous les fichiers presents.
 	[ "$NewRapports" == "0" ] && OPTION="-cnewer rapports.xml" &&echo "Option : $OPTION"
-    # Création de rapports.xml à partir des fichiers rapport (*.txt)
+    # CrÃ©ation de rapports.xml Ã  partir des fichiers rapport (*.txt)
     gawk --re-interval -f /var/www/se3/wpkg/bin/rapports.awk `find . -maxdepth 1 -iname '*.txt' $OPTION -a -printf '%f '` > TMP$RAPPORTXML
     xsltproc --output $RAPPORTXML /var/www/se3/wpkg/bin/rapports.xsl TMP$RAPPORTXML
     if [ -e TMP$RAPPORTXML ] ; then
