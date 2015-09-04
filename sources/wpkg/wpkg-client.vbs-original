@@ -120,11 +120,13 @@ If Not WaitWMIService() Then WScript.Quit 15
 Dim MsgErrNoRun : MsgErrNoRun=""
 Dim cProc
 Dim oProc, cpuLoadOK, cpuLoad
-If testCPU And Not TestCpuLoad() Then
-   MsgErrNoRun = "La charge cpu est trop élevée. Pas d'exécution de wpkg."
-   nowpkg=true
-   CodeSortie = 14
-   ' WScript.Quit 14
+If testCPU Then 
+   if Not TestCpuLoad() Then
+       MsgErrNoRun = "La charge cpu est trop élevée. Pas d'exécution de wpkg."
+       nowpkg=true
+       CodeSortie = 14
+       ' WScript.Quit 14
+   End If
 End If
 
 If Not SetComputerName() Then   ' Défini ComputerName, User et UserDomain

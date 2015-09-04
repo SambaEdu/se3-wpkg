@@ -615,9 +615,12 @@ done
 # Envoi d'un mail a l'admin en cas de nouvelles mises a jour trouvees.
 TEST=`cat $MAIL | grep "successfully downloaded"`
 VersionWsusOffline=`cat /var/se3/unattended/install/wsusoffline/client/cmd/DoUpdate.cmd | grep WSUSOFFLINE_VERSION= | cut -d \= -f2`
-TailleDossierMaj=`du -sh /var/se3/unattended/install/wsusoffline | cut -d/ -f1`
-if [ ! "$TEST" == "" ]; then
+TailleDossierMaj=`du -s /var/se3/unattended/install/wsusoffline/client | awk '{ print $1 }'`
+AncienneTaille=$(cat /var/se3/unattended/install/wsusoffline/client_size.txt)
+
+if [  "$AncienneTaille" != "$TailleDossierMaj" ]; then
 	SENDMAIL "WsusOffline $VersionWsusOffline : Nouvelles Maj Microsoft telechargees. Taille du dossier des Maj : $TailleDossierMaj."
+	echo $TailleDossierMaj > /var/se3/unattended/install/wsusoffline/client_size.txt
 else
 	SENDMAIL "WsusOffline $VersionWsusOffline : Pas de nouvelles Maj Microsoft telechargees."
 	[ -e $MAIL ] && rm -f $MAIL
