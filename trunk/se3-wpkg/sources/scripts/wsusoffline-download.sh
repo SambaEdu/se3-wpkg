@@ -14,7 +14,7 @@
 ## $Id$ ##
 #
 #  Modifie par : Jean-Remi Couturier - Academie de Clermont-Ferrand
-#    juin 2015
+#    septembre 2015
 #    jean-remi.couturier@ac-clermont.fr
 #    Corrections apportees :
 #       Modification du test TESTFREESPACE - 10 Go minimum
@@ -569,7 +569,8 @@ if [ ! -e $PARAMS ]; then
 	fi
 fi
 
-echo "Debut du telechargement des mises a jour microsoft : $date." >$MAIL
+HeureDebutMaj=$(date)
+echo -e "Debut du telechargement des mises a jour microsoft : $HeureDebutMaj \n" >$MAIL
 echo ""
 echo "Analyse du fichier $PARAMS :"
 cat $PARAMS | while read line
@@ -613,14 +614,15 @@ do
 done
 
 # Envoi d'un mail a l'admin en cas de nouvelles mises a jour trouvees.
-TEST=`cat $MAIL | grep "successfully downloaded"`
+# TEST=`cat $MAIL | grep "successfully downloaded"`
 VersionWsusOffline=`cat /var/se3/unattended/install/wsusoffline/client/cmd/DoUpdate.cmd | grep WSUSOFFLINE_VERSION= | cut -d \= -f2`
-TailleDossierMaj=`du -s /var/se3/unattended/install/wsusoffline/client | awk '{ print $1 }'`
-AncienneTaille=$(cat /var/se3/unattended/install/wsusoffline/client_size.txt)
+MailTailleDossierMaj=`du -sh /var/se3/unattended/install/wsusoffline | cut -d/ -f1`
+NouvelleTailleDossierMaj=`du -s /var/se3/unattended/install/wsusoffline/client | awk '{ print $1 }'`
+AncienneTailleDossierMaj=$(cat /var/se3/unattended/install/wsusoffline/wsusoffline_client_size.txt)
 
-if [  "$AncienneTaille" != "$TailleDossierMaj" ]; then
-	SENDMAIL "WsusOffline $VersionWsusOffline : Nouvelles Maj Microsoft telechargees. Taille du dossier des Maj : $TailleDossierMaj."
-	echo $TailleDossierMaj > /var/se3/unattended/install/wsusoffline/client_size.txt
+if [  "$AncienneTailleDossierMaj" != "$NouvelleTailleDossierMaj" ]; then
+	SENDMAIL "WsusOffline $VersionWsusOffline : Nouvelles Maj Microsoft telechargees. Taille du dossier des Maj : $MailTailleDossierMaj"
+	echo $NouvelleTailleDossierMaj > /var/se3/unattended/install/wsusoffline/wsusoffline_client_size.txt
 else
 	SENDMAIL "WsusOffline $VersionWsusOffline : Pas de nouvelles Maj Microsoft telechargees."
 	[ -e $MAIL ] && rm -f $MAIL
