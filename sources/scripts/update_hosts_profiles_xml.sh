@@ -6,14 +6,14 @@
 #########################################################################
 #
 #
-#   Met à jour hosts.xml et profiles.xml dans /var/se3/unattended/install/wpkg
-#   à partir des données de l'annuaire
+#   Met Ã  jour hosts.xml et profiles.xml dans /var/se3/unattended/install/wpkg
+#   Ã  partir des donnÃ©es de l'annuaire
 #
-#   A executer chaque fois que les parcs sont modifiés
+#   A executer chaque fois que les parcs sont modifiÃ©s
 #   Syntaxe :  update_hosts_profiles_xml.sh ComputersRDN ParcsRDN BaseDN
 
 ## $Id$ ##
-#
+# last update fev 2016 - utf8
 
 
 ComputersRDN="$1"
@@ -42,18 +42,18 @@ TousLesPostes="_TousLesPostes"
 
 # echo "ParcsRDN=$ParcsRDN; BaseDN=$BaseDN"
 
-# Création de $PROFILES_XMLTMP et $HOSTS_XML
+# CrÃ©ation de $PROFILES_XMLTMP et $HOSTS_XML
 
 
-echo '<?xml version="1.0" encoding="iso-8859-1"?>' > $PROFILES_XMLTMP
-echo '<!-- Généré par SambaEdu. Ne pas modifier -->' >> $PROFILES_XMLTMP
+echo '<?xml version="1.0" encoding="UTF-8"?>' > $PROFILES_XMLTMP
+echo '<!-- GÃ©nÃ©rÃ© par SambaEdu. Ne pas modifier -->' >> $PROFILES_XMLTMP
 echo '<profiles>' >> $PROFILES_XMLTMP
-echo '<?xml version="1.0" encoding="iso-8859-1"?>' > $HOSTS_XML
-echo '<!-- Généré par SambaEdu. Ne pas modifier -->' >> $HOSTS_XML
+echo '<?xml version="1.0" encoding="UTF-8"?>' > $HOSTS_XML
+echo '<!-- GÃ©nÃ©rÃ© par SambaEdu. Ne pas modifier -->' >> $HOSTS_XML
 echo '<wpkg>' >> $HOSTS_XML
 # Ajout d'un profile pour chaque parc et pour chaque machine
 # Chaque profile poste depend du profile des parcs auxquels il appartient ainsi que du profile $TousLesPostes
-# Seuls les postes ayant un compte (WinXP et2K) sont répertoriés.
+# Seuls les postes ayant un compte (WinXP et2K) sont rÃ©pertoriÃ©s.
 
 # echo "ldapsearch -x -LLL -S 'cn' -b \"$ParcsRDN,$BaseDN\" '(cn=*)' cn member"
 ldapsearch -x -LLL -S 'cn' -b "$ParcsRDN,$BaseDN" '(cn=*)' cn member | 
@@ -110,7 +110,7 @@ echo '</wpkg>' >> $HOSTS_XML
 # Profile profiles.xml
 if [ ! -e $PROFILES_XML ]; then
 cat - > $PROFILES_XML <<ProfilesXML
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <profiles>
   <profile id="_TousLesPostes">
     <package package-id="time" />
@@ -119,6 +119,6 @@ cat - > $PROFILES_XML <<ProfilesXML
 ProfilesXML
 fi
 
-# Réassocie les packages des profiles qui existaient dans profiles.xml
+# RÃ©associe les packages des profiles qui existaient dans profiles.xml
 gawk '{printf("%s",$0)}' $PROFILES_XMLTMP | xsltproc --output $PROFILES_XML $wpkgwebdir/bin/addPackages.xsl -
 #[ -e $PROFILES_XMLTMP ] && rm $PROFILES_XMLTMP
