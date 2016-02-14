@@ -30,6 +30,8 @@
 #             schtasks.exe /Run /Tn wpkg
 #          ou jt.exe /LJ $WINDIR\\tasks\\wpkg.job /RJ
 
+# Dernier update fev 2016 - passage utf8
+
 # Mode debug "1" ou "0"
 DBG="0"
 
@@ -1094,7 +1096,7 @@ if [ -d "$WPKGDIR/hosts" ]; then
     mkdir -p "$WPKGDIR/hosts"
 fi
 TOUSLESPOSTESXML=$WPKGDIR/hosts/Touslespostes.xml
-echo "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>" > $TOUSLESPOSTESXML
+echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" > $TOUSLESPOSTESXML
 echo "<wpkg>" >> $TOUSLESPOSTESXML
 echo "<host name=\".+\" profile-id=\"_TousLesPostes\" />" >> $TOUSLESPOSTESXML
 echo "</wpkg>" >> $TOUSLESPOSTESXML
@@ -1113,7 +1115,7 @@ echo "Creation du fichier $WPKGPROFILEUNATTEND pour les installations unattended
 if [ -d "$WPKGDIR/profiles" ]; then
     mkdir -p "$WPKGDIR/profiles"
 fi
-echo -e "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>\r
+echo -e "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r
 <profiles>\r
 <profile id=\"unattended\">\r
 <depends profile-id=\"_TousLesPostes\"/>\r
@@ -1125,7 +1127,7 @@ echo -e "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>\r
 if [ ! -e "$WPKGDIR/packages.xml" ]; then
     SE3=`gawk -F' *= *' '/netbios name/ {print $2}' /etc/samba/smb.conf`
     cat - > $WPKGDIR/packages.xml <<PACKAGESXML
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <packages>
     <package id="7za" name="7-Zip en ligne de commande" revision="442" reboot="false" priority="10">
         <check  type="file" condition="exists" path="%WinDir%\\7za.exe"/>
@@ -1135,13 +1137,15 @@ if [ ! -e "$WPKGDIR/packages.xml" ]; then
     </package>
 </packages>
 PACKAGESXML
-    if [ ! "$script_charset" == "ISO8859-15" ]; then
-      recode $script_charset..ISO8859-15 $WPKGDIR/packages.xml
-    fi
+#     if [ ! "$script_charset" == "ISO8859-15" ]; then
+#       recode $script_charset..ISO8859-15 $WPKGDIR/packages.xml
+#     fi
 
     echo "Fichier packages.xml cree."
 else
     echo "Le fichier packages.xml present est conserve."
+    sed -i 's/iso-8859-1/UTF-8/' "$WPKGDIR/packages.xml"
+    file --mime-encoding "$WPKGDIR/packages.xml" | grep -q iso && recode ISO8859-15..$script_charset "$WPKGDIR/packages.xml" && echo "passage format utf8 ok"
 fi
 
 # Paquet deploiementimprimantes.xml obsolete : on le rend inactif en supprimant le script qu'il execute.
