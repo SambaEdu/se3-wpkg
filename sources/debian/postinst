@@ -6,7 +6,7 @@ set -e
 # postinst script for se3-wpkg
 #
 #  d'apres le script d'installation de Jean Le Bail
-#  juillet 2008
+#  Dernier update Fev 2016
 #
 ## $Id$ ##
 
@@ -27,11 +27,6 @@ case "$1" in
     	install|configure)
 	cd /var/cache/se3_install/
 	chmod +x wpkg-install.sh
-	if ( /bin/grep -q "3\.[01]" /etc/debian_version ) ; then
-		## charset ISO8859-15 pour woody et sarge ##
-		/usr/bin/recode UTF8..ISO8859-15 wpkg-install.sh
-		/usr/bin/recode UTF8..ISO8859-15 web-wpkg-install.sh
-	fi
 	./wpkg-install.sh
 
 	chown www-se3:root /usr/share/se3/scripts/wakeonlan
