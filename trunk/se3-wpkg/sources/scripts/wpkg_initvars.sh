@@ -7,13 +7,13 @@
 #
 #
 #   Cree un fichier bat /var/se3/unattended/install/wpkg/initvars_se3.bat
-#   d'initialisation des paramètres du serveur ( Set variable=valeur ...)
+#   d'initialisation des paramÃ¨tres du serveur ( Set variable=valeur ...)
 #   Utilisable pour l'install des applis
 
 #   A executer chaque fois que le parametrage du serveur se3 est change
 
 ## $Id$ ##
-#
+# last update fev 2016 - utf8
 
 # Chemin du fichier .bat a creer
 INITVARSSE3BAT='/var/se3/unattended/install/wpkg/initvars_se3.bat'

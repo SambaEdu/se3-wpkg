@@ -6,15 +6,15 @@
 #########################################################################
 #
 #
-#   Met à jour droits.xml dans /var/se3/unattended/install/wpkg
-#   à partir des gon de l'annuaire : computers_is_admin, parc_can_manage et parc_can_view
-#   et des délégations lues dans la table mysql : base se3db, table delegation
+#   Met Ã  jour droits.xml dans /var/se3/unattended/install/wpkg
+#   Ã  partir des gon de l'annuaire : computers_is_admin, parc_can_manage et parc_can_view
+#   et des dÃ©lÃ©gations lues dans la table mysql : base se3db, table delegation
 
-#   A executer chaque fois que les droits ou delegations sont modifiés
+#   A executer chaque fois que les droits ou delegations sont modifiÃ©s
 #   Syntaxe :  update_droits_xml.sh [--help]
 
 ## $Id$ ##
-#
+# last update fev 2016 - utf8
 
 CONFIG_INC="/var/www/se3/includes/config.inc.php"
 dbhost="`gawk -F'[\"]' '/^ *\\$dbhost *=/ {print $2}' $CONFIG_INC`";
@@ -35,7 +35,7 @@ PROFILES_XML="$wpkgroot/profiles.xml";
 DROITS_XML="$wpkgroot/droits.xml";
 
 if [ "$BaseDN" == "" ]; then
-	echo "Met à jour le fichier /var/se3/unattended/install/wpkg/droits.xml"
+	echo "Met Ã  jour le fichier /var/se3/unattended/install/wpkg/droits.xml"
 	echo "  Syntaxe :  update_droits_xml.sh RightsRDN BaseDN"
 	exit 1
 fi
@@ -43,8 +43,8 @@ fi
 # Nom du profile TousLesPostes
 TousLesPostes="_TousLesPostes"
 
-echo '<?xml version="1.0" encoding="iso-8859-1"?>' > $DROITS_XML
-echo '<!-- Généré par SambaEdu. Ne pas modifier -->' >> $DROITS_XML
+echo '<?xml version="1.0" encoding="UTF-8"?>' > $DROITS_XML
+echo '<!-- GÃ©nÃ©rÃ© par SambaEdu. Ne pas modifier -->' >> $DROITS_XML
 echo '<droits>' >> $DROITS_XML
 
 # mysql --host=$dbhost --user=$dbuser --password=$dbpass --skip-column-names --execute='SELECT login, parc, niveau FROM delegation' --silent $dbname
