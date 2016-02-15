@@ -6,7 +6,7 @@
 			
 			## $Id$ ##
 	-->
-	<xsl:output method="text" encoding="iso-8859-1"/>
+	<xsl:output method="text" encoding="UTF-8"/>
 	<xsl:param name="debug">0</xsl:param>
 	<xsl:param name="login"></xsl:param>
 	<xsl:variable name="PROFILES" select="document('/var/se3/unattended/install/wpkg/profiles.xml')/profiles"/>

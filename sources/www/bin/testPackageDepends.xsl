@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl = "http://www.w3.org/1999/XSL/Transform" version = "1.0" >
 	<!-- Test les dépendances logicielles des packages contenues dans le fichier appli.xml traité -->
-	<xsl:output method="text" encoding="iso-8859-1"/>
+	<xsl:output method="text" encoding="UTF-8"/>
 	<xsl:param name="debug">0</xsl:param>
 	<xsl:param name="Appli"></xsl:param>
 	<xsl:param name="NoDownload">0</xsl:param>

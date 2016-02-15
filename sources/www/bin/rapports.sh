@@ -38,7 +38,7 @@ fi
 
 if [ ! -e $RAPPORTXML ] ; then
     echo "Création d'un fichier vide rapports.xml."
-    echo '<?xml version="1.0" encoding="iso-8859-1"?>' > $RAPPORTXML
+    echo '<?xml version="1.0" encoding="UTF-8"?>' > $RAPPORTXML
     echo '<!-- Généré par SambaEdu. Ne pas modifier -->' >> $RAPPORTXML
     echo '<rapports />' >> $RAPPORTXML
     NewRapports=1

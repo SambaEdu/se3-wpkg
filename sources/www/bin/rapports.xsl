@@ -6,7 +6,7 @@
 -->
 
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-	<xsl:output method="xml" version="1.0" encoding="iso-8859-1" indent="yes" />
+	<xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes" />
 	<xsl:variable name="NewRapportsId" select="/rapports/rapport/@id"/>
 	<xsl:variable name="RAPPORT" select="document('/var/se3/unattended/install/wpkg/rapports/rapports.xml')/rapports/rapport"/>
 	<xsl:template match="/">

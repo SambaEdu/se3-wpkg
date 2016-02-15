@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl = "http://www.w3.org/1999/XSL/Transform" version = "1.0" >
-   <xsl:output method="xml" version="1.0" encoding="iso-8859-1" indent="yes" />
+   <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes" />
    <xsl:param name="fichier">nomdefichierbidon</xsl:param>
    <xsl:variable name="wpkg" select="document('/var/www/se3/wpkg/xml/wpkg.xml')/wpkg"/>
    <!-- 
 	Ajoute les données de $fichier à wpkg.xml (destiné au client de gestion wpkg)
 	les noeuds déja existants de wpkg.xml qui provenaient de $fichier sont mis à jours ou effacés (pas dupliqués)
 	Peut s'utiliser à partir d'un fichier wpkg.xml vide :
-		<?xml version="1.0" encoding="iso-8859-1"?>
+		<?xml version="1.0" encoding="UTF-8"?>
 		<wpkg />
 	
 	F="profiles.xml";xsltproc \-\-stringparam fichier "$F" -o wpkg.xml concat.xsl "$F"

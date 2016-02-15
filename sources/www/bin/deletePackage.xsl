@@ -4,7 +4,7 @@
 			S'applique à profiles.xml  
 			Est appelé par deletePackage.sh
 	-->
-	<xsl:output method="text" encoding="iso-8859-1"/>
+	<xsl:output method="text" encoding="UTF-8"/>
 	<xsl:param name="debug">0</xsl:param>
 	<xsl:param name="Appli"></xsl:param>
 	<!-- deleteFiles de la forme ' 1 3 4 ' -->

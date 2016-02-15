@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl = "http://www.w3.org/1999/XSL/Transform" version = "1.0" >
-   <xsl:output method="xml" version="1.0" encoding="iso-8859-1" indent="yes" />
+   <xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes" />
 	<!-- Ajoute ou retire une application d'un profile si les droits de l'utilisateur le permettent et crée profiles.xml modifié.
 			S'applique à profiles.xml 
 			Est appelé par associer.sh
