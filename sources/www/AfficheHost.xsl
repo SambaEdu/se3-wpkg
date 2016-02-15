@@ -10,7 +10,7 @@
 	<xsl:key name = "keyPack" match = "package" use = "@package-id" />
 	
 
-	<xsl:output method="html" encoding="iso-8859-1" />
+	<xsl:output method="html" encoding="UTF-8" />
 	<xsl:param name="Navigateur" select="'inconnu'" />
 	<xsl:param name="Debug" select="false()" />
 	<xsl:param name="Local" select="false()" />

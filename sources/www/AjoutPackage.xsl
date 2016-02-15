@@ -9,7 +9,7 @@
 -->
 
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-	<xsl:output method="html" encoding="iso-8859-1" />
+	<xsl:output method="html" encoding="UTF-8" />
 	<!-- passage de paramètres à partir du javascript (admin.html) -->
 	<xsl:param name="Navigateur" ><xsl:text>inconnu</xsl:text></xsl:param>
 	<xsl:param name="wpkgAdmin" ><xsl:text>0</xsl:text></xsl:param>
