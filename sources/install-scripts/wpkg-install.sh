@@ -1002,9 +1002,13 @@ fi
 
 
 echo "Modification (si besoin) du script de login de base"
+
+# Nettoyage ancienne commande
+sed -i "/^@if \"%OS%\"==\"Windows_NT\"/d" /home/templates/base/logon.bat
+
 # Commande a placer dans le script de login des utilisateurs
-CMDINSTALL="@if \"%OS%\"==\"Windows_NT\" if not exist \"%WinDir%\\wpkg-client.vbs\" $CPAU -dec -lwp -hide -cwd %SystemDrive%\\ -file \\\\$SE3\\Progs\\ro\\$INSTTASKJOB 2>NUL >NUL"
-FINDCMD="@if \"%OS%\"==\"Windows_NT\" if not exist \"%WinDir%\\\\wpkg-client.vbs\" \\\\\\\\$SE3\\\\netlogon\\\\CPAU.exe -dec -lwp -hide -cwd %SystemDrive%\\\\ -file \\\\\\\\$SE3\\\\Progs\\\\ro\\\\$INSTTASKJOB 2>NUL >NUL"
+CMDINSTALL="@if not exist \"%WinDir%\\wpkg-client.vbs\" $CPAU -dec -lwp -hide -cwd %SystemDrive%\\ -file \\\\$SE3\\Progs\\ro\\$INSTTASKJOB 2>NUL >NUL"
+FINDCMD="@if not exist \"%WinDir%\\\\wpkg-client.vbs\" \\\\\\\\$SE3\\\\netlogon\\\\CPAU.exe -dec -lwp -hide -cwd %SystemDrive%\\\\ -file \\\\\\\\$SE3\\\\Progs\\\\ro\\\\$INSTTASKJOB 2>NUL >NUL"
 
 TEST=""
 [ -e /home/templates/base/logon.bat ] && TEST=$(cat /home/templates/base/logon.bat | grep "$FINDCMD" | grep -v "::" | grep -v "rem")
