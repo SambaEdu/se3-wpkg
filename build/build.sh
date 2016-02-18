@@ -29,6 +29,8 @@ then
 fi
 
 cd  "$script_dir/$pkg_name"
+find ./ \( -name *.sh -o -name *.pl -o -name *.py \) -exec chmod +x {} \;
+
 dh_clean
 debuild -uc -us -b
 # Cleaning.
