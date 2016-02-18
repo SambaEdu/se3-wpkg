@@ -21,6 +21,9 @@ var WPKG_VERSION = "1.3.0";
  Les modifs par rapport à wpkg.js officiels sont délimitées par // PATCH SE3 et // FIN PATCH SE3 :
  1. ajout de lignes dans installPackage() et removePackage() pour classement du menu démarrer
  2. modif de la function QueryPackage pour compatibilité avec l'interface se3 actuelle et la lecture des logs d'install 
+ PATCH pour SE3 (Jean-Remi Couturier)
+ Les modifs par rapport à wpkg.js officiels sont délimitées par // PATCH SE3 et // FIN PATCH SE3 :
+ 1. Modification pour la prise en compte des chemins vers le menu Demarrer pour Vista-Seven
  */
 
 /**
@@ -5676,14 +5679,16 @@ function installPackage(packageNode) {
 			// clean downloads
 			downloadsClean(downloadNodes);
 
-			//  PATCH SE3
+			// PATCH SE3
 			var packageID = getPackageID(packageNode);
 			//var packageID = packageNode.getAttribute("id");
 			var lnkDir = packageNode.getAttribute("lnk");
 			var category = packageNode.getAttribute("category");
+			var shell = new ActiveXObject("WScript.Shell");
+			var startmenu = shell.SpecialFolders("AllUsersPrograms");
 			if (lnkDir != null) {
 				if (category != null) {
-					info("Deplacement automatique des raccourcis de id=" + packageID + " depuis %AllUsersProfile%\\Menu Démarrer\\Programmes\\" + lnkDir + " dans la Category " + category + ".");
+					info("Deplacement automatique des raccourcis de id=" + packageID + " depuis " + startmenu + "\\" + lnkDir + " dans la Category " + category + ".");
 					exec("%ComSpec% /C call %Z%\\wpkg\\AnalyseCategory.bat \"" + packageID + "\" \"" + lnkDir + "\"", timeout, workdir);
 				} else {
 					info("Pas de deplacement automatique des raccourcis car 'category' est absent dans " + packageID + ".");
@@ -6699,9 +6704,11 @@ function removePackage(packageNode) {
 					//var packageID = packageNode.getAttribute("id");
 					var lnkDir = packageNode.getAttribute("lnk");
 					var category = packageNode.getAttribute("category");
+					var shell = new ActiveXObject("WScript.Shell");
+					var startmenu = shell.SpecialFolders("AllUsersPrograms");
 					if (lnkDir != null) {
 						if (category != null) {
-							info("Suppression des raccourcis de id=" + packageID + " depuis %AllUsersProfile%\\Menu Démarrer\\Programmes\\" + category + "\\" + lnkDir);
+							info("Suppression des raccourcis de id=" + packageID + " depuis " + startmenu + "\\" + category + "\\" + lnkDir);
 							exec("%ComSpec% /C call %Z%\\wpkg\\AnalyseCategory.bat \"" + packageID + "\" \"" + lnkDir + "\" remove", timeout, workdir);
 						} else {
 							info("Pas de suppression automatique des raccourcis car 'category' est absent dans " + packageID + ".");

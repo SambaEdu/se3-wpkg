@@ -21,24 +21,29 @@ SET DOSSIERLNK=%ARGDEUX:"=%
 
 if "%DEBUG%"=="1" echo # REORGANISATION DU MENU DEMARRER pour le programme %PACKAGE% #
 
-if "%ALLUSERSPROFILE%"=="" (
+rem Modifications jr Couturier 16/02/2016
+rem if "%ALLUSERSPROFILE%"=="" (
 	rem Par defaut, c'est maintenant c:\users sur tous les OS.
-	Set ALLUSERSPROFILE="C:\Users"
-	ver | find /i "version 5.1." > nul
-	if %errorlevel%==0 Set ALLUSERSPROFILE="C:\Documents and Settings\All Users"
-	ver | find /i "version 5.2." > nul
-	if %errorlevel%==0 Set ALLUSERSPROFILE="C:\Documents and Settings\All Users"
-	ver | find /i "Windows 2000" > nul
-	if %errorlevel%==0 Set ALLUSERSPROFILE="C:\Documents and Settings\All Users"
-	echo Documents de AllUsers de l'OS : %ALLUSERSPROFILE%
-)
- 
+rem 	Set ALLUSERSPROFILE="C:\Users"
+rem 	ver | find /i "version 5.1." > nul
+rem 	if %errorlevel%==0 Set ALLUSERSPROFILE="C:\Documents and Settings\All Users"
+rem 	ver | find /i "version 5.2." > nul
+rem 	if %errorlevel%==0 Set ALLUSERSPROFILE="C:\Documents and Settings\All Users"
+rem 	ver | find /i "Windows 2000" > nul
+rem 	if %errorlevel%==0 Set ALLUSERSPROFILE="C:\Documents and Settings\All Users"
+rem 	echo Documents de AllUsers de l'OS : %ALLUSERSPROFILE%
+rem )
+
 reg.exe query "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders" /v "Common Programs" | find /I "Common Programs" > c:\tmp.txt
 CHCP 1252 > NUL
 	for /F "tokens=2* delims=	" %%a in (c:\tmp.txt) do (
 	CHCP 850 > NUL
 	if exist "%%b" set MenuDemarrer=%%b&& if "%DEBUG%"=="1" echo Le menu demarrer de AllUsers est dans %%b
 )
+
+rem Modifications jr Couturier 16/02/2016
+ver | findstr /i /c:"version 5." > nul
+IF NOT "%ERRORLEVEL%"=="0" set "MenuDemarrer=%ALLUSERSPROFILE%\Microsoft\Windows\Start Menu\Programs"
 
 if exist "%raccpersotag%" del /F "%raccpersotag%" > NUL
 SET raccprogstoclassperso=%Z%\packages\windows\PackagesCategory.txt
