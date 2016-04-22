@@ -1,3 +1,15 @@
+se3-wpkg (0.6) UNRELEASED; urgency=low
+
+  * encodage postinst et passage sur github
+
+ -- root <root@DevilXen>  Fri, 21 Apr 2016 19:20:20 +0200
+
+se3-wpkg (0.6) UNRELEASED; urgency=low
+
+  * correctifs categories
+
+ -- root <root@DevilXen>  Mon, 28 Mar 2016 23:11:49 +0200
+
 se3-wpkg (0.5) UNRELEASED; urgency=low
 
   * correction wpkg-client.vbs testcpu.

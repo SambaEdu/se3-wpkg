@@ -53,7 +53,7 @@ case "$1" in
 	##### Activation wpkg dans l'interface web 
 	test_exist=`echo "SELECT id FROM params WHERE name='wpkg'" | mysql -h $dbhost $dbname -u $dbuser -p$dbpass -N`
 	if [ "X$test_exist" = "X" ]; then # if empty
-		echo "INSERT into params (name,value,srv_id,descr,cat) VALUES (\"wpkg\",\"1\",\"\",\"Activation ou désactivation de wpkg\",6) " | mysql -h $dbhost $dbname -u $dbuser -p$dbpass -N
+		echo "INSERT into params (name,value,srv_id,descr,cat) VALUES (\"wpkg\",\"1\",\"\",\"Activation ou dÃ©sactivation de wpkg\",6) " | mysql -h $dbhost $dbname -u $dbuser -p$dbpass -N
 	fi
 	
 	
