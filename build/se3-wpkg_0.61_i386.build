@@ -1,0 +1,359 @@
+ dpkg-buildpackage -rfakeroot -D -us -uc -b
+dpkg-buildpackage: avertissement: utilisation d'une commande pour obtenir les privilèges administrateur en tant qu'administrateur
+dpkg-buildpackage: paquet source se3-wpkg
+dpkg-buildpackage: version source 0.61
+dpkg-buildpackage: source changé par root <root@DevilXen>
+ dpkg-source --before-build se3-wpkg
+dpkg-buildpackage: architecture hôte i386
+ fakeroot debian/rules clean
+dh_testdir
+dh_testroot
+rm -f build-stamp configure-stamp
+# Add here commands to clean up after the build process.
+/usr/bin/make clean
+make[1]: entrant dans le répertoire « /var/se3/devels-scripts/se3-wpkg/build/se3-wpkg »
+make[1]: Rien à faire pour « clean ».
+make[1]: quittant le répertoire « /var/se3/devels-scripts/se3-wpkg/build/se3-wpkg »
+dh_clean 
+ debian/rules build
+dh_testdir
+# Add here commands to configure the package.
+touch configure-stamp
+dh_testdir
+# Add here commands to compile the package.
+/usr/bin/make
+make[1]: entrant dans le répertoire « /var/se3/devels-scripts/se3-wpkg/build/se3-wpkg »
+make[1]: Rien à faire pour « all ».
+make[1]: quittant le répertoire « /var/se3/devels-scripts/se3-wpkg/build/se3-wpkg »
+#docbook-to-man debian/se3-wpkg.sgml > se3-wpkg.1
+touch build-stamp
+ fakeroot debian/rules binary
+dh_testdir
+dh_testroot
+dh_clean -k 
+dh_clean: dh_clean -k is deprecated; use dh_prep instead
+dh_installdirs
+# Add here commands to install the package into debian/se3-wpkg.
+/usr/bin/make DESTDIR=/var/se3/devels-scripts/se3-wpkg/build/se3-wpkg/debian/se3-wpkg install
+make[1]: entrant dans le répertoire « /var/se3/devels-scripts/se3-wpkg/build/se3-wpkg »
+cp -R wpkg/* /var/se3/devels-scripts/se3-wpkg/build/se3-wpkg/debian/se3-wpkg/var/se3/unattended/install/wpkg/
+# Fichiers de l'interface web de wpkg
+cp -R www/* /var/se3/devels-scripts/se3-wpkg/build/se3-wpkg/debian/se3-wpkg/var/www/se3/wpkg/
+# Ajout de l'entree dans le menu (redondant avec 'Installation d'applications')
+cp menu.d_temp/98wpkg.inc /var/se3/devels-scripts/se3-wpkg/build/se3-wpkg/debian/se3-wpkg/var/www/se3/includes/menu.d/
+cp install-scripts/* /var/se3/devels-scripts/se3-wpkg/build/se3-wpkg/debian/se3-wpkg/var/cache/se3_install/
+cp -R scripts/* /var/se3/devels-scripts/se3-wpkg/build/se3-wpkg/debian/se3-wpkg/usr/share/se3/scripts/
+# tools GPL
+cp -R tools/* /var/se3/devels-scripts/se3-wpkg/build/se3-wpkg/debian/se3-wpkg/var/se3/unattended/install/wpkg/tools/
+# verif_wpkg
+[ -d /var/se3/devels-scripts/se3-wpkg/build/se3-wpkg/debian/se3-wpkg/var/se3/Progs/install ] || mkdir -p /var/se3/devels-scripts/se3-wpkg/build/se3-wpkg/debian/se3-wpkg/var/se3/Progs/install
+cp -R verif_wpkg/verif_wpkg.exe /var/se3/devels-scripts/se3-wpkg/build/se3-wpkg/debian/se3-wpkg/var/se3/Progs/install/
+# Ajout de l'entree dans la crontab
+cp crontab/se3-wpkg /var/se3/devels-scripts/se3-wpkg/build/se3-wpkg/debian/se3-wpkg/etc/cron.d/
+make[1]: quittant le répertoire « /var/se3/devels-scripts/se3-wpkg/build/se3-wpkg »
+dh_testdir
+dh_testroot
+dh_installchangelogs 
+dh_installdocs
+dh_installexamples
+dh_installman
+dh_link
+dh_strip
+strip:debian/se3-wpkg/var/se3/unattended/install/wpkg/tools/UnxUtils/libfl.a(libmain.o): Unable to recognise the format of file: File format not recognized
+strip:debian/se3-wpkg/var/se3/unattended/install/wpkg/tools/UnxUtils/libfl.a(libyywrap.o): Unable to recognise the format of file: File format not recognized
+dh_compress
+dh_fixperms
+dh_installdeb
+dh_shlibdeps
+dh_gencontrol
+dh_md5sums
+dh_builddeb
+dpkg-deb : construction du paquet « se3-wpkg » dans « ../se3-wpkg_0.61_all.deb ».
+ dpkg-genchanges -b >../se3-wpkg_0.61_i386.changes
+dpkg-genchanges: envoi d'un binaire - aucune inclusion de code source
+ dpkg-source --after-build se3-wpkg
+dpkg-buildpackage: envoi d'un binaire seulement (aucune inclusion de code source)
+Now running lintian...
+warning: the authors of lintian do not recommend running it with root privileges!
+E: se3-wpkg changes: changed-by-address-malformed root <root@DevilXen>
+E: se3-wpkg: arch-independent-package-contains-binary-or-object var/se3/unattended/install/wpkg/tools/UnxUtils/libfl.a
+E: se3-wpkg: arch-independent-package-contains-binary-or-object var/se3/unattended/install/wpkg/tools/UnxUtils/libfl.lib
+W: se3-wpkg: wrong-bug-number-in-closes l332:#nnnn
+E: se3-wpkg: debian-changelog-file-contains-invalid-email-address root@DevilXen
+E: se3-wpkg: debian-changelog-file-contains-invalid-email-address root@DevilXen
+E: se3-wpkg: debian-changelog-file-contains-invalid-email-address root@DevilXen
+E: se3-wpkg: debian-changelog-file-contains-invalid-email-address root@DevilXen
+E: se3-wpkg: debian-changelog-file-contains-invalid-email-address root@DevilXen
+E: se3-wpkg: debian-changelog-file-contains-invalid-email-address root@DevilXen
+E: se3-wpkg: debian-changelog-file-contains-invalid-email-address root@DevilXen
+E: se3-wpkg: debian-changelog-file-contains-invalid-email-address root@DevilXen
+E: se3-wpkg: debian-changelog-file-contains-invalid-email-address root@DevilXen
+E: se3-wpkg: debian-changelog-file-contains-invalid-email-address root@DevilXen
+E: se3-wpkg: debian-changelog-file-contains-invalid-email-address franck@fport
+E: se3-wpkg: debian-changelog-file-contains-invalid-email-address franck@fport
+E: se3-wpkg: debian-changelog-file-contains-invalid-email-address franck@fport
+E: se3-wpkg: debian-changelog-file-contains-invalid-email-address franck@fport
+E: se3-wpkg: debian-changelog-file-contains-invalid-email-address franck@fport
+E: se3-wpkg: debian-changelog-file-contains-invalid-email-address franck@fport
+E: se3-wpkg: debian-changelog-file-contains-invalid-email-address franck@fport
+E: se3-wpkg: debian-changelog-file-contains-invalid-email-address franck@fport
+E: se3-wpkg: debian-changelog-file-contains-invalid-email-address franck@fport
+E: se3-wpkg: debian-changelog-file-contains-invalid-email-address franck@fport
+E: se3-wpkg: debian-changelog-file-contains-invalid-email-address franck@fport
+E: se3-wpkg: debian-changelog-file-contains-invalid-email-address franck@fport
+E: se3-wpkg: debian-changelog-file-contains-invalid-email-address franck@fport
+E: se3-wpkg: debian-changelog-file-contains-invalid-email-address franck@fport
+E: se3-wpkg: helper-templates-in-copyright
+E: se3-wpkg: copyright-contains-dh_make-todo-boilerplate
+W: se3-wpkg: copyright-without-copyright-notice
+W: se3-wpkg: readme-debian-contains-debmake-template
+W: se3-wpkg: description-too-long
+E: se3-wpkg: extended-description-is-empty
+W: se3-wpkg: file-in-unusual-dir var/cache/se3_install/web-wpkg-install.sh
+W: se3-wpkg: file-in-unusual-dir var/cache/se3_install/wpkg-install.sh
+E: se3-wpkg: non-standard-dir-in-var var/se3/
+W: se3-wpkg: file-in-unusual-dir var/se3/Progs/install/verif_wpkg.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/AnalyseCategory.bat
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/AnalyseCategory.js
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/AnalyseCategory.xsl
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/CONTRIBUTORS
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/ChangeLog
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/GPL-2
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/INSTALL
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/LICENSE
+W: se3-wpkg: extra-license-file var/se3/unattended/install/wpkg/LICENSE
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/README
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/TODO
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/autoit-auto.au3
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/autoit-auto.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/config.xml
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/7za.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/CACLS.EXE
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/NirCmd.html
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/README.TXT
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/SetACL Command line.txt
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/SetACL License GPL.txt
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/SetACL Release notes.txt
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/SetACL.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/SysRun.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/agrep.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/ansi2knr.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/basename.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/bc.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/bison.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/bunzip2.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/bzip2.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/bzip2recover.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/cat.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/chgrp.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/chmod.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/chown.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/cksum.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/cmp.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/comm.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/compress.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/cp.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/csplit.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/cut.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/date.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/dc.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/dd.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/df.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/diff.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/diff3.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/dircolors.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/dirname.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/du.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/echo.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/egrep.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/env.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/expand.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/expr.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/factor.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/fgrep.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/find.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/flex.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/fmt.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/fold.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/fsplit.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/gawk.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/gclip.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/gplay.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/grep.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/gsar.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/gunzip.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/gzip.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/head.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/id.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/indent.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/install.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/join.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/jwhois.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/less.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/lesskey.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/libfl.a
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/libfl.lib
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/ln.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/logname.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/ls.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/m4.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/make.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/makedepend.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/makemsg.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/man.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/md5sum.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/mkdir.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/mkfifo.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/mknod.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/mv.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/mvdir.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/nl.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/od.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/paste.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/patch.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/pathchk.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/pclip.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/pr.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/printenv.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/printf.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/pwd.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/recode.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/rm.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/rman.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/rmdir.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/sdiff.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/sed.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/seq.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/shar.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/sleep.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/sort.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/split.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/stego.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/su.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/sum.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/sync.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/tac.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/tail.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/tar.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/tee.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/test.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/touch.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/tr.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/type.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/uname.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/unexpand.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/uniq.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/unrar.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/unshar.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/unzip.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/uudecode.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/uuencode.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/wc.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/wget.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/wget.hlp
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/which.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/whoami.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/xargs.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/yes.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/zcat.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/UnxUtils/zip.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/WindowsXP-Windows2000-Script56-KB917344-x86-fra.bat
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/au3.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/fileversion.vbs
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/md5sum.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/md5sum.txt
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/nircmd.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/nircmdc.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/tooltip/tooltip.au3
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/tooltip/tooltip.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/tooltip/wpkg-msg.au3
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/tooltip/wpkg-msg.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/wget.exe
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/tools/wget.txt
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/wpkg-client.vbs-original
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/wpkg-se3.js
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/wpkg.js
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/xsd/config.xsd
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/xsd/hosts.xsd
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/xsd/packages.xsd
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/xsd/profiles.xsd
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/xsd/settings.xsd
+W: se3-wpkg: file-in-unusual-dir var/se3/unattended/install/wpkg/xsd/wpkg.xsd
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/Progs/
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/Progs/install/
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/includes/
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/includes/menu.d/
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/includes/menu.d/98wpkg.inc
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/AfficheHost.xsl
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/AffichePackage.xsl
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/AffichePage.php
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/AfficheProfile.xsl
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/AjoutPackage.xsl
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/PackagesProfiles.xsl
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/admin.html
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/associer-client.xsl
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/bin/
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/bin/addPackages.xsl
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/bin/associer.sh
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/bin/associer.xsl
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/bin/canUpdateProfiles.xsl
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/bin/concat.xsl
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/bin/deletePackage.sh
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/bin/deletePackage.xsl
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/bin/extractAppli.xsl
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/bin/indent.xsl
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/bin/installPackage.sh
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/bin/installPackage.xsl
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/bin/mergeForum.xsl
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/bin/mergePackage.xsl
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/bin/profilesXml.xsl
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/bin/rapports.awk
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/bin/rapports.sh
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/bin/rapports.xsl
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/bin/supprPackage.xsl
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/bin/testPackageDepends.xsl
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/bin/timeStampAddPackages.xsl
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/bin/to_utf8.xsl
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/bin/updatewpkgXml.xsl
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/bin/wpkgXml.sh
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/displayDelPackage.xsl
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/droits.php
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/hosts.php
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/img/
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/img/AfficheHost.gif
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/img/AfficheHost0.gif
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/img/AffichePackage.gif
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/img/AffichePackage0.gif
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/img/AfficheProfile.gif
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/img/AfficheProfile0.gif
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/img/AjoutPackage.gif
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/img/AjoutPackage0.gif
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/img/PackagesProfiles.gif
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/img/PackagesProfiles0.gif
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/img/busy.gif
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/img/etat_erreur.gif
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/img/etat_ok.gif
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/img/etat_transfert.gif
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/img/forum_message.gif
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/img/wpkg.png
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/inc/
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/inc/http-conditional.php
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/inc/wpkg.auth.php
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/index.php
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/packages.php
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/posteconf.php
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/profiles.php
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/rapports.php
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/restart-client.php
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/se3-wpkg.css
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/se3_wpkglist.php
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/testConfigWpkg.php
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/timeStamps.php
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/wpkg.php
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/wpkglist.php
+E: se3-wpkg: dir-or-file-in-var-www var/www/se3/wpkg/wpkgtesting.php
+W: se3-wpkg: script-not-executable var/www/se3/wpkg/bin/rapports.awk
+W: se3-wpkg: executable-not-elf-or-script var/se3/unattended/install/wpkg/autoit-auto.au3
+Finished running lintian.
