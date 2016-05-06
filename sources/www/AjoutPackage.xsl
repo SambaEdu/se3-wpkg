@@ -25,7 +25,7 @@
 			est ensuite controlé sur le serveur se3 avant l'installation -->
 	<xsl:param name="urlWawadeb" select="'http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages-ng/stable'" />
 	<!-- url fournissant le xml des packages du forum (nom de variable à changer!). -->
-	<xsl:param name="urlWawadebMD5" select="'http://wawadeb.crdp.ac-caen.fr/unattended/se3_wpkglist.php'" />
+	<xsl:param name="urlWawadebMD5" select="'http://localhost:909/wpkg/bin/se3_wpkglist.php'" />
 
 	<xsl:param name="Local" select="false()" />
 	<xsl:variable name="WPKGROOT" select="'/var/se3/unattended/install/wpkg'" />
