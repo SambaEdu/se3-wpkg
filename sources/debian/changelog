@@ -1,3 +1,9 @@
+se3-wpkg (0.62) UNRELEASED; urgency=low
+
+  * Passage des xml sur une branch ng
+
+ -- root <root@DevilXen>  Fri, 06 May 2016 13:46:02 +0200
+
 se3-wpkg (0.61) UNRELEASED; urgency=low
 
   * encodage postinst et passage sur github
