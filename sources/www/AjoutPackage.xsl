@@ -23,7 +23,7 @@
 	<!-- url fournissant les packages officiels pour se3 
 			pas besoin d'un serveur sécurisé car le md5sum des fichiers appli.xml 
 			est ensuite controlé sur le serveur se3 avant l'installation -->
-	<xsl:param name="urlWawadeb" select="'http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages/stable'" />
+	<xsl:param name="urlWawadeb" select="'http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages-ng/stable'" />
 	<!-- url fournissant le xml des packages du forum (nom de variable à changer!). -->
 	<xsl:param name="urlWawadebMD5" select="'http://wawadeb.crdp.ac-caen.fr/unattended/se3_wpkglist.php'" />
 
@@ -66,13 +66,13 @@
 					<xsl:otherwise>
 						<!-- xsl:choose>
 							<xsl:when test="$urlWawadebMD5 = 'http://wawadeb.crdp.ac-caen.fr/unattended/se3_wpkglist.php?branch=testing'">
-								Les mises à jour proposées ici sont celles des <a href="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages/testing" target="_blank">Paquets WPKG a tester</a> du SVN du CRDP de Basse-Normandie.
+								Les mises à jour proposées ici sont celles des <a href="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages-ng/testing" target="_blank">Paquets WPKG a tester</a> du SVN du CRDP de Basse-Normandie.
 							</xsl:when>
 							<xsl:otherwise>
-								Les mises à jour proposées ici sont celles des <a href="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages/stable" target="_blank">Paquets WPKG Stables</a> du SVN du CRDP de Basse-Normandie.
+								Les mises à jour proposées ici sont celles des <a href="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages-ng/stable" target="_blank">Paquets WPKG Stables</a> du SVN du CRDP de Basse-Normandie.
 							</xsl:otherwise>
 						</xsl:choose -->
-						Les mises à jour proposées ici sont celles des paquets WPKG du <a href="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages/stable" target="_blank">SVN du CRDP de Basse-Normandie</a>.
+						Les mises à jour proposées ici sont celles des paquets WPKG du <a href="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages-ng/stable" target="_blank">SVN du CRDP de Basse-Normandie</a>.
 						
 						<form name="formUpdateXml" method="post" action="index.php?UpdateApplis=1" enctype="multipart/form-data">
 							<table align="center">
@@ -283,10 +283,10 @@
 						<br/>
 						<!-- xsl:choose>
 							<xsl:when test="$urlWawadebMD5 = 'http://wawadeb.crdp.ac-caen.fr/unattended/se3_wpkglist.php?branch=testing'">
-								<a href="javascript:void(0);" onclick="urlWawadebMD5='http://wawadeb.crdp.ac-caen.fr/unattended/se3_wpkglist.php';testUpdatedXml();" >Afficher les applications stables</a> disponibles dans le SVN du CRDP de Basse-Normandie : <a href="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages/stable" target="_blank">Paquets WPKG Stables</a>.
+								<a href="javascript:void(0);" onclick="urlWawadebMD5='http://wawadeb.crdp.ac-caen.fr/unattended/se3_wpkglist.php';testUpdatedXml();" >Afficher les applications stables</a> disponibles dans le SVN du CRDP de Basse-Normandie : <a href="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages-ng/stable" target="_blank">Paquets WPKG Stables</a>.
 							</xsl:when>
 							<xsl:otherwise>
-								<a href="javascript:void(0);" onclick="urlWawadebMD5='http://wawadeb.crdp.ac-caen.fr/unattended/se3_wpkglist.php?branch=testing';testUpdatedXml();" >Afficher les applications à tester</a> disponibles dans le SVN du CRDP de Basse-Normandie : <a href="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages/testing" target="_blank">Paquets WPKG a tester</a>.
+								<a href="javascript:void(0);" onclick="urlWawadebMD5='http://wawadeb.crdp.ac-caen.fr/unattended/se3_wpkglist.php?branch=testing';testUpdatedXml();" >Afficher les applications à tester</a> disponibles dans le SVN du CRDP de Basse-Normandie : <a href="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages-ng/testing" target="_blank">Paquets WPKG a tester</a>.
 							</xsl:otherwise>
 						</xsl:choose -->
 					</xsl:otherwise>
@@ -317,7 +317,7 @@
 		<div id="updatedXml">
 			<table>
 				<tr>
-					<td><p>Pour mettre à jour ou installer des paquets WPKG à partir du <a href="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages/stable" target="_blank">SVN du CRDP de Caen</a> : </p></td>
+					<td><p>Pour mettre à jour ou installer des paquets WPKG à partir du <a href="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages-ng/stable" target="_blank">SVN du CRDP de Caen</a> : </p></td>
 					<td>
 						<input value="Afficher les applications disponibles" type="button" onclick="MAJPackages=1;urlWawadebMD5='http://wawadeb.crdp.ac-caen.fr/unattended/se3_wpkglist.php';testUpdatedXml();"></input>
 						<!-- Devenu inutile puisque la nouvelle page listant les applis du svn est regénérée systématiquement
@@ -399,7 +399,7 @@ N'oubliez pas, après avoir installé une application de "test", d'écrire sur l
 		Le plus souvent, ces fichiers devront d'être adaptés pour fonctionner sur votre réseau.<br></br>
 		Voici quelques liens :<br></br>
 		<!-- obsolete <a href="http://wpkg.linuxkidd.com/live/packages_list.php">http://wpkg.linuxkidd.com/live/packages_list.php</a><br></br> -->
-		<a href="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages/stable" target="_blank">L'ensemble des XML prévus pour SambaEdu3 : http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages/stable</a><br></br>
+		<a href="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages-ng/stable" target="_blank">L'ensemble des XML prévus pour SambaEdu3 : http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages-ng/stable</a><br></br>
 		<a href="http://wpkg.org/index.php/Category:Silent_Installers" target="_blank">XML prévus pour wpkg dont les chemins doivent être adaptés : http://wpkg.org/index.php/Category:Silent_Installers</a><br></br>
 		<!-- inutile ? <a href="http://www.sp.phy.cam.ac.uk/%7Erl201/wpkg/licences.php?action=listsoftware">http://www.sp.phy.cam.ac.uk/~rl201/wpkg/licences.php?action=listsoftware</a> -->
 		

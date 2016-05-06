@@ -16,8 +16,8 @@ if ( $_GET['refresh'] == "1" ) {
 	}
 }
 $ErreurWget=false;
-$url='http://wawadeb.crdp.ac-caen.fr/unattended/se3_wpkglist.php';
-$urlTest='http://wawadeb.crdp.ac-caen.fr/unattended/se3_wpkglist.php?branch=testing';
+$url='http://wawadeb.crdp.ac-caen.fr/unattended/se3_wpkglist_ng.php';
+$urlTest='http://wawadeb.crdp.ac-caen.fr/unattended/se3_wpkglist_ng.php?branch=testing';
 exec ( "cd $wpkgwebdir;wget -N --timeout=15 --tries=3 '$url' 2>&1", $output, $return_value);
 if ( $return_value != 0 ) {
 	$ErreurWget=true;
