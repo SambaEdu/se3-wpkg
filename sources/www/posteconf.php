@@ -119,7 +119,7 @@ if ( ! $wpkgUser ) {
 					}
 					
 				}
-				echo "<tr><td align='center' colspan='3'><button style='font-size:small;' onclick=\"posteini('$Poste', 'DELETE', '' );\">R�tablir la configuration par d�faut</button></td></tr>\n";
+				echo "<tr><td align='center' colspan='3'><button style='font-size:small;' onclick=\"posteini('$Poste', 'DELETE', '' );\">Rétablir la configuration par défaut</button></td></tr>\n";
 				echo "</table>\n";
 				// echo "Param=$Param, ParamFound=$ParamFound<br/><br/>";
 				if (($Param != '') && ($Valeur != '')) {
