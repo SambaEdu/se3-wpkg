@@ -43,7 +43,7 @@ echo "<packages>\n";
 
 $svnurl="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages-ng";
 
-if ($branche<>"testing") {
+if ($branche<>"testing" and $branche<>"XP") {
     $branche="stable";
 }
 

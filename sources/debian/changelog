@@ -1,3 +1,10 @@
+se3-wpkg (0.64) unstable; urgency=low
+
+  * coquille sur branche ng
+  * creation branche XP
+
+ -- Laurent Joly <laurentjoly@orange.fr>  Wed, 11 May 2016 02:30:02 +0200
+
 se3-wpkg (0.63) unstable; urgency=low
 
   * Passage des xml sur une branch ng
