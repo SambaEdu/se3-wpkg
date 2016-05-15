@@ -1,0 +1,23 @@
+Format: 1.8
+Date: Wed, 11 May 2016 02:30:02 +0200
+Source: se3-wpkg
+Binary: se3-wpkg
+Architecture: all
+Version: 0.64
+Distribution: unstable
+Urgency: low
+Maintainer: jean <jean.lebail@etab.ac-caen.fr>
+Changed-By: Laurent Joly <laurentjoly@orange.fr>
+Description: 
+ se3-wpkg   - Paquet optionnel d'installation d'applications sur les clients wi
+Changes: 
+ se3-wpkg (0.64) unstable; urgency=low
+ .
+   * coquille sur branche ng
+   * creation branche XP
+Checksums-Sha1: 
+ 40d04720a9444a2e0542b2cbbb0a90a3cac9c1a4 5538650 se3-wpkg_0.64_all.deb
+Checksums-Sha256: 
+ 824acc3c2fd1f75475c195a45ba2b445ca2a882de9ea05dea04d89ebc426cb16 5538650 se3-wpkg_0.64_all.deb
+Files: 
+ 1af1c323c568cb987ded6f89ea75bdd9 5538650 net extra se3-wpkg_0.64_all.deb
