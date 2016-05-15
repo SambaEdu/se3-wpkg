@@ -16,8 +16,8 @@ Changes:
    * coquille sur branche ng
    * creation branche XP
 Checksums-Sha1: 
- 40d04720a9444a2e0542b2cbbb0a90a3cac9c1a4 5538650 se3-wpkg_0.64_all.deb
+ 55de9f99616801e04c8a28479a5baa0df6be2c88 5538736 se3-wpkg_0.64_all.deb
 Checksums-Sha256: 
- 824acc3c2fd1f75475c195a45ba2b445ca2a882de9ea05dea04d89ebc426cb16 5538650 se3-wpkg_0.64_all.deb
+ ca16de41ca3c61a077590a93e3c54ac691663753ca75c380ceee16527855979d 5538736 se3-wpkg_0.64_all.deb
 Files: 
- 1af1c323c568cb987ded6f89ea75bdd9 5538650 net extra se3-wpkg_0.64_all.deb
+ abb8ffa99f8de4f8c5cc837d3b4c2f82 5538736 net extra se3-wpkg_0.64_all.deb
