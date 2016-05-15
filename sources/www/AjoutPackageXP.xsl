@@ -280,6 +280,9 @@
 			<table>
 				<tr>
 					<td><p>Pour mettre à jour ou installer des paquets WPKG à partir du <a href="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages-ng/stable" target="_blank">SVN du CRDP de Caen</a> : </p></td>
+					<td>
+						<input value="Afficher les applications disponibles" type="button" onclick="MAJPackages=1;testUpdatedXml();"></input>
+					</td>
 				</tr>
 			</table>
 N'oubliez pas, après avoir installé une application de "test", d'écrire sur la liste de diffusion sambaedu, pour indiquer si l'application s'installe correctement ou non sur les postes de votre réseau. Vous contribuerez ainsi à améliorer la qualité des applications proposées.
