@@ -1,4 +1,10 @@
-se3-wpkg (0.64) unstable; urgency=low
+se3-wpkg (0.65) unstable; urgency=low
+
+  * Support de Windows 10 pour wsusoffline
+
+ -- Denis Bonnenfant <denis.bonnenfant@diderot.org>  Sun, 16 Oct 2016 02:30:02 +0200
+ 
+ se3-wpkg (0.64) unstable; urgency=low
 
   * coquille sur branche ng
   * creation branche XP
