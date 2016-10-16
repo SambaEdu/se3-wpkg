@@ -76,6 +76,7 @@ PARAM=$2
 [ "$OSLONG" == "Windows Vista x64" ] && echo "w60-x64"
 [ "$OSLONG" == "Windows 7" ] && echo "w61"
 [ "$OSLONG" == "Windows 7 x64" ] && echo "w61-x64"
+[ "$OSLONG" == "Windows 10 x64" ] && echo "w100-x64"
 # A FAIRE : il faut trouver l'argument pour Windows 2008 server.
 #[ "$OSLONG" == "Windows Server 2008 R2" ] && echo "w"
 #echo "OtherSection"
