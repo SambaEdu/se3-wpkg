@@ -1,3 +1,8 @@
+se3-wpkg (0.66~1) unstable; urgency=low
+  * Ajout contrib E. Farcy sur verif-wpkg
+
+  -- franck MOLLE <franck.molle@ac-rouen.fr>  wed, 25 Oct 2016 01:53:03 +0200
+
 se3-wpkg (0.65) unstable; urgency=low
 
   * Support de Windows 10 pour wsusoffline
