@@ -1,8 +1,9 @@
-; Script lanceur
+ï»¿; Script lanceur
 ; Auteur: Stephane Boireau
 ;         Et pour la partie la plus technique sur les processus ADMINSE3:
 ;         Jean Le Bail
-; Dernière modification: 11/04/2009
+; DerniÃ¨re modification: 11/05/2015
+;ajout de la partie "tuer tous les processus adminse3 par Emmanuel Farcy
 
 If @OSTYPE == "WIN32_WINDOWS" Then
 	MsgBox(0,"Information","Ce programme concerne les OS NT/2K/XP uniquement.")
@@ -17,16 +18,16 @@ Else
 
 	;$GUIWidth = 300
 	$GUIWidth = 300
-	$GUIHeight = 245
+	$GUIHeight = 280
 	;$GUIHeight = 700
 
-	$NOM_FENETRE = "Choix de contrôle WPKG sur " & @ComputerName
+	$NOM_FENETRE = "Choix de contrÃ´le WPKG sur " & @ComputerName
 	GUICreate($NOM_FENETRE, $GUIWidth, $GUIHeight)
 
 	$x0=10
 	$y0=10
 	$y1=$y0+3
-	$hauteur_txt=20
+	$hauteur_txt=30
 	$ecart=20
 	$largeur_zone_checkbox=160
 	;==================================
@@ -35,7 +36,7 @@ Else
 	Dim $objWMIService, $colProcessList, $objProcess, $colProperties
 	Dim $strNameOfUser, $strUserDomain
 	$list = ""
-	
+
 	$Champ_InfosPoste = GUICtrlCreateButton("Infos sur le poste", $x0, $y1, 280, 20)
 	$y0 = $y0 + $ecart
 	$y1=$y0+3
@@ -54,21 +55,29 @@ Else
 	$Label_WPKGsupprxml = GuiCtrlCreateLabel("(pour tester toutes les applis au prochain lancement wpkg)", $x0, $y1, 280, 20)
 	$y0 = $y0 + $ecart
 	$y1=$y0+3
-	$Champ_WPKGprocess = GUICtrlCreateButton("Contrôler les processus ADMINSE3", $x0, $y1, 280, 20)
+	$Champ_WPKGprocess = GUICtrlCreateButton("ContrÃ´ler les processus ADMINSE3", $x0, $y1, 280, 20)
 	$y0 = $y0 + $ecart
 	$y1=$y0+3
-	$Champ_WPKGreg = GUICtrlCreateButton("Contrôler la clé Running", $x0, $y1, 280, 20)
+
+	$Champ_WPKGreg = GUICtrlCreateButton("ContrÃ´ler la clÃ© Running", $x0, $y1, 280, 20)
 	$y0 = $y0 + $ecart
 	$y1=$y0+3
-	$Champ_WPKGreg2 = GUICtrlCreateButton("Corriger la clé Running", $x0, $y1, 280, 20)
+	$Champ_WPKGreg2 = GUICtrlCreateButton("Corriger la clÃ© Running", $x0, $y1, 280, 20)
 	$y0 = $y0 + $ecart
 	$y1=$y0+3
-	; Passer la clé Running en False
+	; Passer la clÃ© Running en False
+	$Champ_WPKGtuer = GUICtrlCreateButton("Tuer process adminse3", $x0, $y1, 280, 20)
+	$y0 = $y0 + $ecart
+	$y1=$y0+3
+	$Label_WPKGsuppr = GuiCtrlCreateLabel("(pour tuer processus adminse3)", $x0, $y1, 280, 20)
+	$y0 = $y0 + $ecart
+	$y1=$y0+3
+	; Tuer processus adminse3
 
 	$Champ_WPKGsuppr = GUICtrlCreateButton("Supprimer le client WPKG", $x0, $y1, 280, 20)
 	$y0 = $y0 + $ecart
 	$y1=$y0+3
-	$Label_WPKGsuppr = GuiCtrlCreateLabel("(pour en forcer la réinstallation au prochain login)", $x0, $y1, 280, 20)
+	$Label_WPKGsuppr = GuiCtrlCreateLabel("(pour en forcer la rÃ©installation au prochain login)", $x0, $y1, 280, 20)
 	If IsAdmin() Then
 		$bidon=""
 	Else
@@ -76,7 +85,7 @@ Else
 		GUICtrlSetState($Champ_WPKGsuppr,$GUI_DISABLE)
 	EndIf
 
-	; Ouvrir le Gestionnaire de tâches pour contrôler
+	; Ouvrir le Gestionnaire de tÃ¢ches pour contrÃ´ler
 	; Relancer via RUNAS...
 
 	;==================================
@@ -84,30 +93,30 @@ Else
 	;	$y0 = $GUIHeight - 35
 	;	$x=($GUIWidth-2*70-35)/2
 
-	;	; Création du bouton "OK"
+	;	; CrÃ©ation du bouton "OK"
 	;	$OK_Btn = GUICtrlCreateButton("OK", $x, $y0, 70, 25)
 
 
 	;	$x=$x+70+35
 
-	;	; Création du bouton "CANCEL"
+	;	; CrÃ©ation du bouton "CANCEL"
 	;	$Cancel_Btn = GUICtrlCreateButton("Cancel", $x, $y0, 70, 25)
 
 	;==================================
 
-		; On rend la fenêtre visible (modification de statut)
+		; On rend la fenÃªtre visible (modification de statut)
 		GUISetState(@SW_SHOW)
 
-		; On fait une boucle jusqu'à ce que:
+		; On fait une boucle jusqu'Ã  ce que:
 		; - l'utilisateur presse ESC
 		; - l'utilisateur presse ALT+F4
-		; - l'utilisateur clique sur le bouton de fermeture de la fenêtre
+		; - l'utilisateur clique sur le bouton de fermeture de la fenÃªtre
 		While 1
-			; Après chaque boucle, on contrôle si l'utilisateur a cliqué sur quelque chose
+			; AprÃ¨s chaque boucle, on contrÃ´le si l'utilisateur a cliquÃ© sur quelque chose
 			$msg = GUIGetMsg()
 
 			Select
-				; On teste si l'utilisateur a cliqué sur le bouton $Champ_WPKGlog
+				; On teste si l'utilisateur a cliquÃ© sur le bouton $Champ_WPKGlog
 				; Infos sur le poste
 				Case $msg = $Champ_InfosPoste
 					;...
@@ -115,7 +124,7 @@ Else
 					$affichage&=@CRLF & "OSVersion:             " & @OSVersion
 					$affichage&=@CRLF & "Domaine Windows: " & @LogonDomain
 					$affichage&=@CRLF & "Domaine DNS:     " & @LogonDNSDomain
-					$affichage&=@CRLF & "IP1:                        " & @IPAddress1 
+					$affichage&=@CRLF & "IP1:                        " & @IPAddress1
 					If @IPAddress2 <> "0.0.0.0" Then
 						$affichage&=@CRLF & "IP2:                        " & @IPAddress2
 					EndIf
@@ -125,8 +134,8 @@ Else
 					If @IPAddress4 <> "0.0.0.0" Then
 						$affichage&=@CRLF & "IP4:                        " & @IPAddress4
 					EndIf
-					$affichage&=@CRLF & "Le " & @MDAY & "/" & @MON & "/" & @YEAR & " à " & @HOUR & ":" & @MIN & ":" & @SEC
-					
+					$affichage&=@CRLF & "Le " & @MDAY & "/" & @MON & "/" & @YEAR & " Ã  " & @HOUR & ":" & @MIN & ":" & @SEC
+
 					MsgBox(0,"Infos",$affichage)
 
 				; Edition du wpkg.log
@@ -137,7 +146,7 @@ Else
 				Case $msg = $Champ_WPKGtxt
 					Run("notepad.exe " & @WindowsDir & "\wpkg.txt")
 
-				; Contrôle des processus tournant sous l'identité de adminse3
+				; ContrÃ´le des processus tournant sous l'identitÃ© de adminse3
 				Case $msg = $Champ_WPKGprocess
 					$list = ""
 					$ObjWMIService = ObjGet ( "winmgmts:{impersonationLevel = impersonate}!\\.\root\cimv2" )
@@ -151,31 +160,31 @@ Else
 						EndIf
 					Next
 					If $list = "" Then
-						MsgBox ( 0 , "Processus d'adminse3" , "Aucun processus trouvé !" )
+						MsgBox ( 0 , "Processus d'adminse3" , "Aucun processus trouvÃ© !" )
 					Else
 						MsgBox ( 0 , "Processus d'adminse3" , $list )
 					EndIf
 					;$SCRIPT=@ScriptDir & "\listProcessAdminse3.vbs"
 					;Run(@ComSpec & " cmd /c @echo **************************** & @echo Liste des processus ADMINSE3 & @echo **************************** & cscript " & $SCRIPT & " & pause", "", @SW_MAXIMIZE)
 
-				; Lecture de la clé RUNNING
+				; Lecture de la clÃ© RUNNING
 				Case $msg = $Champ_WPKGreg
 					$valeur=RegRead("HKEY_LOCAL_MACHINE\SOFTWARE\WPKG","Running")
-					$chaine="La valeur de la clé" & @CRLF & "   HKEY_LOCAL_MACHINE\SOFTWARE\WPKG" & @CRLF & "est:" & @CRLF & "   " & $valeur
+					$chaine="La valeur de la clÃ©" & @CRLF & "   HKEY_LOCAL_MACHINE\SOFTWARE\WPKG" & @CRLF & "est:" & @CRLF & "   " & $valeur
 					If $valeur == "true" Then
-						$chaine=$chaine & @CRLF & "Si plus aucune tâche ne tourne sous l'identité ADMINSE3," & @CRLF & "cette clé devrait être à FALSE."
+						$chaine=$chaine & @CRLF & "Si plus aucune tÃ¢che ne tourne sous l'identitÃ© ADMINSE3," & @CRLF & "cette clÃ© devrait Ãªtre Ã  FALSE."
 					EndIf
 					MsgBox(0,"Info",$chaine)
 
-				; Correction de la clé RUNNING
+				; Correction de la clÃ© RUNNING
 				Case $msg = $Champ_WPKGreg2
 					$valeur=RegRead("HKEY_LOCAL_MACHINE\SOFTWARE\WPKG","Running")
 					If $valeur == "false" Then
-						MsgBox(0,"Info","La valeur de " & @CRLF & "HKEY_LOCAL_MACHINE\SOFTWARE\WPKG\running" & @CRLF & "est déjà FALSE.")
+						MsgBox(0,"Info","La valeur de " & @CRLF & "HKEY_LOCAL_MACHINE\SOFTWARE\WPKG\running" & @CRLF & "est dÃ©jÃ  FALSE.")
 					Else
 						$ecriture=RegWrite("HKEY_LOCAL_MACHINE\SOFTWARE\WPKG","running","REG_SZ","false")
 						If $ecriture <> 1 Then
-							MsgBox(0,"Erreur","Il s'est produit une erreur lors de la tentative de passage à FALSE de la valeur" & @CRLF & "HKEY_LOCAL_MACHINE\SOFTWARE\WPKG\running")
+							MsgBox(0,"Erreur","Il s'est produit une erreur lors de la tentative de passage Ã  FALSE de la valeur" & @CRLF & "HKEY_LOCAL_MACHINE\SOFTWARE\WPKG\running")
 						EndIf
 					EndIf
 
@@ -188,15 +197,19 @@ Else
 						If FileExists(@WindowsDir & "\wpkg-client.vbs") Then
 							MsgBox(0,"Erreur","Il s'est produit une erreur lors de la tentative de suppression de" & @CRLF & "   " & @WindowsDir & "\wpkg-client.vbs")
 						Else
-							MsgBox(0,"Succès","La suppression de " & @CRLF & "   " & @WindowsDir & "\wpkg-client.vbs" & @CRLF & "a réussi." & @CRLF & "Le VBS sera réinstallé à la prochaine connexion.")
+							MsgBox(0,"SuccÃ¨s","La suppression de " & @CRLF & "   " & @WindowsDir & "\wpkg-client.vbs" & @CRLF & "a rÃ©ussi." & @CRLF & "Le VBS sera rÃ©installÃ© Ã  la prochaine connexion.")
 						EndIf
 					Else
-						MsgBox(0,"Info","Le fichier" & @CRLF & "   " & @WindowsDir & "\wpkg-client.vbs" & @CRLF & "n'est pas présent.")
+						MsgBox(0,"Info","Le fichier" & @CRLF & "   " & @WindowsDir & "\wpkg-client.vbs" & @CRLF & "n'est pas prÃ©sent.")
 					EndIf
 
 				; Edition du wpkg.xml
 				Case $msg = $Champ_WPKGxml
 					Run("notepad.exe " & @WindowsDir & "\system32\wpkg.xml")
+
+				;tuer processus adminse3
+			    Case $msg = $Champ_WPKGtuer
+				   Run( "taskkill /fi ""username eq adminse3""")
 
 				; Suppression du wpkg.xml
 				Case $msg = $Champ_WPKGsupprxml
@@ -207,23 +220,23 @@ Else
 						If FileExists(@WindowsDir & "\system32\wpkg.xml") Then
 							MsgBox(0,"Erreur","Il s'est produit une erreur lors de la tentative de suppression de" & @CRLF & "   " & @WindowsDir & "\system32\wpkg.xml")
 						Else
-							MsgBox(0,"Succès","La suppression de " & @CRLF & "   " & @WindowsDir & "\system32\wpkg.xml" & @CRLF & "a réussi." & @CRLF & "Lors de la prochaine exécution de WPKG, toutes les applications seront testées sans tenir compte d'éventuels enregistrements d'une précédente exécution.")
+							MsgBox(0,"SuccÃ¨s","La suppression de " & @CRLF & "   " & @WindowsDir & "\system32\wpkg.xml" & @CRLF & "a rÃ©ussi." & @CRLF & "Lors de la prochaine exÃ©cution de WPKG, toutes les applications seront testÃ©es sans tenir compte d'Ã©ventuels enregistrements d'une prÃ©cÃ©dente exÃ©cution.")
 						EndIf
 					Else
-						MsgBox(0,"Info","Le fichier" & @CRLF & "   " & @WindowsDir & "\wpkg-client.vbs" & @CRLF & "n'est pas présent.")
+						MsgBox(0,"Info","Le fichier" & @CRLF & "   " & @WindowsDir & "\wpkg-client.vbs" & @CRLF & "n'est pas prÃ©sent.")
 					EndIf
 
 					;ExitLoop
 					;GUIDelete()
 
-				; On teste si l'utilisateur a cliqué sur le bouton CANCEL
+				; On teste si l'utilisateur a cliquÃ© sur le bouton CANCEL
 				;Case $msg = $Cancel_Btn
-				;	;MsgBox(64, "Abandon!", "Vous avez souhaité abandonner la mise en place.")
+				;	;MsgBox(64, "Abandon!", "Vous avez souhaitÃ© abandonner la mise en place.")
 				;	GUIDelete()
 				;	Exit
 
 
-				; On teste si l'utilisateur a cliqué sur le bouton CANCEL
+				; On teste si l'utilisateur a cliquÃ© sur le bouton CANCEL
 				Case $msg = $GUI_EVENT_CLOSE
 					;ExitLoop
 					GUIDelete()
