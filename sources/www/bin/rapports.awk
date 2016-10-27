@@ -15,7 +15,7 @@ BEGIN {
 		DATEDAY="date=\"" $1 "\" ";
 		#DATEDAY=$1;
 		HEURE="time=\"" $2 "\" ";
-		TYPEWIN="typewin=\"" $NF "\" ";
+		TYPEWIN="typewin=\"" $7 "\" ";
 		
 		MAC="";
 		for ( i = 4; i < NF; i++) {
