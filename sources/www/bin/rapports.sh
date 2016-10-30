@@ -54,13 +54,25 @@ if [ ! "$Nnew" == "0" -o "$NewRapports" == "1" ] ;then
 	# Si NewRapports=0, on met a jour rapports.xml seulement avec les nouveaux fichiers txt. Sinon, c'est qu'il s'agit de l'initialisation : on met a jour a partir de tous les fichiers presents.
 	[ "$NewRapports" == "0" ] && OPTION="-cnewer rapports.xml" &&echo "Option : $OPTION"
     # Création de rapports.xml à partir des fichiers rapport (*.txt)
-    gawk --re-interval -f /var/www/se3/wpkg/bin/rapports.awk `find . -maxdepth 1 -iname '*.txt' $OPTION -a -printf '%f '` > TMP$RAPPORTXML
-    xsltproc --output $RAPPORTXML /var/www/se3/wpkg/bin/rapports.xsl TMP$RAPPORTXML
-    if [ -e TMP$RAPPORTXML ] ; then
-        /bin/rm TMP$RAPPORTXML
-    fi
+    # modif de superflaf ;)
+    valid_reports=''
+
+   for f in $(find . -maxdepth 1 -iname '*.txt' $OPTION -a -printf '%f ')
+	do
+   	 # Handle of only one report.
+   	 if gawk --re-interval -f /var/www/se3/wpkg/bin/rapports.awk "$f" | xsltproc --output /dev/null /var/www/se3/wpkg/bin/rapports.xsl -
+    	then
+        	# The report file is valid.
+        	valid_reports="$valid_reports $f"
+    	fi
+   done
+
+   gawk --re-interval -f /var/www/se3/wpkg/bin/rapports.awk $valid_reports | xsltproc --output "$RAPPORTXML" /var/www/se3/wpkg/bin/rapports.xsl -
+    
+    
 fi
 
 rm -f $fich_lock
 
 cd -
+exit 0
