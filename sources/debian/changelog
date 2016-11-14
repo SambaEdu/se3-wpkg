@@ -1,5 +1,6 @@
-se3-wpkg (0.66~1) unstable; urgency=low
+se3-wpkg (0.66) unstable; urgency=low
 
+  * Correctif pour les rapports (A voir si on peut optimiser)
   * Ajout contrib E. Farcy sur verif-wpkg
 
  -- franck MOLLE <franck.molle@ac-rouen.fr>  Wed, 25 Oct 2016 01:53:03 +0200
