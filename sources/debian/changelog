@@ -1,3 +1,9 @@
+se3-wpkg (0.67) unstable; urgency=low
+
+  * Optimisation correctif pour des rapports
+
+ -- franck MOLLE <franck.molle@ac-rouen.fr>  Sun, 12 Feb 2016 01:56:03 +0200
+
 se3-wpkg (0.66) unstable; urgency=low
 
   * Correctif pour les rapports (A voir si on peut optimiser)
