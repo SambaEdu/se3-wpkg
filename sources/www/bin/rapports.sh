@@ -60,7 +60,7 @@ if [ ! "$Nnew" == "0" -o "$NewRapports" == "1" ] ;then
    for f in $(find . -maxdepth 1 -iname '*.txt' $OPTION -a -printf '%f ')
 	do
    	 # Handle of only one report.
-   	 if gawk --re-interval -f /var/www/se3/wpkg/bin/rapports.awk "$f" | xsltproc --output /dev/null /var/www/se3/wpkg/bin/rapports.xsl -
+   	 if tail -4 "$f" | grep -q 'Installed' 
     	then
         	# The report file is valid.
         	valid_reports="$valid_reports $f"
