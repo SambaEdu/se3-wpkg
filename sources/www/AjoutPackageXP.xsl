@@ -240,7 +240,7 @@
 <!-- Clé de tri7 Par -->
 <xsl:value-of select="$opXml/@user" /><xsl:text>','</xsl:text>
 <!-- Clé de tri8 Application -->
-<xsl:value-of select="$categoryApp" /><xsl:text>','</xsl:text>
+<xsl:value-of select="$nameApp" /><xsl:text>','</xsl:text>
 <!-- Clé de tri9 Catégorie -->
 <xsl:value-of select="$categoryApp" /><xsl:text>',</xsl:text>
 <!-- Numéro de la ligne -->
