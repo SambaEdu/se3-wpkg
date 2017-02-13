@@ -65,6 +65,8 @@
 									<thead id="headTableau">
 										<tr>
 											<th style="cursor:ne-resize;" onclick="tri(1,event);"></th>
+											<th style="cursor:ne-resize;" onclick="tri(8,event);">Application</th>
+											<th style="cursor:ne-resize;" onclick="tri(9,event);">Catégorie</th>
 											<th style="cursor:ne-resize;" onclick="tri(2,event);">Fichier xml</th>
 											<th style="cursor:ne-resize;" onclick="tri(3,event);">Info SVN</th>
 											<th style="cursor:ne-resize;" onclick="tri(4,event);">Date du fichier officiel</th>
@@ -86,6 +88,8 @@
 									<xsl:variable name="xmlRef" select="@xml"/>
 									<xsl:variable name="idsXml" select="$INSTALLATIONS/package[op/@xml = $xmlRef]"/>
 									<xsl:variable name="opXml" select="$INSTALLATIONS/package[@id = $idsXml/@id]/op[last()]"/>
+									<xsl:variable name="nameApp" select="@name"/>
+									<xsl:variable name="categoryApp" select="@category"/>
 									<xsl:variable name="etat" >
 										<xsl:choose>
 											<xsl:when test="($opXml/@op = 'add') and (@md5sum = $opXml/@md5sum)">
@@ -164,6 +168,8 @@
 		</xsl:otherwise>
 	</xsl:choose>
 <xsl:text>onclick="onclickSelectMajAppli(this.checked, </xsl:text><xsl:value-of select="position() - 1" /><xsl:text>,' + "'</xsl:text><xsl:value-of select="$forumEnCours" /><xsl:text>', " + "'</xsl:text><xsl:value-of select="$autreforumExiste" /><xsl:text>');" + '" name="chk[]" value="</xsl:text><xsl:value-of select="concat(@forum, ':', $xmlRef, ':', @url)" /><xsl:text>" type="checkbox"&gt;&lt;/input&gt;&lt;/td&gt;</xsl:text>
+<xsl:text>&lt;td align="center" style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" /><xsl:text>;"&gt;&lt;a class="postes" style="background-color:transparent;font-weight:bolder;"&gt;</xsl:text><xsl:value-of select="$nameApp" /><xsl:text>&lt;/a&gt;&lt;/td&gt;</xsl:text>
+<xsl:text>&lt;td align="center" style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" /><xsl:text>;"&gt;&lt;a class="postes" style="background-color:transparent;font-weight:bolder;"&gt;</xsl:text><xsl:value-of select="$categoryApp" /><xsl:text>&lt;/a&gt;&lt;/td&gt;</xsl:text>
 <xsl:text>&lt;td align="center" style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" /><xsl:text>;"&gt;&lt;a class="postes" style="background-color:transparent;font-weight:bolder;" title="Cliquer pour voir le contenu du xml" href="</xsl:text><xsl:value-of select="@url" /><xsl:text>" target="_blank"&gt;</xsl:text><xsl:value-of select="$xmlRef" /><xsl:text>&lt;/a&gt;&lt;/td&gt;</xsl:text>
 <xsl:text>&lt;td align="center" style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" /><xsl:text>;" &gt;</xsl:text>
 <!-- <xsl:choose>
@@ -232,7 +238,11 @@
 <!-- Clé de tri6 InstalléLe -->
 <xsl:value-of select="$opXml/@date" /><xsl:text>','</xsl:text>
 <!-- Clé de tri7 Par -->
-<xsl:value-of select="$opXml/@user" /><xsl:text>',</xsl:text>
+<xsl:value-of select="$opXml/@user" /><xsl:text>','</xsl:text>
+<!-- Clé de tri8 Application -->
+<xsl:value-of select="$categoryApp" /><xsl:text>','</xsl:text>
+<!-- Clé de tri9 Catégorie -->
+<xsl:value-of select="$categoryApp" /><xsl:text>',</xsl:text>
 <!-- Numéro de la ligne -->
 <xsl:value-of select="position() - 1" /><xsl:text>,'--&gt;');&#xa;</xsl:text>
 

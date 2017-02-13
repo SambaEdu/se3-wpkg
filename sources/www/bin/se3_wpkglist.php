@@ -1,6 +1,9 @@
 <?php
 // $GET $POST
-$branche=$_GET['branch'];
+if (isset($_GET['branch']))
+	$branche=$_GET['branch'];
+else
+	$branche="stable";
 
 
 // Récupérer la date de dernière modification d'un fichier distant (la fonction retourne un timestamp unix, cf. http://wiki.pcinfo-web.com/timestamp )
@@ -64,8 +67,8 @@ while (!feof ($file))
 		$filedate = RecupDateModifDistant( "$svnurl/$branche/$xmlfile.xml" );
 		
 		$filelog = fopen ("$svnurl/logs/$xmlfile.log", "r");
-		$xml_name=utf8_encode(rtrim(fgets($filelog)));
-		$xml_category=utf8_encode(rtrim(fgets($filelog)));
+		$xml_name=str_replace("'"," ",utf8_encode(rtrim(fgets($filelog))));
+		$xml_category=str_replace("'"," ",utf8_encode(rtrim(fgets($filelog))));
         fclose($filelog);	
 		
 		$md5sum=md5_file("$svnurl/$branche/$xmlfile.xml");
