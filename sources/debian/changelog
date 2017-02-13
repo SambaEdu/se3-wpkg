@@ -1,8 +1,15 @@
+se3-wpkg (0.70~) unstable; urgency=low
+
+  * Affichage du nom de l'application et de la categorie sur la page du svn
+
+ -- Laurent Joly <laurentjoly@orange.fr>  Mon, 13 Feb 2017 23:55:30 +0200
+
+
 se3-wpkg (0.67) unstable; urgency=low
 
   * Optimisation correctif pour des rapports
 
- -- franck MOLLE <franck.molle@ac-rouen.fr>  Sun, 12 Feb 2016 01:56:03 +0200
+ -- franck MOLLE <franck.molle@ac-rouen.fr>  Sun, 12 Feb 2017 01:56:03 +0200
 
 se3-wpkg (0.66) unstable; urgency=low
 
