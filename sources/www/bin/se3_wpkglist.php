@@ -4,7 +4,8 @@ $branche=$_GET['branch'];
 
 
 // Récupérer la date de dernière modification d'un fichier distant (la fonction retourne un timestamp unix, cf. http://wiki.pcinfo-web.com/timestamp )
-function RecupDateModifDistant( $uri ) {
+function RecupDateModifDistant( $uri )
+{
 	// default
 	$unixtime = 0;
 	$fp = fopen( $uri, "r" );
@@ -52,38 +53,26 @@ if (!$file) {
   echo "<p>Impossible de lire la page.\n";
   exit;
 }
-while (!feof ($file)) {
-    $line = fgets ($file, 1024);
-    /* Cela ne fonctionne que si les balises href sont correctement utilisees */
-    //if (preg_match ("@\<a.*\>(.*)/\</a\>@i", $line, $out)) {
-     //   $rep = $out[1];
-        //echo $rep;
-
-     //   if ($rep <> "..") {
-            //echo $rep;
-            // pour la date : date("F d Y H:i:s", filename($xml));
-            //$srep = fopen ("$svnurl/$branche/$rep", "r");
-            //while (!feof ($srep)) {
-                //$files = fgets ($srep, 1024);
-                if (preg_match ("@\<a.*\>(.*).xml\</a\>@i", $line, $xmlfiles)) {
-                    $xmlfile = $xmlfiles[1];
-                    // LIRE LE id dans le fichier $xmlfile.xml et sa date
-                 	$filedate = RecupDateModifDistant( "$svnurl/$branche/$rep/$xmlfile.xml" );
-			//$fileopened = fopen ("$svnurl/$branche/$rep/$xmlfile.xml", "r");
-                    // recuperation de l'id dans le xml
-                    //$filedate=date("F d Y H:i:s", filemtime($svnurl/$branche/$rep/$xmlfile.xml));
-                    //fclose($fileopened);
-			$md5sum=md5_file("$svnurl/$branche/$xmlfile.xml");
-			//$md5sum="b3aa7b6f8357e66f291b8cda074e990d";
-                    $id="$xmlfile"; // pour les tests
-                    echo "<package id='$id' xml='$xmlfile.xml' url='$svnurl/$branche/$xmlfile.xml' md5sum='$md5sum' date='$filedate' svn_link='$svnurl/logs/$xmlfile.log' /> ";
-                     //echo "$xmlfile.xml";
-                    echo "\n";
-                }
-            //}
-            //fclose($srep);
-       // }
-    //}
+while (!feof ($file))
+{
+	$line = fgets ($file, 1024);
+	/* Cela ne fonctionne que si les balises href sont correctement utilisees */
+	if (preg_match ("@\<a.*\>(.*).xml\</a\>@i", $line, $xmlfiles))
+	{
+		$xmlfile = $xmlfiles[1];
+		// LIRE LE id dans le fichier $xmlfile.xml et sa date
+		$filedate = RecupDateModifDistant( "$svnurl/$branche/$xmlfile.xml" );
+		
+		$filelog = fopen ("$svnurl/logs/$xmlfile.log", "r");
+		$xml_name=utf8_encode(rtrim(fgets($filelog)));
+		$xml_category=utf8_encode(rtrim(fgets($filelog)));
+        fclose($filelog);	
+		
+		$md5sum=md5_file("$svnurl/$branche/$xmlfile.xml");
+		$id="$xmlfile"; // pour les tests
+		echo "<package id='$id' xml='$xmlfile.xml' url='$svnurl/$branche/$xmlfile.xml' md5sum='$md5sum' date='$filedate' svn_link='$svnurl/logs/$xmlfile.log' category='$xml_category' name='$xml_name'/> ";
+		echo "\n";
+	}
 }
 fclose($file);
 echo "</packages>";
