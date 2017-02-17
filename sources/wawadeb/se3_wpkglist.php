@@ -76,7 +76,7 @@ while (!feof ($file)) {
 			$md5sum=md5_file("$svnurl/$branche/$xmlfile.xml");
 			//$md5sum="b3aa7b6f8357e66f291b8cda074e990d";
                     $id="$xmlfile"; // pour les tests
-                    echo "<package id='$id' xml='$xmlfile.xml' url='$svnurl/$branche/$xmlfile.xml' md5sum='$md5sum' date='$filedate' svn_link='$svnurl/logs/$xmlfile.log' /> ";
+                    echo "<package id='".htmlspecialchars($id, ENT_QUOTES, 'UTF-8')."' xml='".htmlspecialchars($xmlfile, ENT_QUOTES, 'UTF-8').".xml' url='".htmlspecialchars($svnurl, ENT_QUOTES, 'UTF-8')."/".htmlspecialchars($branche, ENT_QUOTES, 'UTF-8')."/".htmlspecialchars($xmlfile, ENT_QUOTES, 'UTF-8').".xml' md5sum='".htmlspecialchars($md5sum, ENT_QUOTES, 'UTF-8')."' date='".htmlspecialchars($filedate, ENT_QUOTES, 'UTF-8')."' svn_link='".htmlspecialchars($svnurl, ENT_QUOTES, 'UTF-8')."/logs/".htmlspecialchars($xmlfile, ENT_QUOTES, 'UTF-8').".log' /> ";
                      //echo "$xmlfile.xml";
                     echo "\n";
                 }
