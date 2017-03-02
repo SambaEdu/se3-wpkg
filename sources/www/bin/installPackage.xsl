@@ -51,13 +51,13 @@
 						<xsl:when test="$nDownloadAppli > 1" >
 							<xsl:text>    echo &quot;    &apos;</xsl:text><xsl:value-of select="@name"/><xsl:text>&apos; (Rev: </xsl:text><xsl:value-of select="@revision"/><xsl:text>) a besoin de </xsl:text><xsl:value-of select="$nDownloadAppli"/><xsl:text> fichiers téléchargés.&quot;&#x00a;</xsl:text>
 							<xsl:for-each select="download">
-								<xsl:text>      Download &apos;</xsl:text><xsl:value-of select="@url"/><xsl:text>&apos; &apos;</xsl:text><xsl:value-of select="@saveto"/><xsl:text>&apos; &apos;</xsl:text><xsl:value-of select="@md5sum"/><xsl:text>&apos; &apos;</xsl:text><xsl:value-of select="$NoDownload"/><xsl:text>&apos; &#x00a;</xsl:text>
+								<xsl:text>      Download &apos;</xsl:text><xsl:value-of select="@url"/><xsl:text>&apos; &apos;</xsl:text><xsl:value-of select="@saveto"/><xsl:text>&apos; &apos;</xsl:text><xsl:value-of select="@md5sum"/><xsl:text>&apos; &apos;</xsl:text><xsl:value-of select="$NoDownload"/><xsl:text>&apos; &apos;</xsl:text><xsl:choose><xsl:when test="$controlMD5 = ''"><xsl:text>1</xsl:text></xsl:when></xsl:choose><xsl:text>&apos; &#x00a;</xsl:text>
 							</xsl:for-each>
 						</xsl:when>
 						<xsl:when test="$nDownloadAppli = 1" >
 							<xsl:text>    echo &quot;    &apos;</xsl:text><xsl:value-of select="@name"/><xsl:text>&apos; (Rev: </xsl:text><xsl:value-of select="@revision"/><xsl:text>) a besoin d'1 fichier téléchargé.&quot;&#x00a;</xsl:text>
 							<xsl:for-each select="download">
-								<xsl:text>      Download &apos;</xsl:text><xsl:value-of select="@url"/><xsl:text>&apos; &apos;</xsl:text><xsl:value-of select="@saveto"/><xsl:text>&apos; &apos;</xsl:text><xsl:value-of select="@md5sum"/><xsl:text>&apos; &apos;</xsl:text><xsl:value-of select="$NoDownload"/><xsl:text>&apos; &#x00a;</xsl:text>
+								<xsl:text>      Download &apos;</xsl:text><xsl:value-of select="@url"/><xsl:text>&apos; &apos;</xsl:text><xsl:value-of select="@saveto"/><xsl:text>&apos; &apos;</xsl:text><xsl:value-of select="@md5sum"/><xsl:text>&apos; &apos;</xsl:text><xsl:value-of select="$NoDownload"/><xsl:text>&apos; &apos;</xsl:text><xsl:choose><xsl:when test="$controlMD5 = ''"><xsl:text>1</xsl:text></xsl:when></xsl:choose><xsl:text>&apos; &#x00a;</xsl:text>
 							</xsl:for-each>
 						</xsl:when>
 						<xsl:when test="$nDownloadAppli = 0" >

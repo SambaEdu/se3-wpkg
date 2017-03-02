@@ -19,6 +19,7 @@ function Download () {
 	local destFile="$2"
 	local MD5="$3"
 	local pasDeDownload="$4"
+	local ignoreMD5="$5"
 	# $Appli est défini avec l'id de l'Appli
 	echo ""
 	
@@ -26,15 +27,19 @@ function Download () {
 		if [ -e "$Z/$destFile" ]; then
 			echo -e "    Le fichier '$Z/$destFile' est présent.\n"
 			PassMD5="1"
-			if [ "$MD5" != "" ]; then
-				if ( md5sum "$Z/$destFile" | grep $MD5 ) ; then
-					echo -e "Le fichier présent est valide (MD5=$MD5).\n";
-				else
-					md5sum "$Z/$destFile"
-					echo -e "  Erreur : le test md5sum ($MD5) a échoué.\n"
-					ErreurApp="13"
-					PassMD5="0"
-				fi
+			if [ "$ignoreMD5" == "1" ]; then
+			    echo -e "Pas de contrôle MD5 (MD5=$MD5).\n";
+			else
+			    if [ "$MD5" != "" ]; then
+				    if ( md5sum "$Z/$destFile" | grep $MD5 ) ; then
+				    	echo -e "Le fichier présent est valide (MD5=$MD5).\n";
+				    else
+				    	md5sum "$Z/$destFile"
+				    	echo -e "  Erreur : le test md5sum ($MD5) a échoué.\n"
+				    	ErreurApp="13"
+				    	PassMD5="0"
+				    fi
+			    fi
 			fi
 		else
 			echo "    Erreur : Le fichier '$Z/$destFile' est absent."
@@ -79,15 +84,19 @@ function Download () {
 						ErreurApp="12"
 					else
 						PassMD5="1"
-						if [ "$MD5" != "" ]; then
-							if ( md5sum "$fileName" | grep $MD5 ) ; then
-								echo -e "\nLe fichier téléchargé est valide (MD5=$MD5).\n";
-							else
-								md5sum "$fileName"
-								echo -e "  Erreur : le test md5sum ($MD5) a échoué.\n"
-								ErreurApp="13"
-								PassMD5="0"
-							fi
+						if [ "$ignoreMD5" == "1" ]; then
+							echo -e "Pas de contrôle MD5 (MD5=$MD5).\n";
+						else
+						    if [ "$MD5" != "" ]; then
+							    if ( md5sum "$fileName" | grep $MD5 ) ; then
+								    echo -e "\nLe fichier téléchargé est valide (MD5=$MD5).\n";
+							    else
+								    md5sum "$fileName"
+								    echo -e "  Erreur : le test md5sum ($MD5) a échoué.\n"
+							    	ErreurApp="13"
+							    	PassMD5="0"
+							    fi
+						    fi
 						fi
 						if [ "$PassMD5" == "1" ] ; then
 							if ( mv "$fileName" "$Z/$destFile" ) ;then
