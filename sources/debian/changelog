@@ -1,9 +1,14 @@
-se3-wpkg (0.70~1) unstable; urgency=low
+se3-wpkg (0.71) unstable; urgency=low
+
+  * MD5 ignoré pour les fichiers d'installation
+
+ -- Antoine Labarussias <antoineone01@gmail.com>  Thu, 02 Mar 2017 13:31:42 +0200
+ 
+ se3-wpkg (0.70~1) unstable; urgency=low
 
   * Affichage du nom de l'application et de la categorie sur la page du svn
 
  -- Laurent Joly <laurentjoly@orange.fr>  Mon, 13 Feb 2017 23:55:30 +0200
-
 
 se3-wpkg (0.67) unstable; urgency=low
 
