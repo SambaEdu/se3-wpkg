@@ -175,7 +175,39 @@
 <xsl:text>&lt;td align="center" style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" /><xsl:text>;"&gt;&lt;a class="postes" style="background-color:transparent;font-weight:bolder;"&gt;</xsl:text><xsl:value-of select="$nameApp" /><xsl:text>&lt;/a&gt;&lt;/td&gt;</xsl:text>
 <xsl:text>&lt;td align="center" style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" /><xsl:text>;"&gt;&lt;a class="postes" style="background-color:transparent;font-weight:bolder;"&gt;</xsl:text><xsl:value-of select="$categoryApp" /><xsl:text>&lt;/a&gt;&lt;/td&gt;</xsl:text>
 <xsl:text>&lt;td align="center" style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" /><xsl:text>;"&gt;&lt;a class="postes" style="background-color:transparent;font-weight:bolder;"&gt;</xsl:text><xsl:value-of select="$revisionApp" /><xsl:text>&lt;/a&gt;&lt;/td&gt;</xsl:text>
-<xsl:text>&lt;td align="center" style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" /><xsl:text>;"&gt;&lt;a class="postes" style="background-color:transparent;font-weight:bolder;"&gt;</xsl:text><xsl:value-of select="$compatibiliteApp" /><xsl:text>&lt;/a&gt;&lt;/td&gt;</xsl:text>
+<xsl:text>&lt;td align="center" style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" />
+<xsl:text>;"&gt;&lt;a class="postes" style="background-color:transparent;font-weight:bolder;"&gt;</xsl:text>
+<xsl:choose>
+  <xsl:when test="$compatibiliteApp=0">
+    00
+  </xsl:when>
+  <xsl:when test="$compatibiliteApp=1">
+    01
+  </xsl:when>
+  <xsl:when test="$compatibiliteApp=2">
+    02
+  </xsl:when>
+  <xsl:when test="$compatibiliteApp=3">
+    03
+  </xsl:when>
+  <xsl:when test="$compatibiliteApp=4">
+    04
+  </xsl:when>
+  <xsl:when test="$compatibiliteApp=5">
+    05
+  </xsl:when>
+  <xsl:when test="$compatibiliteApp=6">
+    06
+  </xsl:when>
+  <xsl:when test="$compatibiliteApp=7">
+    07
+  </xsl:when>
+  <xsl:otherwise>
+    00
+  </xsl:otherwise>
+</xsl:choose>
+
+<xsl:text>&lt;/a&gt;&lt;/td&gt;</xsl:text>
 <xsl:text>&lt;td align="center" style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" /><xsl:text>;"&gt;&lt;a class="postes" style="background-color:transparent;font-weight:bolder;" title="Cliquer pour voir le contenu du xml" href="</xsl:text><xsl:value-of select="@url" /><xsl:text>" target="_blank"&gt;</xsl:text><xsl:value-of select="$xmlRef" /><xsl:text>&lt;/a&gt;&lt;/td&gt;</xsl:text>
 <xsl:text>&lt;td align="center" style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" /><xsl:text>;" &gt;</xsl:text>
 <!-- <xsl:choose>

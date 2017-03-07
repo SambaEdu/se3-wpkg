@@ -1,8 +1,9 @@
-se3-wpkg (0.70~1) unstable; urgency=low
+se3-wpkg (0.70~2) unstable; urgency=low
 
   * Affichage du nom de l'application et de la categorie sur la page du svn
+  * Affichage du numero de revision et de la compatibilite windows 
 
- -- Laurent Joly <laurentjoly@orange.fr>  Mon, 13 Feb 2017 23:55:30 +0200
+ -- Laurent Joly <laurentjoly@orange.fr>  Tue, 07 Feb 2017 03:55:30 +0200
 
 
 se3-wpkg (0.67) unstable; urgency=low
