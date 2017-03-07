@@ -176,37 +176,36 @@
 <xsl:text>&lt;td align="center" style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" /><xsl:text>;"&gt;&lt;a class="postes" style="background-color:transparent;font-weight:bolder;"&gt;</xsl:text><xsl:value-of select="$categoryApp" /><xsl:text>&lt;/a&gt;&lt;/td&gt;</xsl:text>
 <xsl:text>&lt;td align="center" style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" /><xsl:text>;"&gt;&lt;a class="postes" style="background-color:transparent;font-weight:bolder;"&gt;</xsl:text><xsl:value-of select="$revisionApp" /><xsl:text>&lt;/a&gt;&lt;/td&gt;</xsl:text>
 <xsl:text>&lt;td align="center" style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" />
-<xsl:text>;"&gt;&lt;a class="postes" style="background-color:transparent;font-weight:bolder;"&gt;</xsl:text>
+<xsl:text>;"&lt;a class="postes" style="background-color:transparent;font-weight:bolder;"&gt;</xsl:text>
 <xsl:choose>
-  <xsl:when test="$compatibiliteApp=0">
-    00
+  <xsl:when test="@compatibilite=0">
+  <xsl:text> - </xsl:text>
   </xsl:when>
-  <xsl:when test="$compatibiliteApp=1">
-    01
+  <xsl:when test="@compatibilite=1">
+  <xsl:text>&lt;img src="../elements/images/winxp.png" width="20" height="20"&gt;</xsl:text>
   </xsl:when>
-  <xsl:when test="$compatibiliteApp=2">
-    02
+  <xsl:when test="@compatibilite=2">
+  <xsl:text>&lt;img src="../elements/images/win7.png" width="20" height="20"&gt;</xsl:text>
   </xsl:when>
-  <xsl:when test="$compatibiliteApp=3">
-    03
+  <xsl:when test="@compatibilite=3">
+  <xsl:text>&lt;img src="../elements/images/winxp.png" width="20" height="20"&gt;&lt;img src="../elements/images/win7.png" width="20" height="20"&gt;</xsl:text>
   </xsl:when>
-  <xsl:when test="$compatibiliteApp=4">
-    04
+  <xsl:when test="@compatibilite=4">
+  <xsl:text>&lt;img src="../elements/images/win10.png" width="20" height="20"&gt;</xsl:text>
   </xsl:when>
-  <xsl:when test="$compatibiliteApp=5">
-    05
+  <xsl:when test="@compatibilite=5">
+  <xsl:text>&lt;img src="../elements/images/winxp.png" width="20" height="20"&gt;&lt;img src="../elements/images/win10.png" width="20" height="20"&gt;</xsl:text>
   </xsl:when>
-  <xsl:when test="$compatibiliteApp=6">
-    06
+  <xsl:when test="@compatibilite=6">
+  <xsl:text>&lt;img src="../elements/images/win7.png" width="20" height="20"&gt;&lt;img src="../elements/images/win10.png" width="20" height="20"&gt;</xsl:text>
   </xsl:when>
-  <xsl:when test="$compatibiliteApp=7">
-    07
+  <xsl:when test="@compatibilite=7">
+  <xsl:text>&lt;img src="../elements/images/winxp.png" width="20" height="20"&gt;&lt;img src="../elements/images/win7.png" width="20" height="20"&gt;&lt;img src="../elements/images/win10.png" width="20" height="20"&gt;</xsl:text>
   </xsl:when>
   <xsl:otherwise>
-    00
+  <xsl:text> - </xsl:text>
   </xsl:otherwise>
 </xsl:choose>
-
 <xsl:text>&lt;/a&gt;&lt;/td&gt;</xsl:text>
 <xsl:text>&lt;td align="center" style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" /><xsl:text>;"&gt;&lt;a class="postes" style="background-color:transparent;font-weight:bolder;" title="Cliquer pour voir le contenu du xml" href="</xsl:text><xsl:value-of select="@url" /><xsl:text>" target="_blank"&gt;</xsl:text><xsl:value-of select="$xmlRef" /><xsl:text>&lt;/a&gt;&lt;/td&gt;</xsl:text>
 <xsl:text>&lt;td align="center" style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" /><xsl:text>;" &gt;</xsl:text>
