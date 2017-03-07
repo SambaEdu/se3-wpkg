@@ -67,6 +67,8 @@
 											<th style="cursor:ne-resize;" onclick="tri(1,event);"></th>
 											<th style="cursor:ne-resize;" onclick="tri(8,event);">Application</th>
 											<th style="cursor:ne-resize;" onclick="tri(9,event);">Catégorie</th>
+											<th style="cursor:ne-resize;">Révision</th>
+											<th style="cursor:ne-resize;">Compatibilité</th>
 											<th style="cursor:ne-resize;" onclick="tri(2,event);">Fichier xml</th>
 											<th style="cursor:ne-resize;" onclick="tri(3,event);">Info SVN</th>
 											<th style="cursor:ne-resize;" onclick="tri(4,event);">Date du fichier officiel</th>
@@ -90,6 +92,8 @@
 									<xsl:variable name="opXml" select="$INSTALLATIONS/package[@id = $idsXml/@id]/op[last()]"/>
 									<xsl:variable name="nameApp" select="@name"/>
 									<xsl:variable name="categoryApp" select="@category"/>
+									<xsl:variable name="categoryApp" select="@revision"/>
+									<xsl:variable name="categoryApp" select="@compatibilite"/>
 									<xsl:variable name="etat" >
 										<xsl:choose>
 											<xsl:when test="($opXml/@op = 'add') and (@md5sum = $opXml/@md5sum)">
