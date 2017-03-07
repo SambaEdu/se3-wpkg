@@ -122,8 +122,8 @@
 									<xsl:variable name="opXml" select="$INSTALLATIONS/package[@id = $idsXml/@id]/op[last()]"/>
 									<xsl:variable name="nameApp" select="@name"/>
 									<xsl:variable name="categoryApp" select="@category"/>
-									<xsl:variable name="categoryApp" select="@revision"/>
-									<xsl:variable name="categoryApp" select="@compatibilite"/>
+									<xsl:variable name="revisionApp" select="@revision"/>
+									<xsl:variable name="compatibiliteApp" select="@compatibilite"/>
 									<xsl:variable name="etat" >
 										<xsl:choose>
 											<xsl:when test="($opXml/@op = 'add') and (@md5sum = $opXml/@md5sum)">
@@ -204,6 +204,8 @@
 <xsl:text>onclick="onclickSelectMajAppli(this.checked, </xsl:text><xsl:value-of select="position() - 1" /><xsl:text>,' + "'</xsl:text><xsl:value-of select="$forumEnCours" /><xsl:text>', " + "'</xsl:text><xsl:value-of select="$autreforumExiste" /><xsl:text>');" + '" name="chk[]" value="</xsl:text><xsl:value-of select="concat(@forum, ':', $xmlRef, ':', @url)" /><xsl:text>" type="checkbox"&gt;&lt;/input&gt;&lt;/td&gt;</xsl:text>
 <xsl:text>&lt;td align="center" style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" /><xsl:text>;"&gt;&lt;a class="postes" style="background-color:transparent;font-weight:bolder;"&gt;</xsl:text><xsl:value-of select="$nameApp" /><xsl:text>&lt;/a&gt;&lt;/td&gt;</xsl:text>
 <xsl:text>&lt;td align="center" style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" /><xsl:text>;"&gt;&lt;a class="postes" style="background-color:transparent;font-weight:bolder;"&gt;</xsl:text><xsl:value-of select="$categoryApp" /><xsl:text>&lt;/a&gt;&lt;/td&gt;</xsl:text>
+<xsl:text>&lt;td align="center" style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" /><xsl:text>;"&gt;&lt;a class="postes" style="background-color:transparent;font-weight:bolder;"&gt;</xsl:text><xsl:value-of select="$revisionApp" /><xsl:text>&lt;/a&gt;&lt;/td&gt;</xsl:text>
+<xsl:text>&lt;td align="center" style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" /><xsl:text>;"&gt;&lt;a class="postes" style="background-color:transparent;font-weight:bolder;"&gt;</xsl:text><xsl:value-of select="$compatibiliteApp" /><xsl:text>&lt;/a&gt;&lt;/td&gt;</xsl:text>
 <xsl:text>&lt;td align="center" style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" /><xsl:text>;"&gt;&lt;a class="postes" style="background-color:transparent;font-weight:bolder;" title="Cliquer pour voir le contenu du xml" href="</xsl:text><xsl:value-of select="@url" /><xsl:text>" target="_blank"&gt;</xsl:text><xsl:value-of select="$xmlRef" /><xsl:text>&lt;/a&gt;&lt;/td&gt;</xsl:text>
 <xsl:text>&lt;td align="center" style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" /><xsl:text>;" &gt;</xsl:text>
 <!-- <xsl:choose>
