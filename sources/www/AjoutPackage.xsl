@@ -95,7 +95,7 @@
 											<th style="cursor:ne-resize;" onclick="tri(9,event);">Catégorie</th>
 											<th style="cursor:ne-resize;">Révision</th>
 											<th style="cursor:ne-resize;">Compatibilité</th>
-											<th style="cursor:ne-resize;" onclick="tri(2,event);">Fichier xml</th>
+											<!-- <th style="cursor:ne-resize;" onclick="tri(2,event);">Fichier xml</th> -->
 											<th style="cursor:ne-resize;" onclick="tri(3,event);">Info SVN</th>
 											<th style="cursor:ne-resize;" onclick="tri(4,event);">Date du fichier officiel</th>
 											<th style="cursor:ne-resize;" onclick="tri(5,event);">Etat</th>
@@ -202,7 +202,9 @@
 		</xsl:otherwise>
 	</xsl:choose>
 <xsl:text>onclick="onclickSelectMajAppli(this.checked, </xsl:text><xsl:value-of select="position() - 1" /><xsl:text>,' + "'</xsl:text><xsl:value-of select="$forumEnCours" /><xsl:text>', " + "'</xsl:text><xsl:value-of select="$autreforumExiste" /><xsl:text>');" + '" name="chk[]" value="</xsl:text><xsl:value-of select="concat(@forum, ':', $xmlRef, ':', @url)" /><xsl:text>" type="checkbox"&gt;&lt;/input&gt;&lt;/td&gt;</xsl:text>
-<xsl:text>&lt;td align="center" style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" /><xsl:text>;"&gt;&lt;a class="postes" style="background-color:transparent;font-weight:bolder;"&gt;</xsl:text><xsl:value-of select="$nameApp" /><xsl:text>&lt;/a&gt;&lt;/td&gt;</xsl:text>
+<xsl:text>&lt;td align="center" style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" /><xsl:text>;"&gt;&lt;a class="postes" style="background-color:transparent;font-weight:bolder;" title="Cliquer pour voir le contenu du xml" href="</xsl:text><xsl:value-of select="@url" /><xsl:text>" target="_blank"&gt;</xsl:text><xsl:value-of select="$nameApp" /><xsl:text>&lt;/a&gt;&lt;/td&gt;</xsl:text>
+
+<!-- <xsl:text>&lt;td align="center" style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" /><xsl:text>;"&gt;&lt;a class="postes" style="background-color:transparent;font-weight:bolder;"&gt;</xsl:text><xsl:value-of select="$nameApp" /><xsl:text>&lt;/a&gt;&lt;/td&gt;</xsl:text> -->
 <xsl:text>&lt;td align="center" style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" /><xsl:text>;"&gt;&lt;a class="postes" style="background-color:transparent;font-weight:bolder;"&gt;</xsl:text><xsl:value-of select="$categoryApp" /><xsl:text>&lt;/a&gt;&lt;/td&gt;</xsl:text>
 <xsl:text>&lt;td align="center" style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" /><xsl:text>;"&gt;&lt;a class="postes" style="background-color:transparent;font-weight:bolder;"&gt;</xsl:text><xsl:value-of select="$revisionApp" /><xsl:text>&lt;/a&gt;&lt;/td&gt;</xsl:text>
 <xsl:text>&lt;td align="center" style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" />
@@ -237,7 +239,7 @@
   </xsl:otherwise>
 </xsl:choose>
 <xsl:text>&lt;/a&gt;&lt;/td&gt;</xsl:text>
-<xsl:text>&lt;td align="center" style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" /><xsl:text>;"&gt;&lt;a class="postes" style="background-color:transparent;font-weight:bolder;" title="Cliquer pour voir le contenu du xml" href="</xsl:text><xsl:value-of select="@url" /><xsl:text>" target="_blank"&gt;</xsl:text><xsl:value-of select="$xmlRef" /><xsl:text>&lt;/a&gt;&lt;/td&gt;</xsl:text>
+<!-- <xsl:text>&lt;td align="center" style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" /><xsl:text>;"&gt;&lt;a class="postes" style="background-color:transparent;font-weight:bolder;" title="Cliquer pour voir le contenu du xml" href="</xsl:text><xsl:value-of select="@url" /><xsl:text>" target="_blank"&gt;</xsl:text><xsl:value-of select="$xmlRef" /><xsl:text>&lt;/a&gt;&lt;/td&gt;</xsl:text> -->
 <xsl:text>&lt;td align="center" style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" /><xsl:text>;" &gt;</xsl:text>
 <!-- <xsl:choose>
 	<xsl:when test="@topic_id > 0"> -->
