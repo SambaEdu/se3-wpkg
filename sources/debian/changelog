@@ -1,9 +1,15 @@
-se3-wpkg (0.70~2) unstable; urgency=low
+se3-wpkg (0.70~3) unstable; urgency=low
 
-  * Affichage du nom de l'application et de la categorie sur la page du svn
-  * Affichage du numero de revision et de la compatibilite windows
+  * Modification de l'affichage de la liste des xml du svn
+        - Ajout nom de l'application
+        - Ajout de la categorie
+        - Ajout du numéro de révision
+        - Ajout des informations de compatibilité windows
+        - Retrait de la colonne nom xml
+  * Correction d'un fichier de la branche XP
+  * Creation des scripts d'activation/desactivation de la branche XP
 
- -- Laurent Joly <laurentjoly@orange.fr>  Tue, 07 Feb 2017 03:55:30 +0200
+ -- Laurent Joly <laurentjoly@orange.fr>  Wed, 08 Feb 2017 18:55:30 +0200
 
 
 se3-wpkg (0.67) unstable; urgency=low
