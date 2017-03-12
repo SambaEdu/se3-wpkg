@@ -78,8 +78,11 @@ PARAM=$2
 [ "$OSLONG" == "Windows Server 2008 R2" ] && echo "w61-x64"
 [ "$OSLONG" == "Windows 10" ] && echo "w100"
 [ "$OSLONG" == "Windows Server 2016" ] && echo "w100-x64"
-# A FAIRE : il faut trouver l'argument pour Windows 2008 server.
-#[ "$OSLONG" == "Windows Server 2008 R2" ] && echo "w"
+[ "$OSLONG" == "Windows Server 2016" ] && echo "w100-x64"
+[ "$OSLONG" == "Office 2007" ] && echo "o2k7"
+[ "$OSLONG" == "Office 2010" ] && echo "o2k10"
+[ "$OSLONG" == "Office 2013" ] && echo "o2k13"
+[ "$OSLONG" == "Office 2016" ] && echo "o2k16"
 #echo "OtherSection"
 }
 
