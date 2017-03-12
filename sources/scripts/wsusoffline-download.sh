@@ -68,17 +68,12 @@ CORRESPONDANCE()
 OSLONG=$1
 PARAM=$2
 #echo "CORRESPONDANCE execute avec $SECTION $PARAM"
-[ "$OSLONG" == "Windows XP" ] && echo "wxp"
-[ "$OSLONG" == "Windows XP x64" ] && echo "wxp-x64"
-[ "$OSLONG" == "Windows Server 2003" ] && echo "w2k3"
-[ "$OSLONG" == "Windows Server 2003 x64" ] && echo "w2k3-x64"
 [ "$OSLONG" == "Windows Vista" ] && echo "w60"
 [ "$OSLONG" == "Windows Vista x64" ] && echo "w60-x64"
 [ "$OSLONG" == "Windows 7" ] && echo "w61"
-[ "$OSLONG" == "Windows 7 x64" ] && echo "w61-x64"
-[ "$OSLONG" == "Windows 10 x64" ] && echo "w100-x64"
-# A FAIRE : il faut trouver l'argument pour Windows 2008 server.
-#[ "$OSLONG" == "Windows Server 2008 R2" ] && echo "w"
+[ "$OSLONG" == "Windows Server 2008 R2" ] && echo "w61-x64"
+[ "$OSLONG" == "Windows 10" ] && echo "w100"
+[ "$OSLONG" == "Windows Server 2016" ] && echo "w100-x64"
 #echo "OtherSection"
 }
 
@@ -592,6 +587,16 @@ do
 			else
 				LANG=$PARAMETRE
 			fi
+			#Prise en compte des .NET/Définitions Windows Defender/Microsoft Security Essentials
+			if [ "$SECTION" == "Options" ]; then
+				if [ "$PARAMETRE" == "includedotnet" ]; then
+					DOTNET="1"
+				elif [ "$PARAMETRE" == "includewddefs" ]; then
+					WDDEFS="1"
+				elif [ "$PARAMETRE" == "includemsse" ]; then
+					MSSE="1"
+				fi
+			fi
 			if [ "$ipproxy" == "" ]; then
 				PROXY=""
 			else
@@ -604,7 +609,7 @@ do
 				echo "Telechargement des mises a jour pour l'OS $OS et la langue $LANG..."
 				echo "/var/se3/unattended/install/wsusoffline/sh/DownloadUpdates.sh $OS $LANG /msse $PROXY" >>$MAIL
 				TESTFREESPACE
-				/var/se3/unattended/install/wsusoffline/sh/DownloadUpdates.sh $OS $LANG /msse $PROXY >>$MAIL 2>&1
+				/var/se3/unattended/install/wsusoffline/sh/DownloadUpdates.sh $OS $LANG `if [ "$DOTNET" == "1" ]; then echo "/dotnet "; fi``if [ "$WDDEFS" == "1" ]; then echo "/wddefs "; fi``if [ "$MSSE" == "1" ]; then echo "/msse "; fi`$PROXY >>$MAIL 2>&1
 			fi
 		fi
 	else
