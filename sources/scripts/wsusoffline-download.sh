@@ -140,7 +140,7 @@ if [ $? != 0 ]; then
 	SENDMAIL "WsusOffline : Reinstallation du xml qui est absent de WPKG."
 fi
 
-WSUSOFFLINEROOT=http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages/files/wsusoffline
+WSUSOFFLINEROOT=http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages-ng/files/wsusoffline
 TEMOIN=/var/se3/unattended/install/wsusoffline/WsusOffline-Versions.txt
 NEWTEMOIN=/tmp/wsusofflineversions.txt
 wget -O $NEWTEMOIN $WSUSOFFLINEROOT/WsusOffline-Versions.txt? >/dev/null 2>&1
