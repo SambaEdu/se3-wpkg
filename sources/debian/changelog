@@ -1,4 +1,4 @@
-se3-wpkg (0.70~3) unstable; urgency=low
+se3-wpkg (0.70~4) unstable; urgency=low
 
   * Modification de l'affichage de la liste des xml du svn
         - Ajout nom de l'application
@@ -8,6 +8,8 @@ se3-wpkg (0.70~3) unstable; urgency=low
         - Retrait de la colonne nom xml
   * Correction d'un fichier de la branche XP
   * Creation des scripts d'activation/desactivation de la branche XP
+  * Passage de wsusoffline en version 10.9.1
+  * Ajout du support W10 pour wsusoffline (non fonctionnel avant)
 
  -- Laurent Joly <laurentjoly@orange.fr>  Wed, 08 Feb 2017 18:55:30 +0200
 
