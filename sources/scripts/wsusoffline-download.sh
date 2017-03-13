@@ -78,7 +78,6 @@ PARAM=$2
 [ "$OSLONG" == "Windows Server 2008 R2" ] && echo "w61-x64"
 [ "$OSLONG" == "Windows 10" ] && echo "w100"
 [ "$OSLONG" == "Windows Server 2016" ] && echo "w100-x64"
-[ "$OSLONG" == "Windows Server 2016" ] && echo "w100-x64"
 [ "$OSLONG" == "Office 2007" ] && echo "o2k7"
 [ "$OSLONG" == "Office 2010" ] && echo "o2k10"
 [ "$OSLONG" == "Office 2013" ] && echo "o2k13"

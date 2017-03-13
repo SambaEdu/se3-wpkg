@@ -53,6 +53,7 @@ if ( $wpkgUser && ($login != "")) {
 	}
 	$Maintenant = strftime ( "%D_%T" );
 	exec ( "$wpkgwebdir/bin/wpkgXml.sh '$login'", $output, $return_value);
+	exec ( "$wpkgwebdir/bin/wpkgXml.sh '$login'", $output, $return_value);
 	if ( $return_value == 0 ) {
 		get_html($xsl, $xml, $parametres);
 	} else {
