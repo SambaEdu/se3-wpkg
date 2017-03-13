@@ -31,18 +31,7 @@
 	<xsl:variable name="WPKGROOT" select="'/var/se3/unattended/install/wpkg'" />
 	<xsl:variable name="INSTALLATIONS" select="document('/var/se3/unattended/install/wpkg/tmp/timeStamps.xml')/installations" />
 	<xsl:variable name="PACKAGES" select="/wpkg/packages" />
-	<!-- xsl:variable name="DocWPKGList">
-		<xsl:choose>
-			<xsl:when test="$urlWawadebMD5 = 'http://wawadeb.crdp.ac-caen.fr/unattended/se3_wpkglist.php?branch=testing'">
-				<xsl:value-of select="'/var/www/se3/wpkg/se3_wpkglist.php?branch=testing'" />
-			</xsl:when>
-			<xsl:otherwise>
-				<xsl:value-of select="'/var/www/se3/wpkg/se3_wpkglist.php'" />
-			</xsl:otherwise>
-		</xsl:choose>
-	</xsl:variable -->
 	<xsl:variable name="DocWPKGList"><xsl:value-of select="'/var/www/se3/wpkg/forum.xml'" /></xsl:variable>
-	<!-- xsl:variable name="WPKGLIST" select="document($DocWPKGList)/packages/package[concat(@id, '.xml') = @xml]" / -->
 	<xsl:variable name="WPKGLIST" select="document('/var/www/se3/wpkg/forum.xml')/packages/package" />
 
 	<xsl:variable name="lcletters">abcdefghijklmnopqrstuvwxyz</xsl:variable>
@@ -51,27 +40,12 @@
 	<xsl:template match="/">
 		<xsl:choose>
 			<xsl:when test="$MAJPackages = '1'" >
-				<!-- xsl:choose>
-					<xsl:when test="$urlWawadebMD5 = 'http://wawadeb.crdp.ac-caen.fr/unattended/se3_wpkglist.php?branch=testing'">
-						<h2 style="color:#FF7F50;">Mise à jour des applications - Paquets WPKG a tester</h2>
-					</xsl:when>
-					<xsl:otherwise -->
-						<h2>Mise à jour des applications</h2>
-					<!-- /xsl:otherwise>
-				</xsl:choose -->
+				<h2>Mise à jour des applications</h2>
 				<xsl:choose>
 					<xsl:when test="count($WPKGLIST) = 0" >
 						Erreur : <xsl:value-of select="$urlWawadebMD5"/> n'est pas accessible !
 					</xsl:when>
 					<xsl:otherwise>
-						<!-- xsl:choose>
-							<xsl:when test="$urlWawadebMD5 = 'http://wawadeb.crdp.ac-caen.fr/unattended/se3_wpkglist.php?branch=testing'">
-								Les mises à jour proposées ici sont celles des <a href="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages-ng/testing" target="_blank">Paquets WPKG a tester</a> du SVN du CRDP de Basse-Normandie.
-							</xsl:when>
-							<xsl:otherwise>
-								Les mises à jour proposées ici sont celles des <a href="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages-ng/stable" target="_blank">Paquets WPKG Stables</a> du SVN du CRDP de Basse-Normandie.
-							</xsl:otherwise>
-						</xsl:choose -->
 						Les mises à jour proposées ici sont celles des paquets WPKG du <a href="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages-ng/stable" target="_blank">SVN du CRDP de Basse-Normandie</a>.
 						
 						<form name="formUpdateXml" method="post" action="index.php?UpdateApplis=1" enctype="multipart/form-data">
@@ -330,14 +304,6 @@
 							</xsl:choose>
 						</form>
 						<br/>
-						<!-- xsl:choose>
-							<xsl:when test="$urlWawadebMD5 = 'http://wawadeb.crdp.ac-caen.fr/unattended/se3_wpkglist.php?branch=testing'">
-								<a href="javascript:void(0);" onclick="urlWawadebMD5='http://wawadeb.crdp.ac-caen.fr/unattended/se3_wpkglist.php';testUpdatedXml();" >Afficher les applications stables</a> disponibles dans le SVN du CRDP de Basse-Normandie : <a href="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages-ng/stable" target="_blank">Paquets WPKG Stables</a>.
-							</xsl:when>
-							<xsl:otherwise>
-								<a href="javascript:void(0);" onclick="urlWawadebMD5='http://wawadeb.crdp.ac-caen.fr/unattended/se3_wpkglist.php?branch=testing';testUpdatedXml();" >Afficher les applications à tester</a> disponibles dans le SVN du CRDP de Basse-Normandie : <a href="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages-ng/testing" target="_blank">Paquets WPKG a tester</a>.
-							</xsl:otherwise>
-						</xsl:choose -->
 					</xsl:otherwise>
 				</xsl:choose>
 			</xsl:when>

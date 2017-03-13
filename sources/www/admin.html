@@ -25,7 +25,7 @@
 	var urlWawadeb="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages-ng/stable";
 	// url du fichier md5sum sur le secure serveur
 	//var urlWawadebMD5="http://www.etab.ac-caen.fr/serveurmalherbe/se3/wpkg/packages/packages.md5";
-	var urlWawadebMD5="http://wawadeb.crdp.ac-caen.fr/unattended/se3_wpkglist.php";
+	var urlWawadebMD5="http://wawadeb.crdp.ac-caen.fr/wpkg-list-ng/se3_wpkglist.php";
 	var se3urlWawadeb;
 
 	var UpdateEnCours="";
@@ -153,14 +153,7 @@
 			return false; 
 		} 
 		// Requete en mode asynchrone
-		//var url = "wpkgtesting.php";
 		var url = "wpkglist.php";
-		//if ( forceRefresh ) {
-		//	url += "?refresh=1";
-		//}
-		//if (urlWawadebMD5 == "http://wawadeb.crdp.ac-caen.fr/unattended/se3_wpkglist.php" ) {
-		//	url = "wpkglist.php";
-		//}
 		http.open("GET", url , true); 
 		http.onreadystatechange = function() { 
 			if (http.readyState == 4) {
@@ -955,7 +948,7 @@
 	<a style="font-size:xx-small;" title="A virer dès que la mise à jour sera effectuée dans l'interface de gestion des parcs" href="index.php?updateProfiles=1">Mettre à jour les fichiers hosts.xml et profiles.xml pour prendre en compte les modifications des parcs</a><br>
 	<a style="font-size:xx-small;" title="A virer dès que la mise à jour sera effectuée dans l'interface de gestion des parcs" href="index.php?updateDroits=1">Mettre à jour le fichier droits.xml pour prendre en compte les modifications de délégation de parcs</a>
 </div>
-<h1 align="center">Déploiement d'applications <font size="3">( sur Win2000, WinXP, Vista et Win7 )</font></h1>
+<h1 align="center">Déploiement d'applications <font size="3">( sur Windows XP, Windows 7 et Windows 10 )</font></h1>
 <div id="Onglets" style="border-bottom:3px solid black;height:37px;width:100%;">
 	<script type = "text/javascript">
 		if ( (typeof(lsusInstalled) != "undefined") && lsusInstalled ) {
