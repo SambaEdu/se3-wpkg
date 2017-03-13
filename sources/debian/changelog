@@ -1,4 +1,4 @@
-se3-wpkg (0.70~8) unstable; urgency=low
+se3-wpkg (0.70~9) unstable; urgency=low
 
   * Modification de l'affichage de la liste des xml du svn
         - Ajout nom de l'application

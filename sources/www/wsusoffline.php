@@ -122,10 +122,10 @@ function nom_os($nom)
         $nom_return = array("Windows Vista","x64");
         break;
 		case "Windows 7":
-        $nom_return = array("Windows 7 /  Windows Server 2008 R2","x86");
+        $nom_return = array("Windows 7 / Windows Server 2008 R2","x86");
         break;
 		case "Windows Server 2008 R2":
-        $nom_return = array("Windows 7 /  Windows Server 2008 R2","x64");
+        $nom_return = array("Windows 7 / Windows Server 2008 R2","x64");
         break;
 		case "Windows 10":
         $nom_return = array("Windows 10 / Windows Server 2016","x86");
@@ -147,6 +147,39 @@ function nom_os($nom)
         break;
 		default:
         $nom_return = array($nom,"-");
+        break;
+		
+	}
+	return $nom_return;
+}
+
+function nom_image($nom)
+{
+	switch ($nom)
+	{
+		case "Windows Vista":
+        $nom_return = "winvista";
+        break;
+		case "Windows 7 / Windows Server 2008 R2":
+        $nom_return = "win7";
+        break;
+		case "Windows 10 / Windows Server 2016":
+        $nom_return = "win10";
+        break;
+		case "Office 2007":
+        $nom_return = "o2k07";
+        break;
+		case "Office 2010":
+        $nom_return = "o2k10";
+        break;
+		case "Office 2013":
+        $nom_return = "o2k13";
+        break;
+		case "Office 2016":
+        $nom_return = "o2k16";
+        break;
+		default:
+        $nom_return = "vide";
         break;
 		
 	}
@@ -351,6 +384,7 @@ else
 			{
 				$compteur=0;
 				echo "<tr bgcolor='white'>";
+				echo "<td valign='center' width='60' align='center'><img src='".nom_image($id_os_nom).".png' width='30' height='30'></td>";
 				echo "<td valign='center' width='300' align='center'>".$id_os_nom."</td>";
 				foreach ($list_conf_ini_os as $id_section=>$list_conf_ini_arch)
 				{
@@ -374,7 +408,7 @@ else
 				echo "</tr>";
 			}
 			echo "<tr>";
-			echo "<td colspan='".(max($size_max)+1)."' align='center'>";
+			echo "<td colspan='".(max($size_max)+2)."' align='center'>";
 			echo "<input type='submit' value='Enregistrer les modifications'/>";
 			echo "</td>";
 			echo "</tr>";
