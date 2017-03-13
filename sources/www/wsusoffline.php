@@ -381,7 +381,7 @@ else
 			}
 			echo "<table align='center' cellspacing='1' cellpadding='2' bgcolor='#000000'>";
 			echo "<tr bgcolor='#7CA9D6'>";
-			echo "<th colspan='".(max($size_max)+2)."' align='center' style='color:white;'>";
+			echo "<th colspan='".(max($size_max)+2)."' align='center' style='color:white;text-shadow: 1px 1px 1px #000000;'>";
 			echo "Choix des mises &#224; jour t&#233;l&#233;charg&#233;es &#224; 20h45";
 			echo "</th>";
 			echo "</tr>";

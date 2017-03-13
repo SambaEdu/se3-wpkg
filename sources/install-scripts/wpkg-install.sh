@@ -191,7 +191,7 @@ RebootSpecial=""
 if [ ! -e psshutdown.exe ] || [ ! -e pslist.exe ] ; then
    if [ ! -e PSTools.zip ]; then
       echo "Telechargement des PSTools (http://live.sysinternals.com/Files/PSTools.zip)."
-      if ( ! wget "http://live.sysinternals.com/Files/PSTools.zip" ) ; then
+      if ( ! wget "http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages-ng/files/pstools/PSTools.zip" ) ; then
         echo "Erreur de telechargement."
         if [ -e PSTools.zip ]; then
           rm PSTools.zip

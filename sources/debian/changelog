@@ -1,4 +1,4 @@
-se3-wpkg (0.70~10) unstable; urgency=low
+se3-wpkg (0.70~11) unstable; urgency=low
 
   * Modification de l'affichage de la liste des xml du svn
         - Ajout nom de l'application
@@ -14,6 +14,7 @@ se3-wpkg (0.70~10) unstable; urgency=low
   * Ajout d'une page de configuration de wsusoffline
   * Patch temporaire pour le correctif des rapports
   * Nettoyage du code
+  * Correction du lien de pstools
 
  -- Laurent Joly <laurentjoly@orange.fr>  Mon, 13 Mar 2017 14:10:30 +0200
 
