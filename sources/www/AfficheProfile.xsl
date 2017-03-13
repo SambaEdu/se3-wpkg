@@ -89,13 +89,13 @@
 					<div style="font-size:small;" >
 						<xsl:choose>
 							<xsl:when test="$nbPostes = '0'">
-								<xsl:text> 0 poste Windows 2000 ou XP dans le parc </xsl:text><b><xsl:value-of select="$idProfile" /></b><br></br> 
+								<xsl:text> 0 poste Windows dans le parc </xsl:text><b><xsl:value-of select="$idProfile" /></b><br></br> 
 							</xsl:when>
 							<xsl:when test="$nbPostes = '1'">
-								<xsl:text> 1 poste Windows 2000 ou XP dans le parc </xsl:text><b><xsl:value-of select="$idProfile" /></b><br></br> 
+								<xsl:text> 1 poste Windows dans le parc </xsl:text><b><xsl:value-of select="$idProfile" /></b><br></br> 
 							</xsl:when>
 							<xsl:otherwise>
-								<xsl:value-of select="$nbPostes" /><xsl:text> poste(s) Windows 2000 ou XP dans le parc </xsl:text><b><xsl:value-of select="$idProfile" /></b><br></br> 
+								<xsl:value-of select="$nbPostes" /><xsl:text> postes Windows dans le parc </xsl:text><b><xsl:value-of select="$idProfile" /></b><br></br> 
 							</xsl:otherwise>
 						</xsl:choose>
 					</div>
