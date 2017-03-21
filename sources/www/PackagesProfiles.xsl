@@ -142,7 +142,6 @@
 				</xsl:attribute>
 				<xsl:attribute name="style">
 					<xsl:text>
-						/* background-color:#F0F8FF; */
 						</xsl:text>
 							<!-- A remplacer par des images ou icônes -->
 							<xsl:choose>

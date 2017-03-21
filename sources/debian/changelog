@@ -1,3 +1,9 @@
+se3-wpkg (0.80~1) unstable; urgency=low
+
+  * Changement des couleurs de l'interface
+
+-- Laurent Joly <laurentjoly@orange.fr>  Tue, 21 Mar 2017 14:10:30 +0200
+
 se3-wpkg (0.70) unstable; urgency=low
 
   * Modification de l'affichage de la liste des xml du svn

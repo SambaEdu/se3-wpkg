@@ -345,12 +345,12 @@
 									<xsl:when test="$status = 'Non installé'">
 										<xsl:choose>
 											<xsl:when test="not($isInstallRequested)">
-												<!-- appli NON installée avec demande identique bleu grisclair -->
+												<!-- appli NON installée et NON demandée bleu grisclair -->
 												<xsl:text>#dee2e5</xsl:text>
 											</xsl:when>
 											<xsl:otherwise>
-												<!-- appli non installée  #FF7F50-->
-												<xsl:text>#FFA500</xsl:text>
+												<!-- appli non installée et demandée Rouge -->
+												<xsl:text>#FF3939</xsl:text>
 											</xsl:otherwise>
 										</xsl:choose>
 									</xsl:when>
@@ -359,18 +359,18 @@
 											<xsl:when test="$isInstallRequested">
 												<xsl:choose>
 													<xsl:when test="$CePackageDuPoste/@revision = $CePackage/@revision">
-														<!-- N° de version OK -->
-														<xsl:text>#b3cce5</xsl:text>
+														<!-- N° de version OK Vert -->
+														<xsl:text>#39FF39</xsl:text>
 													</xsl:when>
 													<xsl:otherwise>
-														<!-- appli installée dans une autre version -->
-														<xsl:text>#ffd07a</xsl:text>
+														<!-- appli installée dans une autre version jaune -->
+														<xsl:text>#FFFF39</xsl:text>
 													</xsl:otherwise>
 												</xsl:choose>
 											</xsl:when>
 											<xsl:otherwise>
-												<!-- appli installée -->
-												<xsl:text>#FFA500</xsl:text>
+												<!-- appli installée et non demandée Rouge -->
+												<xsl:text>#FF3939</xsl:text>
 											</xsl:otherwise>
 										</xsl:choose>
 									</xsl:when>
