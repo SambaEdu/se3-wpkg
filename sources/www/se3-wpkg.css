@@ -42,6 +42,7 @@ table.postes th {
 	border-style: groove;
 	border-color: grey;
 	background-color: #6699cc;
+	color: black;
 }
 table.postes td {
 	border-width: 2px 2px 2px 2px;
@@ -50,10 +51,51 @@ table.postes td {
 	border-color: grey;
 	/* background-color: #b3cce5; */
 	font-size : 10pt;
-	font-weight: normal; 
+	font-weight: normal;
 }
 table.postes tr {
 	background-color: #b3cce5;
+	color: black;
+}
+table.postes tr.trR {
+	background-color: #FF3939;
+	color: white;
+}
+table.postes tr.trY {
+	background-color: #FFFF39;
+	color: black;
+}
+table.postes tr.trG {
+	background-color: #39FF39;
+	color: black;
+}
+table.postes tr.trB {
+	background-color: #DEE2E5;
+	color: black;
+}
+table.postes tr.trW {
+	background-color: #FFFFFF;
+	color: black;
+}
+table.postes td.tdR {
+	background-color: #FF3939;
+	color: white;
+}
+table.postes td.tdY {
+	background-color: #FFFF39;
+	color: black;
+}
+table.postes td.tdG {
+	background-color: #39FF39;
+	color: black;
+}
+table.postes td.tdB {
+	background-color: #DEE2E5;
+	color: black;
+}
+table.postes td.tdW {
+	background-color: #FFFFFF;
+	color: black;
 }
 table.postes td.tdlien {
 	border-width: 2px 2px 2px 2px;
@@ -66,16 +108,31 @@ table.postes td.tdlien {
 	color: #005594;
 	cursor:pointer;
 }
+table.postes td.tdlien1 {
+	border-width: 2px 2px 2px 2px;
+	padding: 2px 2px 2px 2px;
+	border-style: groove;
+	border-color: grey;
+	font-size : 10pt;
+	font-weight: normal; 
+	color: #FFFF00;
+	cursor:pointer;
+}
 table.postes td.tdlien2 {
 	border-width: 2px 2px 2px 2px;
 	padding: 2px 2px 2px 2px;
 	border-style: groove;
 	border-color: grey;
-	/* background-color: #b3cce5; */
 	font-size : 10pt;
 	font-weight: normal; 
-	/* color: #005594; */
+	color: #005594;
 	cursor:pointer;
+}
+table.postes span.tdlien1 {
+	color: #FFFF00;
+}
+table.postes span.tdlien2 {
+	color: #005594;
 }
 table.postes span {
 	text-decoration: none;

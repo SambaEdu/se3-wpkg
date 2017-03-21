@@ -138,7 +138,7 @@ DemandPackages = </xsl:text>
 											<td style="font-size:10px;background-color:#FFA500;" ><xsl:value-of select="$RapportDuPoste/erreur/@str" /></td>
 										</xsl:when>
 										<xsl:when test="($Synchro = '-2') or ($Synchro = '-1')">
-											<td style="background-color:#FFA500;font-weight: bold;" align="center">
+											<td class="tdR" style="font-weight: bold;" align="center">
 												<xsl:value-of select="$nInstalled" />
 												<xsl:text> / </xsl:text>
 												<xsl:value-of select="$nDemandPackages" />
@@ -146,14 +146,14 @@ DemandPackages = </xsl:text>
 										</xsl:when>
 										<xsl:when test="$Synchro = '0'">
 											<!-- Bad version -->
-											<td style="background-color:#ffd07a;font-weight: bold;" align="center">
+											<td class="tdY" style="font-weight: bold;" align="center">
 												<xsl:value-of select="$nInstalled" />
 												<xsl:text> / </xsl:text>
 												<xsl:value-of select="$nDemandPackages" />
 											</td>
 										</xsl:when>
 										<xsl:otherwise>
-											<td align="center" style="font-weight: bold;">
+											<td class="tdG" style="font-weight: bold;" align="center">
 												<xsl:value-of select="$nInstalled" />
 												<xsl:text> / </xsl:text>
 												<xsl:value-of select="$nDemandPackages" />
@@ -320,51 +320,60 @@ document.getElementById("consoleWpkg").innerHTML = "&lt;img title='Console WPKG'
 										</xsl:otherwise>
 									</xsl:choose>
 								</xsl:variable>
-								<xsl:variable name="BGcouleur" >
+								<xsl:variable name="StyleTR" >
 									<xsl:choose>
 										<xsl:when test="not(@status)">
 											<!-- appli au status inconnu -->
-											<xsl:text>ghostwhite</xsl:text>
+											<xsl:text>trW</xsl:text>
 										</xsl:when>
 										<xsl:when test="(not(@status = 'Installed')) and (not($isInstallRequested))">
-											<!-- appli NON installée avec demande identique bleu grisclair -->
-											<xsl:text>#dee2e5</xsl:text>
+											<!-- appli NON installée et non demandée -->
+											<xsl:text>trB</xsl:text>
 										</xsl:when>
 										<xsl:when test="(@status = 'Installed') and ($isInstallRequested)">
-											<!-- appli installée avec demande identique -->
+											<!-- appli installée et demandée -->
 											<xsl:choose>
 												<xsl:when test="@revision = $Package/@revision">
 													<!-- N° de version OK -->
-													<xsl:text>#b3cce5</xsl:text>
+													<xsl:text>trG</xsl:text>
 												</xsl:when>
 												<xsl:otherwise>
 													<!-- appli installée dans une autre version -->
-													<xsl:text>#ffd07a</xsl:text>
+													<xsl:text>trY</xsl:text>
 												</xsl:otherwise>
 											</xsl:choose>
 										</xsl:when>
 										<xsl:when test="@status = 'Installed'">
 											<!-- appli installée avec install non demandée -->
-											<xsl:text>#FFA500</xsl:text>
+											<xsl:text>trR</xsl:text>
 										</xsl:when>
 										<xsl:when test="@status = 'Not Installed'">
 											<!-- appli non installée et install demandée #FF7F50-->
-											<xsl:text>#FFA500</xsl:text>
+											<xsl:text>trR</xsl:text>
 										</xsl:when>
 										<xsl:otherwise>
 											<!-- autre cas ? -->
-											<xsl:text>ghostwhite</xsl:text>
+											<xsl:text>trW</xsl:text>
 										</xsl:otherwise>
 									</xsl:choose>
 								</xsl:variable>
+							<xsl:variable name="StyleLink" >
+							<xsl:choose>
+									<xsl:when test="$StyleTR='trR'">
+										<xsl:text>tdlien1</xsl:text>
+									</xsl:when>
+									<xsl:otherwise>
+										<xsl:text>tdlien2</xsl:text>
+									</xsl:otherwise>
+								</xsl:choose>
+							</xsl:variable>
 
 
 
 
 
 								<xsl:text>Tableau[</xsl:text><xsl:value-of select="position() - 1" /><xsl:text>] = new Array('</xsl:text>
-<xsl:text>&lt;tr style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" />
-<xsl:text>;" &gt; &lt;td class="tdlien" title="' + "</xsl:text>
+<xsl:text>&lt;tr class="</xsl:text><xsl:value-of select="$StyleTR" /><xsl:text>" &gt; &lt;td class="</xsl:text><xsl:value-of select="$StyleLink" /><xsl:text>" title="' + "</xsl:text>
 <xsl:value-of select="concat($Package/@name, ' (Rev:', $Package/@revision,')')" />
 <xsl:text>" + '" style="font-weight: bold;cursor:pointer;" onclick="defPackage(&amp;quot;</xsl:text>
 	<xsl:value-of select="@id" /><xsl:text>&amp;quot;);"&gt;</xsl:text>
@@ -376,7 +385,7 @@ document.getElementById("consoleWpkg").innerHTML = "&lt;img title='Console WPKG'
 			<xsl:value-of select="$revision" />
 		</xsl:when>
 		<xsl:otherwise>
-			<xsl:text>&lt;font color="red" style="font-weight:bold;"&gt;</xsl:text>
+			<xsl:text>&lt;font style="font-weight:bold;"&gt;</xsl:text>
 			<xsl:value-of select="$revision" />
 			<xsl:text>&lt;/font&gt;</xsl:text>
 		</xsl:otherwise>

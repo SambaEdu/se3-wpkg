@@ -336,10 +336,7 @@
 									</xsl:choose>
 								</xsl:if>
 							</xsl:variable>
-							<xsl:variable name="Linkcouleur" >
-								<xsl:text>#005594</xsl:text>
-							</xsl:variable>
-							<xsl:variable name="BGcouleur" >
+							<xsl:variable name="StyleTR" >
 								<xsl:choose>
 									<xsl:when test="$status = 'Inconnu'">
 										<!-- appli au status inconnu -->
@@ -349,14 +346,11 @@
 										<xsl:choose>
 											<xsl:when test="not($isInstallRequested)">
 												<!-- appli NON installée et NON demandée bleu grisclair -->
-												<xsl:text>#dee2e5</xsl:text>
+												<xsl:text>trB</xsl:text>
 											</xsl:when>
 											<xsl:otherwise>
 												<!-- appli non installée et demandée Rouge -->
-												<xsl:text>#FF3939</xsl:text>
-												<xsl:variable name="Linkcouleur" >
-													<xsl:text>#FFFFFF</xsl:text>
-												</xsl:variable>
+												<xsl:text>trR</xsl:text>
 											</xsl:otherwise>
 										</xsl:choose>
 									</xsl:when>
@@ -366,34 +360,41 @@
 												<xsl:choose>
 													<xsl:when test="$CePackageDuPoste/@revision = $CePackage/@revision">
 														<!-- N° de version OK Vert -->
-														<xsl:text>#39FF39</xsl:text>
+														<xsl:text>trG</xsl:text>
 													</xsl:when>
 													<xsl:otherwise>
 														<!-- appli installée dans une autre version jaune -->
-														<xsl:text>#FFFF39</xsl:text>
+														<xsl:text>trY</xsl:text>
 													</xsl:otherwise>
 												</xsl:choose>
 											</xsl:when>
 											<xsl:otherwise>
 												<!-- appli installée et non demandée Rouge -->
-												<xsl:text>#FF3939</xsl:text>
-												<xsl:variable name="Linkcouleur" >
-													<xsl:text>#FFFFFF</xsl:text>
-												</xsl:variable>
+												<xsl:text>trR</xsl:text>
 											</xsl:otherwise>
 										</xsl:choose>
 									</xsl:when>
 									<xsl:otherwise>
 										<!-- autre cas ? -->
-										<xsl:text>ghostwhite</xsl:text>
+										<xsl:text>trW</xsl:text>
+									</xsl:otherwise>
+								</xsl:choose>
+							</xsl:variable>
+							<xsl:variable name="StyleLink" >
+							<xsl:choose>
+									<xsl:when test="$StyleTR='trR'">
+										<xsl:text>tdlien1</xsl:text>
+									</xsl:when>
+									<xsl:otherwise>
+										<xsl:text>tdlien2</xsl:text>
 									</xsl:otherwise>
 								</xsl:choose>
 							</xsl:variable>
 							
 							
 							<xsl:text>Tableau[</xsl:text><xsl:value-of select="position() - 1" /><xsl:text>] = new Array('</xsl:text>
-<xsl:text>&lt;tr style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" /><xsl:text>;" &gt;</xsl:text>
-	<xsl:text>&lt;td class="tdlien2"  style="color:<xsl:value-of select="$Linkcouleur" /><xsl:text>; font-weight: bold;cursor:pointer;" onclick="defHost(&amp;quot;</xsl:text><xsl:value-of select="$idPoste" /><xsl:text>&amp;quot;)"&gt;</xsl:text>
+<xsl:text>&lt;tr class="</xsl:text><xsl:value-of select="$StyleTR" /><xsl:text>"&gt;</xsl:text>
+	<xsl:text>&lt;td class="</xsl:text><xsl:value-of select="$StyleLink" /><xsl:text>"  style="font-weight: bold;cursor:pointer;" onclick="defHost(&amp;quot;</xsl:text><xsl:value-of select="$idPoste" /><xsl:text>&amp;quot;)"&gt;</xsl:text>
 		<xsl:value-of select="$idPoste" />
 	<xsl:text>&lt;/td&gt;</xsl:text>
 	<xsl:choose>
@@ -404,13 +405,13 @@
 			<xsl:text>&lt;td align="center" style="font-weight: bold;"&gt;</xsl:text>
 			<xsl:value-of select="$status" />
 			<xsl:text>&lt;/td&gt;</xsl:text>
-			<xsl:text>&lt;td align="right"&gt;</xsl:text>
+			<xsl:text>&lt;td align="right" &gt;</xsl:text>
 			<xsl:choose>
 				<xsl:when test="$CePackageDuPoste/@revision = $CePackage/@revision">
 					<xsl:value-of select="$CePackageDuPoste/@revision" />
 				</xsl:when>
 				<xsl:otherwise>
-					<xsl:text>&lt;font color="black" style="font-weight:bold;"&gt;</xsl:text>
+					<xsl:text>&lt;font style="font-weight:bold;"&gt;</xsl:text>
 					<xsl:value-of select="$CePackageDuPoste/@revision" />
 					<xsl:text>&lt;/font&gt;</xsl:text>
 				</xsl:otherwise>
@@ -435,7 +436,7 @@
 			<xsl:choose>
 				<xsl:when test="$CePoste/@logfile">
 					<!-- Fichier log disponible -->
-					<xsl:text>&lt;td&gt;&lt;span class="tdlien" title="</xsl:text>
+					<xsl:text>&lt;td&gt;&lt;span class="</xsl:text><xsl:value-of select="$StyleLink" /><xsl:text>" title="</xsl:text>
 						<xsl:value-of select="$CePoste/@logfile" />
 						<xsl:text>" onclick="javascript:window.open(&amp;quot;index.php?logfile=</xsl:text>
 						<xsl:value-of select="$CePoste/@logfile" />
