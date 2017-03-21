@@ -336,6 +336,9 @@
 									</xsl:choose>
 								</xsl:if>
 							</xsl:variable>
+							<xsl:variable name="Linkcouleur" >
+								<xsl:text>#005594</xsl:text>
+							</xsl:variable>
 							<xsl:variable name="BGcouleur" >
 								<xsl:choose>
 									<xsl:when test="$status = 'Inconnu'">
@@ -351,6 +354,9 @@
 											<xsl:otherwise>
 												<!-- appli non installée et demandée Rouge -->
 												<xsl:text>#FF3939</xsl:text>
+												<xsl:variable name="Linkcouleur" >
+													<xsl:text>#FFFFFF</xsl:text>
+												</xsl:variable>
 											</xsl:otherwise>
 										</xsl:choose>
 									</xsl:when>
@@ -371,6 +377,9 @@
 											<xsl:otherwise>
 												<!-- appli installée et non demandée Rouge -->
 												<xsl:text>#FF3939</xsl:text>
+												<xsl:variable name="Linkcouleur" >
+													<xsl:text>#FFFFFF</xsl:text>
+												</xsl:variable>
 											</xsl:otherwise>
 										</xsl:choose>
 									</xsl:when>
@@ -381,9 +390,10 @@
 								</xsl:choose>
 							</xsl:variable>
 							
+							
 							<xsl:text>Tableau[</xsl:text><xsl:value-of select="position() - 1" /><xsl:text>] = new Array('</xsl:text>
 <xsl:text>&lt;tr style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" /><xsl:text>;" &gt;</xsl:text>
-	<xsl:text>&lt;td class="tdlien" style="font-weight: bold;cursor:pointer;" onclick="defHost(&amp;quot;</xsl:text><xsl:value-of select="$idPoste" /><xsl:text>&amp;quot;)"&gt;</xsl:text>
+	<xsl:text>&lt;td class="tdlien2"  style="color:<xsl:value-of select="$Linkcouleur" /><xsl:text>; font-weight: bold;cursor:pointer;" onclick="defHost(&amp;quot;</xsl:text><xsl:value-of select="$idPoste" /><xsl:text>&amp;quot;)"&gt;</xsl:text>
 		<xsl:value-of select="$idPoste" />
 	<xsl:text>&lt;/td&gt;</xsl:text>
 	<xsl:choose>
@@ -400,7 +410,7 @@
 					<xsl:value-of select="$CePackageDuPoste/@revision" />
 				</xsl:when>
 				<xsl:otherwise>
-					<xsl:text>&lt;font color="red" style="font-weight:bold;"&gt;</xsl:text>
+					<xsl:text>&lt;font color="black" style="font-weight:bold;"&gt;</xsl:text>
 					<xsl:value-of select="$CePackageDuPoste/@revision" />
 					<xsl:text>&lt;/font&gt;</xsl:text>
 				</xsl:otherwise>

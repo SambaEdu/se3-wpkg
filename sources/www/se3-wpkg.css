@@ -66,6 +66,17 @@ table.postes td.tdlien {
 	color: #005594;
 	cursor:pointer;
 }
+table.postes td.tdlien2 {
+	border-width: 2px 2px 2px 2px;
+	padding: 2px 2px 2px 2px;
+	border-style: groove;
+	border-color: grey;
+	/* background-color: #b3cce5; */
+	font-size : 10pt;
+	font-weight: normal; 
+	/* color: #005594; */
+	cursor:pointer;
+}
 table.postes span {
 	text-decoration: none;
 	color: #005594;

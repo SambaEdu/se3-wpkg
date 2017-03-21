@@ -1,8 +1,9 @@
-se3-wpkg (0.80~1) unstable; urgency=low
+se3-wpkg (0.80~2) unstable; urgency=low
 
   * Changement des couleurs de l'interface
 
--- Laurent Joly <laurentjoly@orange.fr>  Tue, 21 Mar 2017 14:10:30 +0200
+ -- Laurent Joly <laurentjoly@orange.fr>  Tue, 21 Mar 2017 14:10:30 +0200
+
 
 se3-wpkg (0.70) unstable; urgency=low
 
@@ -24,7 +25,6 @@ se3-wpkg (0.70) unstable; urgency=low
   * Suppression des references à windows 2000
 
  -- Laurent Joly <laurentjoly@orange.fr>  Mon, 13 Mar 2017 14:10:30 +0200
-
 
 se3-wpkg (0.67) unstable; urgency=low
 
