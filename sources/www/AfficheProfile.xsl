@@ -152,31 +152,41 @@
 								</xsl:choose>
 							</xsl:variable>
 
-							<xsl:variable name="BGcouleur" >
+							<xsl:variable name="StyleTR" >
 								<xsl:choose>
 									<xsl:when test="$CePoste">
 										<!-- Rapport disponible -->
 										<xsl:choose>
 											<xsl:when test="$PackagesNotSynchro">
-												<xsl:text>#FFA500</xsl:text>
+												<xsl:text>trR</xsl:text>
 											</xsl:when>
 											<xsl:when test="$PackagesBadVersion">
-												<xsl:text>#ffd07a</xsl:text>
+												<xsl:text>trY</xsl:text>
 											</xsl:when>
 											<xsl:otherwise>
-												<xsl:text>#b3cce5</xsl:text>
+												<xsl:text>trG</xsl:text>
 											</xsl:otherwise>
 										</xsl:choose>
 									</xsl:when>
 									<xsl:otherwise>
 										<!-- pas de rapport dispo -->
-										<xsl:text>ghostwhite</xsl:text>
+										<xsl:text>trW</xsl:text>
+									</xsl:otherwise>
+								</xsl:choose>
+							</xsl:variable>
+							<xsl:variable name="StyleLink" >
+							<xsl:choose>
+									<xsl:when test="$StyleTR='trR'">
+										<xsl:text>tdlien1</xsl:text>
+									</xsl:when>
+									<xsl:otherwise>
+										<xsl:text>tdlien2</xsl:text>
 									</xsl:otherwise>
 								</xsl:choose>
 							</xsl:variable>
 
 							<xsl:text>Tableau[</xsl:text><xsl:value-of select="position() - 1" /><xsl:text>] = new Array('</xsl:text>
-<xsl:text>&lt;tr style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" /><xsl:text>;" &gt;&lt;td class="tdlien" style="font-weight: bold;cursor:pointer;" onclick="defHost(&amp;quot;</xsl:text>
+<xsl:text>&lt;tr class="</xsl:text><xsl:value-of select="$StyleTR" /><xsl:text>" &gt;&lt;td class="</xsl:text><xsl:value-of select="$StyleLink" /><xsl:text>" style="font-weight: bold;cursor:pointer;" onclick="defHost(&amp;quot;</xsl:text>
 <xsl:value-of select="$idPoste" />
 <xsl:text>&amp;quot;)"&gt;</xsl:text>
 <xsl:value-of select="$idPoste" />
@@ -200,7 +210,7 @@
 			<xsl:when test="$CePoste/@logfile">
 <xsl:value-of select="$Synchro" /><xsl:text>&lt;/td&gt;&lt;td&gt;</xsl:text>
 				<!-- Fichier log disponible -->
-				<xsl:text>&lt;span class="tdlien" title="</xsl:text>
+				<xsl:text>&lt;span class="</xsl:text><xsl:value-of select="$StyleLink" /><xsl:text>" title="</xsl:text>
 <xsl:value-of select="$CePoste/@logfile" />
 				<xsl:text>" onclick="javascript:window.open(&amp;quot;index.php?logfile=</xsl:text>
 <xsl:value-of select="$CePoste/@logfile" />

@@ -116,47 +116,40 @@
 											</xsl:otherwise>
 										</xsl:choose>
 									</xsl:variable>
-									<xsl:variable name="couleur" >
+									<xsl:variable name="StyleTR" >
 										<xsl:choose>
 											<xsl:when test="($opXml/@op = 'add') and (@md5sum = $opXml/@md5sum)">
-												<xsl:text>black</xsl:text>
+												<!-- appli installée et à jour  Vert -->
+												<xsl:text>trG</xsl:text>
 											</xsl:when>
 											<xsl:when test="($opXml/@op = 'add')">
-												<!-- appli installée et md5 différents (Maj dispo) -->
-												<xsl:text>#000099</xsl:text>
+												<!-- appli installée et md5 différents (Maj dispo) Jaune -->
+												<xsl:text>try</xsl:text>
 											</xsl:when>
 											<xsl:when test="$PACKAGES/package[@id = $idsXml/@id]">
 												<!-- appli installée avant version se3-wpkg_0.2-0_i386.deb : xml inconnu -->
-												<xsl:text>#FF7F50</xsl:text>
-											</xsl:when>
-											<xsl:otherwise>
-												<xsl:text>#696969</xsl:text>
-											</xsl:otherwise>
-										</xsl:choose>
-									</xsl:variable>
-									<xsl:variable name="BGcouleur" >
-										<xsl:choose>
-											<xsl:when test="($opXml/@op = 'add') and (@md5sum = $opXml/@md5sum)">
-												<!-- appli installée et à jour  bleu -->
-												<xsl:text>#b3cce5</xsl:text>
-											</xsl:when>
-											<xsl:when test="($opXml/@op = 'add')">
-												<!-- appli installée et md5 différents (Maj dispo) orange -->
-												<xsl:text>#FFA500</xsl:text>
-											</xsl:when>
-											<xsl:when test="$PACKAGES/package[@id = $idsXml/@id]">
-												<!-- appli installée avant version se3-wpkg_0.2-0_i386.deb : xml inconnu -->
-												<xsl:text>#FF7F50</xsl:text>
+												<xsl:text>trR</xsl:text>
 											</xsl:when>
 											<xsl:otherwise>
 												<!-- appli non installée -->
-												<xsl:text>ghostwhite</xsl:text>
+												<xsl:text>trW</xsl:text>
 											</xsl:otherwise>
 										</xsl:choose>
 									</xsl:variable>
+									<xsl:variable name="StyleLink" >
+									<xsl:choose>
+											<xsl:when test="$StyleTR='trR'">
+												<xsl:text>alien1</xsl:text>
+											</xsl:when>
+											<xsl:otherwise>
+												<xsl:text>alien2</xsl:text>
+											</xsl:otherwise>
+										</xsl:choose>
+									</xsl:variable>
+
 									<xsl:text>Tableau[</xsl:text><xsl:value-of select="position() - 1" /><xsl:text>] = new Array('</xsl:text>
-<xsl:text>&lt;tr style="color:</xsl:text><xsl:value-of select="$couleur" /><xsl:text>;" title="</xsl:text><xsl:value-of select="$etat" /><xsl:text>"&gt;</xsl:text>
-<xsl:text>&lt;td style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" /><xsl:text>;" </xsl:text>
+<xsl:text>&lt;tr class="</xsl:text><xsl:value-of select="$StyleTR" /><xsl:text>" title="</xsl:text><xsl:value-of select="$etat" /><xsl:text>"&gt;</xsl:text>
+<xsl:text>&lt;td </xsl:text>
 <xsl:choose>
 	<xsl:when test="($opXml/@op = 'add') and (@md5sum = $opXml/@md5sum)">
 			<xsl:text>title="Le xml officiel est le même que le votre" &gt;&lt;input </xsl:text>
@@ -176,13 +169,11 @@
 		</xsl:otherwise>
 	</xsl:choose>
 <xsl:text>onclick="onclickSelectMajAppli(this.checked, </xsl:text><xsl:value-of select="position() - 1" /><xsl:text>,' + "'</xsl:text><xsl:value-of select="$forumEnCours" /><xsl:text>', " + "'</xsl:text><xsl:value-of select="$autreforumExiste" /><xsl:text>');" + '" name="chk[]" value="</xsl:text><xsl:value-of select="concat(@forum, ':', $xmlRef, ':', @url)" /><xsl:text>" type="checkbox"&gt;&lt;/input&gt;&lt;/td&gt;</xsl:text>
-<xsl:text>&lt;td align="center" style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" /><xsl:text>;"&gt;&lt;a class="postes" style="background-color:transparent;font-weight:bolder;" title="Cliquer pour voir le contenu du xml" href="</xsl:text><xsl:value-of select="@url" /><xsl:text>" target="_blank"&gt;</xsl:text><xsl:value-of select="$nameApp" /><xsl:text>&lt;/a&gt;&lt;/td&gt;</xsl:text>
+<xsl:text>&lt;td align="center" &gt;&lt;a class="</xsl:text><xsl:value-of select="$StyleLink" /><xsl:text>" style="background-color:transparent;font-weight:bolder;" title="Cliquer pour voir le contenu du xml" href="</xsl:text><xsl:value-of select="@url" /><xsl:text>" target="_blank"&gt;</xsl:text><xsl:value-of select="$nameApp" /><xsl:text>&lt;/a&gt;&lt;/td&gt;</xsl:text>
 
-<!-- <xsl:text>&lt;td align="center" style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" /><xsl:text>;"&gt;&lt;a class="postes" style="background-color:transparent;font-weight:bolder;"&gt;</xsl:text><xsl:value-of select="$nameApp" /><xsl:text>&lt;/a&gt;&lt;/td&gt;</xsl:text> -->
-<xsl:text>&lt;td align="center" style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" /><xsl:text>;"&gt;&lt;a class="postes" style="background-color:transparent;font-weight:bolder;"&gt;</xsl:text><xsl:value-of select="$categoryApp" /><xsl:text>&lt;/a&gt;&lt;/td&gt;</xsl:text>
-<xsl:text>&lt;td align="center" style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" /><xsl:text>;"&gt;&lt;a class="postes" style="background-color:transparent;font-weight:bolder;"&gt;</xsl:text><xsl:value-of select="$revisionApp" /><xsl:text>&lt;/a&gt;&lt;/td&gt;</xsl:text>
-<xsl:text>&lt;td align="center" style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" />
-<xsl:text>;"&lt;a class="postes" style="background-color:transparent;font-weight:bolder;"&gt;</xsl:text>
+<xsl:text>&lt;td align="center" &gt;</xsl:text><xsl:value-of select="$categoryApp" /><xsl:text>&lt;/td&gt;</xsl:text>
+<xsl:text>&lt;td align="center" &gt;</xsl:text><xsl:value-of select="$revisionApp" /><xsl:text>&lt;/td&gt;</xsl:text>
+<xsl:text>&lt;td align="center" &gt;</xsl:text>
 <xsl:choose>
   <xsl:when test="@compatibilite=0">
   <xsl:text> - </xsl:text>
@@ -212,12 +203,10 @@
   <xsl:text> - </xsl:text>
   </xsl:otherwise>
 </xsl:choose>
-<xsl:text>&lt;/a&gt;&lt;/td&gt;</xsl:text>
-<!-- <xsl:text>&lt;td align="center" style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" /><xsl:text>;"&gt;&lt;a class="postes" style="background-color:transparent;font-weight:bolder;" title="Cliquer pour voir le contenu du xml" href="</xsl:text><xsl:value-of select="@url" /><xsl:text>" target="_blank"&gt;</xsl:text><xsl:value-of select="$xmlRef" /><xsl:text>&lt;/a&gt;&lt;/td&gt;</xsl:text> -->
-<xsl:text>&lt;td align="center" style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" /><xsl:text>;" &gt;</xsl:text>
-<!-- <xsl:choose>
-	<xsl:when test="@topic_id > 0"> -->
-		<xsl:text>&lt;a style="background-color:transparent;" title="Cliquer pour accéder au fichier journal du svn" target="_blank" href="</xsl:text><xsl:value-of select="@svn_link" />
+<xsl:text>&lt;/td&gt;</xsl:text>
+<xsl:text>&lt;td align="center" &gt;</xsl:text>
+
+		<xsl:text>&lt;a class="</xsl:text><xsl:value-of select="$StyleLink" /><xsl:text>" style="background-color:transparent;" title="Cliquer pour accéder au fichier journal du svn" target="_blank" href="</xsl:text><xsl:value-of select="@svn_link" />
 		<xsl:choose>
 			<xsl:when test="(@forum = 'stable') or (@forum = 'test')">
 				<xsl:text>"  &gt;&lt;img border="0" style="background-color:transparent;" src="img/forum_message.gif" width="12px" height="13px"&gt; </xsl:text><xsl:value-of select="@forum" /><xsl:text> &lt;/a&gt;</xsl:text>
@@ -226,15 +215,12 @@
 				<xsl:text>"  &gt;&lt;img border="0" style="background-color:transparent;" src="img/forum_message.gif" width="12px" height="13px"&gt;&lt;/a&gt;</xsl:text>
 			</xsl:otherwise>
 		</xsl:choose>
-	<!-- </xsl:when>
-	<xsl:otherwise>
-		<xsl:text> </xsl:text>
-	</xsl:otherwise>
-</xsl:choose> -->
+
 <xsl:text>&lt;/td&gt;</xsl:text>
-<xsl:text>&lt;td style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" /><xsl:text>;" &gt;' + dateFromIso8601('</xsl:text><xsl:value-of select="@date" /><xsl:text>') + '&lt;/td&gt;</xsl:text>
-<xsl:text>&lt;td style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" /><xsl:text>;" &gt;</xsl:text><xsl:value-of select="$etat" /><xsl:text>&lt;/td&gt;</xsl:text>
-<xsl:text>&lt;td style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" /><xsl:text>;" &gt;</xsl:text>
+<xsl:text>&lt;td &gt;' + dateFromIso8601('</xsl:text><xsl:value-of select="@date" /><xsl:text>') + '&lt;/td&gt;</xsl:text>
+<xsl:text>&lt;td &gt;</xsl:text><xsl:value-of select="$etat" /><xsl:text>&lt;/td&gt;</xsl:text>
+
+<xsl:text>&lt;td &gt;</xsl:text>
 <xsl:choose>
 	<xsl:when test="$opXml/@op = 'del'">
 		<xsl:text>&lt;div style="color:red;" title="Cette application a été désinstallée." &gt;' + dateFromIso8601('</xsl:text><xsl:value-of select="$opXml/@date" /><xsl:text>') + '&lt;/div&gt;</xsl:text>
@@ -243,7 +229,7 @@
 		<xsl:text>' + dateFromIso8601('</xsl:text><xsl:value-of select="$opXml/@date" /><xsl:text>') + '</xsl:text>
 	</xsl:otherwise>
 </xsl:choose>
-<xsl:text>&lt;/td&gt;&lt;td style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" /><xsl:text>;" &gt;</xsl:text><xsl:value-of select="$opXml/@user" /><xsl:text>&lt;/td&gt;</xsl:text>
+<xsl:text>&lt;/td&gt;&lt;td &gt;</xsl:text><xsl:value-of select="$opXml/@user" /><xsl:text>&lt;/td&gt;</xsl:text>
 <xsl:text>&lt;/tr&gt; &lt;!--',</xsl:text>
 <!-- Clé de tri1 checked-->
 <!-- xsl:value-of select="($opXml/@op = 'add') and not(@md5sum = $opXml/@md5sum)" /><xsl:text>','</xsl:text -->

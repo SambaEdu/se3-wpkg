@@ -16,13 +16,15 @@ if ( $_GET['refresh'] == "1" ) {
 	}
 }
 $ErreurWget=false;
-$url='http://wawadeb.crdp.ac-caen.fr/wpkg-list-ng/se3_wpkglist.php';
-$urlTest='http://wawadeb.crdp.ac-caen.fr/wpkg-list-ng/se3_wpkglist.php?branch=testing';
-exec ( "cd $wpkgwebdir;wget -N --timeout=30 --tries=3 '$url' 2>&1", $output, $return_value);
+$url='http://wawadeb.crdp.ac-caen.fr/wpkg-list-ng/packages_stable.xml';
+$fichier='se3_wpkglist.php';
+$urlTest='http://wawadeb.crdp.ac-caen.fr/wpkg-list-ng/packages_testing.xml';
+$fichiertest='se3_wpkglist.php?branch=testing';
+exec ( "cd $wpkgwebdir;wget -N --timeout=30 --cache=off --tries=3 '$url' -O '$fichier' 2>&1", $output, $return_value);
 if ( $return_value != 0 ) {
 	$ErreurWget=true;
 } else {
-	exec ( "cd $wpkgwebdir;wget -N --timeout=30 --tries=3 '$urlTest' 2>&1", $output, $return_value);
+	exec ( "cd $wpkgwebdir;wget -N --timeout=30 --cache=off --tries=3 '$urlTest' -O '$fichiertest' 2>&1", $output, $return_value);
 	if ( $return_value != 0 ) {
 		$ErreurWget=true;
 	} else {

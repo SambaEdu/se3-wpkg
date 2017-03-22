@@ -128,6 +128,12 @@ table.postes td.tdlien2 {
 	color: #005594;
 	cursor:pointer;
 }
+a.alien1 {
+	color: #FFFF00;
+}
+a.alien2 {
+	color: #005594;
+}
 table.postes span.tdlien1 {
 	color: #FFFF00;
 }

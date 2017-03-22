@@ -1,8 +1,11 @@
-se3-wpkg (0.80~4) unstable; urgency=low
+se3-wpkg (0.80~5) unstable; urgency=low
 
   * Changement des couleurs de l'interface
+  * Telechargement de la liste des applications sous forme de xml
+  * Suppression du cache wget sur le telechargement de la liste des applications
+  * Nettoyage de la mise en forme de la page listant les applications du svn
 
- -- Laurent Joly <laurentjoly@orange.fr>  Tue, 21 Mar 2017 14:10:30 +0200
+ -- Laurent Joly <laurentjoly@orange.fr>  Wed, 22 Mar 2017 14:10:30 +0200
 
 
 se3-wpkg (0.70) unstable; urgency=low
