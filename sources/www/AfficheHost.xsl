@@ -65,6 +65,10 @@
 	
 	<xsl:variable name="lcletters">abcdefghijklmnopqrstuvwxyz</xsl:variable>
 	<xsl:variable name="ucletters">ABCDEFGHIJKLMNOPQRSTUVWXYZ</xsl:variable>
+	<xsl:variable name="nameletters">'</xsl:variable>
+	<xsl:variable name="nameletters2"> </xsl:variable>
+	<xsl:variable name="catletters">'ÚÞ</xsl:variable>
+	<xsl:variable name="catletters2"> éè</xsl:variable>
 	
 	<xsl:template match="/">
 		<xsl:comment>
@@ -253,8 +257,9 @@ document.getElementById("consoleWpkg").innerHTML = "&lt;img title='Console WPKG'
 									<!-- Tableau des applis installées sur ce poste -->
 									<tr>
 										<th style="cursor:ne-resize;" onclick="tri(1,event);" >Application</th>
-										<th style="cursor:ne-resize;" onclick="tri(2,event);" title="&apos;Installée&apos; ou &apos;Non installée&apos;.   En rouge si l'état ne correspond pas à la demande">Etat</th>
 										<th style="cursor:ne-resize;" onclick="tri(3,event);" >Version</th>
+										<th style="cursor:ne-resize;" onclick="tri(7,event);" >Catégorie</th>
+										<th style="cursor:ne-resize;" onclick="tri(2,event);" title="&apos;Installée&apos; ou &apos;Non installée&apos;.   En rouge si l'état ne correspond pas à la demande">Etat</th>
 										<th style="cursor:ne-resize;" onclick="tri(4,event);" title="L'installation nécessite-t-elle un reboot ?">Reboot</th>
 										<th style="cursor:ne-resize;" onclick="tri(5,event);" title="Parcs, poste ou appli. à l'origine de la demande d'installation">Install. demandée pour</th>
 										<th style="cursor:ne-resize;" onclick="tri(6,event);" title="Installation d'une application uniquement sur &apos;{$idHost}&apos;">Installer sur ce poste</th>
@@ -358,7 +363,7 @@ document.getElementById("consoleWpkg").innerHTML = "&lt;img title='Console WPKG'
 									</xsl:choose>
 								</xsl:variable>
 							<xsl:variable name="StyleLink" >
-							<xsl:choose>
+								<xsl:choose>
 									<xsl:when test="$StyleTR='trR'">
 										<xsl:text>tdlien1</xsl:text>
 									</xsl:when>
@@ -367,19 +372,29 @@ document.getElementById("consoleWpkg").innerHTML = "&lt;img title='Console WPKG'
 									</xsl:otherwise>
 								</xsl:choose>
 							</xsl:variable>
-
+							<xsl:variable name="name_app">
+								<xsl:value-of select="translate($Package/@name,$nameletters,$nameletters2)" />
+							</xsl:variable>
+							<xsl:variable name="cat_app">
+								<xsl:choose>
+									<xsl:when test="$Package/@category2">
+										<xsl:value-of select="translate($Package/@category2,$catletters,$catletters2)" />
+									</xsl:when>
+									<xsl:otherwise>
+										<xsl:value-of select="translate($Package/@category,$catletters,$catletters2)" />
+									</xsl:otherwise>
+								</xsl:choose>
+							</xsl:variable>
 
 
 
 
 								<xsl:text>Tableau[</xsl:text><xsl:value-of select="position() - 1" /><xsl:text>] = new Array('</xsl:text>
 <xsl:text>&lt;tr class="</xsl:text><xsl:value-of select="$StyleTR" /><xsl:text>" &gt; &lt;td class="</xsl:text><xsl:value-of select="$StyleLink" /><xsl:text>" title="' + "</xsl:text>
-<xsl:value-of select="concat($Package/@name, ' (Rev:', $Package/@revision,')')" />
+
 <xsl:text>" + '" style="font-weight: bold;cursor:pointer;" onclick="defPackage(&amp;quot;</xsl:text>
 	<xsl:value-of select="@id" /><xsl:text>&amp;quot;);"&gt;</xsl:text>
-	<xsl:value-of select="@id" /><xsl:text>&lt;/td&gt; &lt;td align="center" &gt;</xsl:text>
-		<xsl:value-of select="$status" />
-	<xsl:text>&lt;/td&gt; &lt;td align="right" &gt;</xsl:text>
+	<xsl:value-of select="$name_app" /><xsl:text>&lt;/td&gt; &lt;td align="center" &gt;</xsl:text>
 	<xsl:choose>
 		<xsl:when test="@revision = key('PackageFromId', $idPackage)/@revision">
 			<xsl:value-of select="$revision" />
@@ -390,6 +405,10 @@ document.getElementById("consoleWpkg").innerHTML = "&lt;img title='Console WPKG'
 			<xsl:text>&lt;/font&gt;</xsl:text>
 		</xsl:otherwise>
 	</xsl:choose>
+	<xsl:text>&lt;/td&gt; &lt;td align="center" &gt;</xsl:text>
+		<xsl:value-of select="$cat_app" />
+	<xsl:text>&lt;/td&gt; &lt;td align="right" &gt;</xsl:text>
+		<xsl:value-of select="$status" />
 	
 	<xsl:text>&lt;/td&gt; &lt;td align="center" &gt;</xsl:text>
 	<xsl:value-of select="$reboot" />
@@ -428,7 +447,7 @@ document.getElementById("consoleWpkg").innerHTML = "&lt;img title='Console WPKG'
 	</xsl:if>
 	<xsl:text> &lt;/td&gt;&lt;/tr&gt; &lt;!--','</xsl:text>
 <!-- Clé de tri1 idPackage-->
-<xsl:value-of select="translate(@id, $ucletters, $lcletters)" /><xsl:text>','</xsl:text>
+<xsl:value-of select="translate($name_app, $ucletters, $lcletters)" /><xsl:text>','</xsl:text>
 <!-- Clé de tri2 Etat -->
 <xsl:value-of select="$status" /><xsl:text>',</xsl:text>
 <!-- Clé de tri3 Revision (numérique) -->
@@ -438,7 +457,9 @@ document.getElementById("consoleWpkg").innerHTML = "&lt;img title='Console WPKG'
 <!-- Clé de tri5 install. demandée par -->
 <xsl:value-of select="string($profilsImplyPackageHost)" /><xsl:text>','</xsl:text>
 <!-- Clé de tri6 install host only-->
-<xsl:value-of select="$requestInstallHostOnly" /><xsl:text>',</xsl:text>
+<xsl:value-of select="$requestInstallHostOnly" /><xsl:text>','</xsl:text>
+<!-- Clé de tri7 category app-->
+<xsl:value-of select="translate($cat_app, $ucletters, $lcletters)" /><xsl:text>',</xsl:text>
 <!-- Numéro de la ligne -->
 <xsl:value-of select="position() - 1" /><xsl:text>,'--&gt;');&#xa;</xsl:text>
 							</xsl:for-each>

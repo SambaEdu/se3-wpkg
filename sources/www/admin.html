@@ -222,7 +222,7 @@
 				}
 				if ( (typeof ordre) == 'object' ) {
 					//alert("In updateTableau ordre.length=" + ordre.length + "\nordre=" + ordre + "\nnChamps=" + nChamps);
-					tri(nChamps+1); // tri pour rétablir l'ordre du tableau avant le rafraichissement de la page
+					tri(nChamps+0); // tri pour rétablir l'ordre du tableau avant le rafraichissement de la page
 				} else {
 					// alert("In updateTableau typeof ordre=" + (typeof ordre));
 					l = Tableau.length;
@@ -230,7 +230,7 @@
 					for (i=0; i<l; i++ ) ordre[i] = i;
 					//alert("In updateTableau avant tri nChamps=" + nChamps);
 					try {
-						tri(nChamps + 1);
+						tri(nChamps + 0);
 					} catch (e) {
 						alert("Erreur updateTableau tri : nChamps=" + nChamps + "\n" +e);
 						return e;
