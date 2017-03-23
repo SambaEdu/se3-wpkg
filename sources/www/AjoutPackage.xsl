@@ -318,7 +318,7 @@
 		<div id="updatedXml">
 			<table>
 				<tr>
-					<td><p>Pour mettre à jour ou installer des paquets WPKG à partir du <a href="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages-ng/stable" target="_blank">SVN du CRDP de Caen</a> : </p></td>
+					<td><p>Pour mettre à jour ou installer des paquets WPKG à partir du <a href="http://wawadeb.crdp.ac-caen.fr/versions-xml-se3.php" target="_blank">SVN du CRDP de Caen</a> : </p></td>
 					<td>
 						<input value="Afficher les applications disponibles" type="button" onclick="MAJPackages=1;urlWawadebMD5='view-source:http://wawadeb.crdp.ac-caen.fr/wpkg-list-ng/se3_wpkglist.php';testUpdatedXml();"></input>
 						<!-- Devenu inutile puisque la nouvelle page listant les applis du svn est regénérée systématiquement
@@ -339,7 +339,7 @@ N'oubliez pas, après avoir installé une application de "test", d'écrire sur l
 	<xsl:template name="explication">
 		<div>
 			<h3>Information</h3>
-			En dehors du <a href="{$urlWawadeb}" target="_blank">SVN</a>,
+			En dehors du <a href="http://wawadeb.crdp.ac-caen.fr/versions-xml-se3.php" target="_blank">SVN</a>,
 			vous pouvez ajouter une application de votre cru ou inspirée d'applications téléchargées sur internet (voir 'Compléments' plus bas).<br></br>
 			<dir>
 				<li >Créer un fichier (*.xml) en vous aidant de la <a href="http://wwdeb.crdp.ac-caen.fr/mediase3/index.php/FaqWpkg#Comment_fabriquer_un_xml_destin.C3.A9_.C3.A0_devenir_officiellement_d.C3.A9ploy.C3.A9.3F" target="_blank">documentation officielle SE3</a> et en vous inspirant de ceux disponibles depuis les liens ci-dessous.</li>

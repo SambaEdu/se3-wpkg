@@ -32,7 +32,6 @@
 	<xsl:variable name="INSTALLATIONS" select="document('/var/se3/unattended/install/wpkg/tmp/timeStamps.xml')/installations" />
 	<xsl:variable name="PACKAGES" select="/wpkg/packages" />
 	<xsl:variable name="DocWPKGList"><xsl:value-of select="'/var/www/se3/wpkg/forum.xml'" /></xsl:variable>
-	<!-- xsl:variable name="WPKGLIST" select="document($DocWPKGList)/packages/package[concat(@id, '.xml') = @xml]" / -->
 	<xsl:variable name="WPKGLIST" select="document('/var/www/se3/wpkg/forum.xml')/packages/package" />
 
 	<xsl:variable name="lcletters">abcdefghijklmnopqrstuvwxyz</xsl:variable>
@@ -41,6 +40,7 @@
 	<xsl:template match="/">
 		<xsl:choose>
 			<xsl:when test="$MAJPackages = '1'" >
+				<h2>Mise à jour des applications</h2>
 				<xsl:choose>
 					<xsl:when test="count($WPKGLIST) = 0" >
 						Erreur : <xsl:value-of select="$urlWawadebMD5"/> n'est pas accessible !
@@ -73,6 +73,10 @@
 											<th style="cursor:ne-resize;" onclick="tri(3,event);">Info SVN</th>
 											<th style="cursor:ne-resize;" onclick="tri(4,event);">Date du fichier officiel</th>
 											<th style="cursor:ne-resize;" onclick="tri(5,event);">Etat</th>
+											<!--
+											<th>md5sum officiel</th>
+											<th>md5sum local</th>
+											-->
 											<th style="cursor:ne-resize;" onclick="tri(6,event);">Installé le</th>
 											<th style="cursor:ne-resize;" onclick="tri(7,event);">Par</th>
 										</tr>
@@ -112,47 +116,40 @@
 											</xsl:otherwise>
 										</xsl:choose>
 									</xsl:variable>
-									<xsl:variable name="couleur" >
+									<xsl:variable name="StyleTR" >
 										<xsl:choose>
 											<xsl:when test="($opXml/@op = 'add') and (@md5sum = $opXml/@md5sum)">
-												<xsl:text>black</xsl:text>
+												<!-- appli installée et à jour  Vert -->
+												<xsl:text>trG</xsl:text>
 											</xsl:when>
 											<xsl:when test="($opXml/@op = 'add')">
-												<!-- appli installée et md5 différents (Maj dispo) -->
-												<xsl:text>#000099</xsl:text>
+												<!-- appli installée et md5 différents (Maj dispo) Jaune -->
+												<xsl:text>try</xsl:text>
 											</xsl:when>
 											<xsl:when test="$PACKAGES/package[@id = $idsXml/@id]">
 												<!-- appli installée avant version se3-wpkg_0.2-0_i386.deb : xml inconnu -->
-												<xsl:text>#FF7F50</xsl:text>
-											</xsl:when>
-											<xsl:otherwise>
-												<xsl:text>#696969</xsl:text>
-											</xsl:otherwise>
-										</xsl:choose>
-									</xsl:variable>
-									<xsl:variable name="BGcouleur" >
-										<xsl:choose>
-											<xsl:when test="($opXml/@op = 'add') and (@md5sum = $opXml/@md5sum)">
-												<!-- appli installée et à jour  bleu -->
-												<xsl:text>#b3cce5</xsl:text>
-											</xsl:when>
-											<xsl:when test="($opXml/@op = 'add')">
-												<!-- appli installée et md5 différents (Maj dispo) orange -->
-												<xsl:text>#FFA500</xsl:text>
-											</xsl:when>
-											<xsl:when test="$PACKAGES/package[@id = $idsXml/@id]">
-												<!-- appli installée avant version se3-wpkg_0.2-0_i386.deb : xml inconnu -->
-												<xsl:text>#FF7F50</xsl:text>
+												<xsl:text>trR</xsl:text>
 											</xsl:when>
 											<xsl:otherwise>
 												<!-- appli non installée -->
-												<xsl:text>ghostwhite</xsl:text>
+												<xsl:text>trW</xsl:text>
 											</xsl:otherwise>
 										</xsl:choose>
 									</xsl:variable>
+									<xsl:variable name="StyleLink" >
+									<xsl:choose>
+											<xsl:when test="$StyleTR='trR'">
+												<xsl:text>alien1</xsl:text>
+											</xsl:when>
+											<xsl:otherwise>
+												<xsl:text>alien2</xsl:text>
+											</xsl:otherwise>
+										</xsl:choose>
+									</xsl:variable>
+
 									<xsl:text>Tableau[</xsl:text><xsl:value-of select="position() - 1" /><xsl:text>] = new Array('</xsl:text>
-<xsl:text>&lt;tr style="color:</xsl:text><xsl:value-of select="$couleur" /><xsl:text>;" title="</xsl:text><xsl:value-of select="$etat" /><xsl:text>"&gt;</xsl:text>
-<xsl:text>&lt;td style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" /><xsl:text>;" </xsl:text>
+<xsl:text>&lt;tr class="</xsl:text><xsl:value-of select="$StyleTR" /><xsl:text>" title="</xsl:text><xsl:value-of select="$etat" /><xsl:text>"&gt;</xsl:text>
+<xsl:text>&lt;td </xsl:text>
 <xsl:choose>
 	<xsl:when test="($opXml/@op = 'add') and (@md5sum = $opXml/@md5sum)">
 			<xsl:text>title="Le xml officiel est le même que le votre" &gt;&lt;input </xsl:text>
@@ -172,12 +169,11 @@
 		</xsl:otherwise>
 	</xsl:choose>
 <xsl:text>onclick="onclickSelectMajAppli(this.checked, </xsl:text><xsl:value-of select="position() - 1" /><xsl:text>,' + "'</xsl:text><xsl:value-of select="$forumEnCours" /><xsl:text>', " + "'</xsl:text><xsl:value-of select="$autreforumExiste" /><xsl:text>');" + '" name="chk[]" value="</xsl:text><xsl:value-of select="concat(@forum, ':', $xmlRef, ':', @url)" /><xsl:text>" type="checkbox"&gt;&lt;/input&gt;&lt;/td&gt;</xsl:text>
-<xsl:text>&lt;td align="center" style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" /><xsl:text>;"&gt;&lt;a class="postes" style="background-color:transparent;font-weight:bolder;" title="Cliquer pour voir le contenu du xml" href="</xsl:text><xsl:value-of select="@url" /><xsl:text>" target="_blank"&gt;</xsl:text><xsl:value-of select="$nameApp" /><xsl:text>&lt;/a&gt;&lt;/td&gt;</xsl:text>
-<!-- <xsl:text>&lt;td align="center" style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" /><xsl:text>;"&gt;&lt;a class="postes" style="background-color:transparent;font-weight:bolder;"&gt;</xsl:text><xsl:value-of select="$nameApp" /><xsl:text>&lt;/a&gt;&lt;/td&gt;</xsl:text> -->
-<xsl:text>&lt;td align="center" style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" /><xsl:text>;"&gt;&lt;a class="postes" style="background-color:transparent;font-weight:bolder;"&gt;</xsl:text><xsl:value-of select="$categoryApp" /><xsl:text>&lt;/a&gt;&lt;/td&gt;</xsl:text>
-<xsl:text>&lt;td align="center" style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" /><xsl:text>;"&gt;&lt;a class="postes" style="background-color:transparent;font-weight:bolder;"&gt;</xsl:text><xsl:value-of select="$revisionApp" /><xsl:text>&lt;/a&gt;&lt;/td&gt;</xsl:text>
-<xsl:text>&lt;td align="center" style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" />
-<xsl:text>;"&lt;a class="postes" style="background-color:transparent;font-weight:bolder;"&gt;</xsl:text>
+<xsl:text>&lt;td align="center" &gt;&lt;a class="</xsl:text><xsl:value-of select="$StyleLink" /><xsl:text>" style="background-color:transparent;font-weight:bolder;" title="Cliquer pour voir le contenu du xml" href="</xsl:text><xsl:value-of select="@url" /><xsl:text>" target="_blank"&gt;</xsl:text><xsl:value-of select="$nameApp" /><xsl:text>&lt;/a&gt;&lt;/td&gt;</xsl:text>
+
+<xsl:text>&lt;td align="center" &gt;</xsl:text><xsl:value-of select="$categoryApp" /><xsl:text>&lt;/td&gt;</xsl:text>
+<xsl:text>&lt;td align="center" &gt;</xsl:text><xsl:value-of select="$revisionApp" /><xsl:text>&lt;/td&gt;</xsl:text>
+<xsl:text>&lt;td align="center" &gt;</xsl:text>
 <xsl:choose>
   <xsl:when test="@compatibilite=0">
   <xsl:text> - </xsl:text>
@@ -207,12 +203,10 @@
   <xsl:text> - </xsl:text>
   </xsl:otherwise>
 </xsl:choose>
-<xsl:text>&lt;/a&gt;&lt;/td&gt;</xsl:text>
-<!-- <xsl:text>&lt;td align="center" style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" /><xsl:text>;"&gt;&lt;a class="postes" style="background-color:transparent;font-weight:bolder;" title="Cliquer pour voir le contenu du xml" href="</xsl:text><xsl:value-of select="@url" /><xsl:text>" target="_blank"&gt;</xsl:text><xsl:value-of select="$xmlRef" /><xsl:text>&lt;/a&gt;&lt;/td&gt;</xsl:text> -->
-<xsl:text>&lt;td align="center" style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" /><xsl:text>;" &gt;</xsl:text>
-<!-- <xsl:choose>
-	<xsl:when test="@topic_id > 0"> -->
-		<xsl:text>&lt;a style="background-color:transparent;" title="Cliquer pour accéder au fichier journal du svn" target="_blank" href="</xsl:text><xsl:value-of select="@svn_link" />
+<xsl:text>&lt;/td&gt;</xsl:text>
+<xsl:text>&lt;td align="center" &gt;</xsl:text>
+
+		<xsl:text>&lt;a class="</xsl:text><xsl:value-of select="$StyleLink" /><xsl:text>" style="background-color:transparent;" title="Cliquer pour accéder au fichier journal du svn" target="_blank" href="</xsl:text><xsl:value-of select="@svn_link" />
 		<xsl:choose>
 			<xsl:when test="(@forum = 'stable') or (@forum = 'test') or (@forum = 'XP')">
 				<xsl:text>"  &gt;&lt;img border="0" style="background-color:transparent;" src="img/forum_message.gif" width="12px" height="13px"&gt; </xsl:text><xsl:value-of select="@forum" /><xsl:text> &lt;/a&gt;</xsl:text>
@@ -221,15 +215,12 @@
 				<xsl:text>"  &gt;&lt;img border="0" style="background-color:transparent;" src="img/forum_message.gif" width="12px" height="13px"&gt;&lt;/a&gt;</xsl:text>
 			</xsl:otherwise>
 		</xsl:choose>
-	<!-- </xsl:when>
-	<xsl:otherwise>
-		<xsl:text> </xsl:text>
-	</xsl:otherwise>
-</xsl:choose> -->
+
 <xsl:text>&lt;/td&gt;</xsl:text>
-<xsl:text>&lt;td style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" /><xsl:text>;" &gt;' + dateFromIso8601('</xsl:text><xsl:value-of select="@date" /><xsl:text>') + '&lt;/td&gt;</xsl:text>
-<xsl:text>&lt;td style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" /><xsl:text>;" &gt;</xsl:text><xsl:value-of select="$etat" /><xsl:text>&lt;/td&gt;</xsl:text>
-<xsl:text>&lt;td style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" /><xsl:text>;" &gt;</xsl:text>
+<xsl:text>&lt;td &gt;' + dateFromIso8601('</xsl:text><xsl:value-of select="@date" /><xsl:text>') + '&lt;/td&gt;</xsl:text>
+<xsl:text>&lt;td &gt;</xsl:text><xsl:value-of select="$etat" /><xsl:text>&lt;/td&gt;</xsl:text>
+
+<xsl:text>&lt;td &gt;</xsl:text>
 <xsl:choose>
 	<xsl:when test="$opXml/@op = 'del'">
 		<xsl:text>&lt;div style="color:red;" title="Cette application a été désinstallée." &gt;' + dateFromIso8601('</xsl:text><xsl:value-of select="$opXml/@date" /><xsl:text>') + '&lt;/div&gt;</xsl:text>
@@ -238,7 +229,7 @@
 		<xsl:text>' + dateFromIso8601('</xsl:text><xsl:value-of select="$opXml/@date" /><xsl:text>') + '</xsl:text>
 	</xsl:otherwise>
 </xsl:choose>
-<xsl:text>&lt;/td&gt;&lt;td style="background-color:</xsl:text><xsl:value-of select="$BGcouleur" /><xsl:text>;" &gt;</xsl:text><xsl:value-of select="$opXml/@user" /><xsl:text>&lt;/td&gt;</xsl:text>
+<xsl:text>&lt;/td&gt;&lt;td &gt;</xsl:text><xsl:value-of select="$opXml/@user" /><xsl:text>&lt;/td&gt;</xsl:text>
 <xsl:text>&lt;/tr&gt; &lt;!--',</xsl:text>
 <!-- Clé de tri1 checked-->
 <!-- xsl:value-of select="($opXml/@op = 'add') and not(@md5sum = $opXml/@md5sum)" /><xsl:text>','</xsl:text -->
@@ -327,9 +318,13 @@
 		<div id="updatedXml">
 			<table>
 				<tr>
-					<td><p>Pour mettre à jour ou installer des paquets WPKG à partir du <a href="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages-ng/stable" target="_blank">SVN du CRDP de Caen</a> : </p></td>
+					<td><p>Pour mettre à jour ou installer des paquets WPKG à partir du <a href="http://wawadeb.crdp.ac-caen.fr/versions-xml-se3.php" target="_blank">SVN du CRDP de Caen</a> : </p></td>
 					<td>
-						<input value="Afficher les applications disponibles" type="button" onclick="MAJPackages=1;testUpdatedXml();"></input>
+						<input value="Afficher les applications disponibles" type="button" onclick="MAJPackages=1;urlWawadebMD5='view-source:http://wawadeb.crdp.ac-caen.fr/wpkg-list-ng/se3_wpkglist.php';testUpdatedXml();"></input>
+						<!-- Devenu inutile puisque la nouvelle page listant les applis du svn est regénérée systématiquement
+						<br/><br/> 
+						<input name="forceRefresh" id="forceRefresh" value="0" type="checkbox" title="Récupérer les données du SVN même si elle ne semble pas avoir été modifiées"></input>forçer le rafraîchissement.<br/>
+						-->
 					</td>
 				</tr>
 			</table>
@@ -344,7 +339,7 @@ N'oubliez pas, après avoir installé une application de "test", d'écrire sur l
 	<xsl:template name="explication">
 		<div>
 			<h3>Information</h3>
-			En dehors du <a href="{$urlWawadeb}" target="_blank">SVN</a>,
+			En dehors du <a href="http://wawadeb.crdp.ac-caen.fr/versions-xml-se3.php" target="_blank">SVN</a>,
 			vous pouvez ajouter une application de votre cru ou inspirée d'applications téléchargées sur internet (voir 'Compléments' plus bas).<br></br>
 			<dir>
 				<li >Créer un fichier (*.xml) en vous aidant de la <a href="http://wwdeb.crdp.ac-caen.fr/mediase3/index.php/FaqWpkg#Comment_fabriquer_un_xml_destin.C3.A9_.C3.A0_devenir_officiellement_d.C3.A9ploy.C3.A9.3F" target="_blank">documentation officielle SE3</a> et en vous inspirant de ceux disponibles depuis les liens ci-dessous.</li>
