@@ -480,7 +480,7 @@ document.getElementById("consoleWpkg").innerHTML = "&lt;img title='Console WPKG'
 			<!-- Ce profile réclame l'installation de l'appli -->
 			<xsl:choose>
 				<xsl:when test="$withLink">
-					<xsl:text>&lt;span class="</xsl:text><xsl:value-of select="$StyleLink" /><xsl:text>" title="Parc &amp;#39;</xsl:text><xsl:value-of select="$tmpProfile/@id" /><xsl:text>&amp;#39;" onclick="defProfile(&amp;quot;</xsl:text><xsl:value-of select="$tmpProfile/@id" /><xsl:text>&amp;quot;);" &gt;</xsl:text>
+					<xsl:text>&lt;span class="postes" title="Parc &amp;#39;</xsl:text><xsl:value-of select="$tmpProfile/@id" /><xsl:text>&amp;#39;" onclick="defProfile(&amp;quot;</xsl:text><xsl:value-of select="$tmpProfile/@id" /><xsl:text>&amp;quot;);" &gt;</xsl:text>
 						<xsl:value-of select="$tmpProfile/@id" />
 					<xsl:text>&lt;/span&gt;</xsl:text>
 				</xsl:when>
@@ -509,7 +509,7 @@ document.getElementById("consoleWpkg").innerHTML = "&lt;img title='Console WPKG'
 			<xsl:choose>
 				<xsl:when test="$withLink">
 					<xsl:for-each select="($AskPackages)[$tmpPackage = depends/@package-id]">
-						<xsl:text>&lt;span class="</xsl:text><xsl:value-of select="$StyleLink" /><xsl:text>" title="Application &amp;#39;</xsl:text><xsl:value-of select="@id" /><xsl:text>&amp;#39;" onclick="defPackage(&amp;quot;</xsl:text><xsl:value-of select="@id" /><xsl:text>&amp;quot;);" &gt;</xsl:text>
+						<xsl:text>&lt;span class="postes" title="Application &amp;#39;</xsl:text><xsl:value-of select="@id" /><xsl:text>&amp;#39;" onclick="defPackage(&amp;quot;</xsl:text><xsl:value-of select="@id" /><xsl:text>&amp;quot;);" &gt;</xsl:text>
 							<xsl:value-of select="@id" />
 						<xsl:text>&lt;/span&gt; </xsl:text>
 					</xsl:for-each>
