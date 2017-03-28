@@ -31,7 +31,8 @@ if (! $login ) {
 		include entete.inc.php; ?>
 			<h2>D&#233;ploiement d'applications</h2>
 			<div class=error_msg>Vous n'avez pas les droits n&#233;cessaires &#224; l'utilisation de ce module !</div>
-<?		include pdp.inc.php;
+<?php
+		include pdp.inc.php;
 		exit;
 	} else { 
 		# On a affaire a un utilisateur autorise de wpkg
@@ -206,7 +207,8 @@ function adminWpkg() {
 			<html><body>
 			<h2>D&#233;ploiement d'applications</h2>
 			<div class=error_msg>Vous devez avoir des droits d'administration pour utiliser cette fonction !</div>
-<?		include "pdp.inc.php";
+<?php
+		include "pdp.inc.php";
 		return false;
 	} else { 
 		return true;
@@ -277,7 +279,7 @@ function printHead() {
 			<link  href='../style.css' rel='StyleSheet' type='text/css'>
 		</head>
 	<body>  
-<?
+<?php
 }
 
 function Erreur($iErr) {

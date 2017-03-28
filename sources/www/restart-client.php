@@ -6,7 +6,8 @@ if ( ! $wpkgUser ) {
     include entete.inc.php; ?>
         <h2>Déploiement d'applications</h2>
         <div class=error_msg>Vous n'avez pas les droits nécessaires à l'utilisation de cette fonction !</div>
-<?  include pdp.inc.php;
+<?php
+	include pdp.inc.php;
     exit;
 } else{
     if ($_GET["Poste"] == '') Erreur("poste non défini");

@@ -35,7 +35,7 @@ if ( ! $wpkgUser ) {
     ?>
             <h2>Déploiement d'applications</h2>
             <div class=error_msg>Vous n'avez pas les droits nécessaires à l'utilisation de ce module !</div>
-    <?
+    <?php
     include "pdp.inc.php";
     exit;
 }

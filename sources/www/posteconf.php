@@ -14,7 +14,8 @@ if ( ! $wpkgUser ) {
 	include entete.inc.php; ?>
 		<h2>Déploiement d'applications</h2>
 		<div class=error_msg>Vous n'avez pas les droits nécessaires à l'utilisation de cette fonction !</div>
-<?  include pdp.inc.php;
+<?php
+	include pdp.inc.php;
 	exit;
 } else{ ?>
 <html>
@@ -24,7 +25,8 @@ if ( ! $wpkgUser ) {
 		<meta http-equiv="Pragma" content="no-cache" />
 	</head>
 	<body>
-<?	if ($_GET["Poste"] === '') {
+<?php
+	if ($_GET["Poste"] === '') {
 		Erreur("poste non défini");
 	} else {
 		$Poste = $_GET["Poste"];
@@ -151,7 +153,7 @@ if ( ! $wpkgUser ) {
 	?>
 	</body>
 </html>
-<?
+<?php
 }
 function NotValeur( $Val ) {
 	if ( $Val === '1' ) $NVal = '0';
