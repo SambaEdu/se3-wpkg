@@ -42,7 +42,7 @@
 	foreach ($liste_appli as $key => $row)
 	{
 		$name[$key]  = strtolower($row['name']);
-		$category[$key] = $row['category'];
+		$category[$key] = strtolower($row['category']);
 		$compatibilite[$key] = $row['compatibilite']+0;
 		$revision[$key] = $row['revision'];
 	}
