@@ -13,10 +13,23 @@
 	
 	$xml_packages = simplexml_load_file("/var/se3/unattended/install/wpkg/packages.xml");
 	$xml_profiles = simplexml_load_file("/var/se3/unattended/install/wpkg/profiles.xml");
+	$xml_time = simplexml_load_file("/var/se3/unattended/install/wpkg/tmp/timeStamps.xml");
 	
 	$liste_appli=array();
 	$liste_profiles=array();
 	$liste_profiles2=array();
+	$liste_time=array();
+	
+	foreach ($xml_time->package as $time_package)
+	{
+		foreach ($time_package->op as $time_op)
+		{
+			sscanf($time_op["date"],"%4u-%2u-%2uT%2u:%2u:%2uZ",$annee,$mois,$jour,$heure,$minute,$seconde);
+			$newTstamp = mktime($heure,$minute,$seconde,$mois,$jour,$annee)+3600;
+			$liste_time[(string) $time_package["id"]] = array ("date"=>(string) $time_op["date"],
+																"date2"=>date("d/m/Y à H:i:s", $newTstamp));
+		}
+	}
 	
 	foreach ($xml_packages->package as $app)
 	{
@@ -28,8 +41,11 @@
 						 "category"=>str_replace("'"," ",$app["category"]),
 						 "name"=>str_replace("'"," ",$app["name"]),
 						 "compatibilite"=>$app["compatibilite"],
-						 "revision"=>$app["revision"]);
+						 "revision"=>$app["revision"],
+						 "date"=>$liste_time[(string) $app["id"]]["date"],
+						 "date2"=>$liste_time[(string) $app["id"]]["date2"]);
 	}
+	
 	
 	foreach ($xml_profiles->profile as $profile1)
 	{
@@ -45,6 +61,7 @@
 		$category[$key] = strtolower($row['category']);
 		$compatibilite[$key] = $row['compatibilite']+0;
 		$revision[$key] = $row['revision'];
+		$date[$key] = $row['date'];
 	}
 	
 	if (isset($_GET["tri"]))
@@ -71,6 +88,12 @@
 		break;
 		case 5:
 		array_multisort($compatibilite, SORT_ASC, $name, SORT_ASC, $liste_appli);
+		break;
+		case 6:
+		array_multisort($date, SORT_DESC, $name, SORT_ASC, $liste_appli);
+		break;
+		case 7:
+		array_multisort($date, SORT_ASC, $name, SORT_ASC, $liste_appli);
 		break;
 		default:
 		array_multisort($name, SORT_ASC, $branche, SORT_ASC, $liste_appli);
@@ -100,6 +123,12 @@
 		echo "1";
 	echo "'>Cat&#233;gorie</a></th>";
 	echo "<th width='120'>Liste des parcs</th>";
+	echo "<th width='150'><a href='?tri=";
+	if ($tri==6)
+		echo "7";
+	else
+		echo "6";
+	echo "'>Date d'ajout</a></th>";
 	echo "</tr>";
 	foreach ($liste_appli as $application)
 	{
@@ -155,6 +184,7 @@
 			}
 		}
 		echo "</td>";
+		echo "<td align='center'>".$application["date2"]."</td>";
 		echo "</tr>";
 
 	}
