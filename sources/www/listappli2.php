@@ -54,6 +54,8 @@
 		foreach ($profile1->depends as $profile2)
 			$liste_profiles2[(string) $profile2["profile-id"]][] = (string) $profile1["id"];
 	}
+
+	ksort($liste_profiles2);
 	
 	foreach ($liste_appli as $key => $row)
 	{
@@ -99,8 +101,32 @@
 		array_multisort($name, SORT_ASC, $branche, SORT_ASC, $liste_appli);
 		break;
 	}
-
 	
+	echo "<center><form method='get' action=''>";
+	echo "<select name='id_parc'>";
+	$parc_actif="";
+	$parc_defaut="";
+	foreach ($liste_profiles2 as $id_parc=>$liste_parc)
+	{
+		if ($parc_defaut=="")
+			$parc_defaut=$id_parc;
+		echo "<option value='".$id_parc."'";
+		if (isset($_GET["id_parc"]))
+		{
+			if ($_GET["id_parc"]==$id_parc)
+			{
+				$parc_actif=$id_parc;
+				echo " selected";
+			}
+		}
+		echo ">".$id_parc."</option>";
+	}
+	echo "</select>";
+	if ($parc_actif=="")
+		$parc_actif=$parc_defaut;
+	echo "<input type='hidden' name='tri' value='".$tri."'>";
+	echo "<input type='submit' value='Valider'>";
+	echo "</form></center>";
 	echo "<table cellspadding='2' cellspacing='1' border='0' align='center' bgcolor='black'>";
 	echo "<tr bgcolor='white' height='30' valing='center'>";
 	echo "<th width='300'><a href='?tri=";
@@ -108,85 +134,75 @@
 		echo "3";
 	else
 		echo "0";
-	echo "'>Nom de l'application</a></th>";
+	echo "&id_parc=".$parc_actif."'>Nom de l'application</a></th>";
 	echo "<th width='120'>Version</th>";
 	echo "<th width='120'><a href='?tri=";
 	if ($tri==2)
 		echo "5";
 	else
 		echo "2";
-	echo "'>Compatibilit&#233;</a></th>";
+	echo "&id_parc=".$parc_actif."'>Compatibilit&#233;</a></th>";
 	echo "<th width='150'><a href='?tri=";
 	if ($tri==1)
 		echo "4";
 	else
 		echo "1";
-	echo "'>Cat&#233;gorie</a></th>";
-	echo "<th width='120'>Liste des parcs</th>";
+	echo "&id_parc=".$parc_actif."'>Cat&#233;gorie</a></th>";
 	echo "<th width='150'><a href='?tri=";
 	if ($tri==6)
 		echo "7";
 	else
 		echo "6";
-	echo "'>Date d'ajout</a></th>";
+	echo "&id_parc=".$parc_actif."'>Date d'ajout</a></th>";
 	echo "</tr>";
 	foreach ($liste_appli as $application)
 	{
-		echo "<tr bgcolor='white' height='30' valing='center'>";
-		echo "<td><a href='index.php?extractAppli=".$application["id"]."' target='info'>".$application["name"]."</a></td>";
-		echo "<td align='center'>".$application["revision"]."</td>";
-		echo "<td align='center'>";
-		
-		switch ($application["compatibilite"])
-		{
-			case 1:
-			echo "<img src='winxp.png' witdh='20' height='20'>";
-			break;
-			case 2:
-			echo "<img src='win7.png' witdh='20' height='20'>";
-			break;
-			case 3:
-			echo "<img src='winxp.png' witdh='20' height='20'><img src='win7.png' witdh='20' height='20'>";
-			break;
-			case 4:
-			echo "<img src='win10.png' witdh='20' height='20'>";
-			break;
-			case 5:
-			echo "<img src='winxp.png' witdh='20' height='20'><img src='win10.png' witdh='20' height='20'>";
-			break;
-			case 6:
-			echo "<img src='win7.png' witdh='20' height='20'><img src='win10.png' witdh='20' height='20'>";
-			break;
-			case 7:
-			echo "<img src='winxp.png' witdh='20' height='20'><img src='win7.png' witdh='20' height='20'><img src='win10.png' witdh='20' height='20'>";
-			break;
-			case 0:
-			echo "";
-			break;
-			default:
-			echo "";
-			break;
-			
-		}
-		echo "</td>";
-		echo "<td align='center'>".$application["category"]."</td>";
-		echo "<td align='center'>";
 		if (isset($liste_profiles[(string) $application["id"]]))
 		{
-			$i=0;
-			foreach ($liste_profiles[(string) $application["id"]] as $toto)
+			if (in_array($parc_actif, $liste_profiles[(string) $application["id"]]))
 			{
-				if ($i>0)
-					echo ", ";
-				else
-					$i++;
-				echo $toto;
+				echo "<tr bgcolor='white' height='30' valing='center'>";
+				echo "<td><a href='index.php?extractAppli=".$application["id"]."' target='info'>".$application["name"]."</a></td>";
+				echo "<td align='center'>".$application["revision"]."</td>";
+				echo "<td align='center'>";
+				
+				switch ($application["compatibilite"])
+				{
+					case 1:
+					echo "<img src='winxp.png' witdh='20' height='20'>";
+					break;
+					case 2:
+					echo "<img src='win7.png' witdh='20' height='20'>";
+					break;
+					case 3:
+					echo "<img src='winxp.png' witdh='20' height='20'><img src='win7.png' witdh='20' height='20'>";
+					break;
+					case 4:
+					echo "<img src='win10.png' witdh='20' height='20'>";
+					break;
+					case 5:
+					echo "<img src='winxp.png' witdh='20' height='20'><img src='win10.png' witdh='20' height='20'>";
+					break;
+					case 6:
+					echo "<img src='win7.png' witdh='20' height='20'><img src='win10.png' witdh='20' height='20'>";
+					break;
+					case 7:
+					echo "<img src='winxp.png' witdh='20' height='20'><img src='win7.png' witdh='20' height='20'><img src='win10.png' witdh='20' height='20'>";
+					break;
+					case 0:
+					echo "";
+					break;
+					default:
+					echo "";
+					break;
+					
+				}
+				echo "</td>";
+				echo "<td align='center'>".$application["category"]."</td>";
+				echo "<td align='center'>".$application["date2"]."</td>";
+				echo "</tr>";
 			}
 		}
-		echo "</td>";
-		echo "<td align='center'>".$application["date2"]."</td>";
-		echo "</tr>";
-
 	}
 	echo "</table>";
 
