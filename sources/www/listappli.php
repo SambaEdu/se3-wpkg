@@ -1,13 +1,43 @@
-<html lang="fr">
-<HEAD>
-<meta charset="utf-8">
-<link rel="StyleSheet" type="text/css" href="../style.css"></HEAD>
-<title>Version des applications du serveur</title>
-<meta name=generator content=HTML::TextToHTML v2.51/>
-</head>
-<body background="../elements/images/fond_SE3.png">
-<h1>Liste des applications déployables sur votre SE3</h1>
 <?php
+/**
+ * Affichage de la liste des applications d'un parc
+ * @Version $Id$
+ * @Projet LCS / SambaEdu
+ * @auteurs  Laurent Joly
+ * @note
+ * @Licence Distribue sous la licence GPL
+ */
+/**
+ * @Repertoire: dhcp
+ * file: reservations.php
+*/
+	// loading libs and init
+	include "entete.inc.php";
+	include "ldap.inc.php";
+	include "ihm.inc.php";
+	$login = isauth();
+	if (! $login )
+	{
+		echo "<script language=\"JavaScript\" type=\"text/javascript\">\n<!--\n";
+		$request = '/wpkg/index.php';
+		echo "top.location.href = '/auth.php?request=" . rawurlencode($request) . "';\n";
+		echo "//-->\n</script>\n";
+		exit;
+	}
+	/*
+	if (is_admin("computers_is_admin",$login)!="Y")
+		die (gettext("Vous n'avez pas les droits suffisants pour acc&#233;der &#224; cette fonction")."</BODY></HTML>");
+	*/
+	// HTMLpurifier
+	include("../se3/includes/library/HTMLPurifier.auto.php");
+	$config = HTMLPurifier_Config::createDefault();
+	$purifier = new HTMLPurifier($config);
+	if (isset($_GET["tri"]))
+		$tri=$purifier->purify($_GET["tri"])+0;
+	else
+		$tri=0;
+
+	echo "<h1>Liste des applications déployables sur votre SE3</h1>";
 	
 	$svnurl="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages-ng";
 	
@@ -63,11 +93,6 @@
 		$revision[$key] = $row['revision'];
 		$date[$key] = $row['date'];
 	}
-	
-	if (isset($_GET["tri"]))
-		$tri=$_GET["tri"]+0;
-	else
-		$tri=0;	
 	
 	switch ($tri)
 	{
@@ -189,5 +214,5 @@
 
 	}
 	echo "</table>";
-
+include ("pdp.inc.php");
 ?>
