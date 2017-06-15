@@ -2,7 +2,7 @@
 
 /**
 
- * Gestion des baux du DHCP
+ * Gestion de la configuration de wsus offline
  * @Version $Id$
 
  * @Projet LCS / SambaEdu
