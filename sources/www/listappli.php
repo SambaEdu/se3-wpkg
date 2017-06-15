@@ -37,7 +37,7 @@
 	else
 		$tri=0;
 
-	echo "<h1>Liste des applications déployables sur votre SE3</h1>";
+	echo "<h1>Liste des applications d&#233;ployables sur votre SE3</h1>";
 	
 	$svnurl="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages-ng";
 	
