@@ -44,7 +44,7 @@
 		$get_id_parc="";
 
 	
-echo "<h1>Liste des applications déployables sur votre SE3</h1>";
+echo "<h1>Liste des applications d&#233;ploy&#233;es sur un parc</h1>";
 	
 	$svnurl="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages-ng";
 	
