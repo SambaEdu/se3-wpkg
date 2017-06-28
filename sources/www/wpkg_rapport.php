@@ -94,7 +94,7 @@ foreach ($info as $info2)
 		$package->addAttribute("id",$info_g2["ID"]);
 		$package->addAttribute("revision",$info_g2["Revision"]);
 		$package->addAttribute("reboot",$info_g2["Reboot"]);
-		$package->addAttribute("satuts",$info_g2["Status"]);
+		$package->addAttribute("status",$info_g2["Status"]);
 	}
 
 }
