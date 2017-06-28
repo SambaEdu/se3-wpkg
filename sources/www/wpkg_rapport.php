@@ -60,16 +60,16 @@ if ($rapport_txt)
 			{
 				case "ID":
 					$id_app++;
-					$info[$rapport_fichier]["App"][$id_app]["ID"]=ltrim($rapport_ligne_data[1]);
+					$info[$rapport_fichier]["App"][$id_app]["ID"]=rtrim(ltrim($rapport_ligne_data[1]));
 					break;
 				case "Revision":
-                                        $info[$rapport_fichier]["App"][$id_app]["Revision"]=ltrim($rapport_ligne_data[1]);
+                                        $info[$rapport_fichier]["App"][$id_app]["Revision"]=rtrim(ltrim($rapport_ligne_data[1]));
                                         break;
 				case "Reboot":
-                                        $info[$rapport_fichier]["App"][$id_app]["Reboot"]=ltrim($rapport_ligne_data[1]);
+                                        $info[$rapport_fichier]["App"][$id_app]["Reboot"]=rtrim(ltrim($rapport_ligne_data[1]));
                                         break;
 				case "Status":
-                                        $info[$rapport_fichier]["App"][$id_app]["Status"]=ltrim($rapport_ligne_data[1]);
+                                        $info[$rapport_fichier]["App"][$id_app]["Status"]=rtrim(ltrim($rapport_ligne_data[1]));
                                         break;
 				default:
 					break;
