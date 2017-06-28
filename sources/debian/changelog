@@ -1,4 +1,4 @@
-se3-wpkg (0.85~2) unstable; urgency=low
+se3-wpkg (0.85~3) unstable; urgency=low
 
   * Correctif sur le code php pourri
   * Correctif sur la couleur des liens
@@ -6,8 +6,9 @@ se3-wpkg (0.85~2) unstable; urgency=low
   * Nouvelle page listant les applications du serveur dans un parc donne
   * Correctif sur une erreur de tri de la page admin.hmtl
   * Ajout de lien dans le menu
+  * Nouvelle page de generation de rapports.xml
 
- -- Laurent Joly <laurentjoly@orange.fr>  Thu, 15 Jun 2017 12:08:30 +0200
+ -- Laurent Joly <laurentjoly@orange.fr>  Thu, 29 Jun 2017 00:08:30 +0200
 
 se3-wpkg (0.80) unstable; urgency=low
 
