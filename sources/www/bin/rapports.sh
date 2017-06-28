@@ -43,34 +43,36 @@ if [ ! -e $RAPPORTXML ] ; then
     echo '<rapports />' >> $RAPPORTXML
     NewRapports=1
 fi
-Nnew=`ls -rt1 *.txt rapports.xml | grep -v wsusoffline  | grep -v unattended | awk '{if ($0 == "rapports.xml") {N=0}else{N=N+1}}END{print N}'`
-if [ "$Nnew" == "0" ]; then
-    echo "rapports.xml était à jour."
-else
-    echo "$Nnew rapports à prendre en compte."
-fi
-if [ ! "$Nnew" == "0" -o "$NewRapports" == "1" ] ;then
-    echo "Mise à jour de rapports.xml."
-	# Si NewRapports=0, on met a jour rapports.xml seulement avec les nouveaux fichiers txt. Sinon, c'est qu'il s'agit de l'initialisation : on met a jour a partir de tous les fichiers presents.
-	[ "$NewRapports" == "0" ] && OPTION="-cnewer rapports.xml" &&echo "Option : $OPTION"
-    # Création de rapports.xml à partir des fichiers rapport (*.txt)
-    # modif de superflaf ;)
-    valid_reports=''
 
-   for f in $(find . -maxdepth 1 -iname '*.txt' $OPTION -a -printf '%f ')
-	do
-   	 # Handle of only one report.
-   	 if tail -4 "$f" | grep -q 'Installed' 
-    	then
-        	# The report file is valid.
-        	valid_reports="$valid_reports $f"
-    	fi
-   done
 
-   gawk --re-interval -f /var/www/se3/wpkg/bin/rapports.awk $valid_reports | xsltproc --output "$RAPPORTXML" /var/www/se3/wpkg/bin/rapports.xsl -
-    
-    
-fi
+#Nnew=`ls -rt1 *.txt rapports.xml | grep -v wsusoffline  | grep -v unattended | awk '{if ($0 == "rapports.xml") {N=0}else{N=N+1}}END{print N}'`
+#if [ "$Nnew" == "0" ]; then
+#    echo "rapports.xml était à jour."
+#else
+#    echo "$Nnew rapports à prendre en compte."
+#fi
+#if [ ! "$Nnew" == "0" -o "$NewRapports" == "1" ] ;then
+#    echo "Mise à jour de rapports.xml."
+#	# Si NewRapports=0, on met a jour rapports.xml seulement avec les nouveaux fichiers txt. Sinon, c'est qu'il s'agit de l'initialisation : on met a jour a partir de tous les fichiers presents.
+#	[ "$NewRapports" == "0" ] && OPTION="-cnewer rapports.xml" &&echo "Option : $OPTION"
+#	# Création de rapports.xml à partir des fichiers rapport (*.txt)
+#	# modif de superflaf ;)
+#	valid_reports=''
+#
+#	for f in $(find . -maxdepth 1 -iname '*.txt' $OPTION -a -printf '%f ')
+#	do
+#		# Handle of only one report.
+#		if tail -4 "$f" | grep -q 'Installed' 
+#		then
+#			# The report file is valid.
+#			valid_reports="$valid_reports $f"
+#		fi
+#	done
+#	
+#	gawk --re-interval -f /var/www/se3/wpkg/bin/rapports.awk $valid_reports | xsltproc --output "$RAPPORTXML" /var/www/se3/wpkg/bin/rapports.xsl -
+#fi
+
+/usr/bin/php /var/www/se3/wpkg/wpkg_rapport.php
 
 rm -f $fich_lock
 
