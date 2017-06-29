@@ -32,7 +32,7 @@ if ($rapport_txt)
 		{
 			$rapport_ligne_data=explode(" ",$rapport_ligne);
 			$info[$rapport_fichier]["general"]=array("id"=>$rapport_ligne_data[2]
-								,"datetime"=>str_replace("/","-",$rapport_ligne_data[0])." ".$rapport_ligne_data[1]
+								,"datetime"=>substr($rapport_ligne_data[0],6,4)."-".substr($rapport_ligne_data[0],3,2)."-".substr($rapport_ligne_data[0],0,2)." ".$rapport_ligne_data[1]
 								,"date"=>$rapport_ligne_data[0]
 								,"time"=>$rapport_ligne_data[1]
 								,"mac"=>$rapport_ligne_data[3]
@@ -87,16 +87,17 @@ foreach ($info as $info2)
 	$rapport=$xml->addChild('rapport');
 	foreach ($info2["general"] as $key_g=>$info_g)
 		$rapport->addAttribute($key_g,$info_g);
-
-	foreach ($info2["App"] as $info_g2)
-	{
-		$package=$rapport->addChild("package");
-		$package->addAttribute("id",$info_g2["ID"]);
-		$package->addAttribute("revision",$info_g2["Revision"]);
-		$package->addAttribute("reboot",$info_g2["Reboot"]);
-		$package->addAttribute("status",$info_g2["Status"]);
+	if (isset($info2["App"]))
+	{	
+		foreach ($info2["App"] as $info_g2)
+		{
+			$package=$rapport->addChild("package");
+			$package->addAttribute("id",$info_g2["ID"]);
+			$package->addAttribute("revision",$info_g2["Revision"]);
+			$package->addAttribute("reboot",$info_g2["Reboot"]);
+			$package->addAttribute("status",$info_g2["Status"]);
+		}
 	}
-
 }
 
 $xml->asXML("/var/se3/unattended/install/wpkg/rapports/rapports.xml");
