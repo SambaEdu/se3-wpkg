@@ -27,9 +27,6 @@ foreach ($liste_rapport as $rapport_fichier)
 	$rapport_txt=@fopen($rapport_repertoire.$rapport_fichier, "r");
 	if ($rapport_txt)
 	{
-		$ligne=0;
-		$id_app=0;
-		$info[$rapport_fichier]=array();
 		list($element) = $xml_md5->xpath('/*/rapport[@id="'.$rapport_fichier.'"]');
 		$md5_element_old=(string) $element[0]->data["md5"];
                 $md5_element_new=md5_file($rapport_repertoire.$rapport_fichier);
@@ -42,6 +39,9 @@ foreach ($liste_rapport as $rapport_fichier)
 			$md5_rapport2=$md5_rapport->addChild("data");
 			$md5_rapport2->addAttribute("md5",md5_file($rapport_repertoire.$rapport_fichier));
 			
+			$ligne=0;
+			$id_app=0;
+			$info[$rapport_fichier]=array();
 			// Traitement du fichier txt
 			while (($rapport_ligne=fgets($rapport_txt)) !== false)
 			{
@@ -102,28 +102,30 @@ foreach ($liste_rapport as $rapport_fichier)
 $xml_md5->asXML($rapport_repertoire.$rapport_md5);
 
 $xml = simplexml_load_file("/var/se3/unattended/install/wpkg/rapports/rapports.xml");
-foreach ($info as $info2)
+if (isset($info) and @$info!="")
 {
-	// Suppression de l'ancienne entree
-	list($element2) = $xml->xpath('/*/rapport[@id="'.$info2["general"]["id"].'"]');
-	unset($element2[0]);
-	// Ajout de la nouvelle entree
-	$rapport=$xml->addChild('rapport');
-	foreach ($info2["general"] as $key_g=>$info_g)
-		$rapport->addAttribute($key_g,$info_g);
-	if (isset($info2["App"]))
-	{	
-		foreach ($info2["App"] as $info_g2)
-		{
-			$package=$rapport->addChild("package");
-			$package->addAttribute("id",$info_g2["ID"]);
-			$package->addAttribute("revision",$info_g2["Revision"]);
-			$package->addAttribute("reboot",$info_g2["Reboot"]);
-			$package->addAttribute("status",$info_g2["Status"]);
+	foreach ($info as $info2)
+	{
+		// Suppression de l'ancienne entree
+		list($element2) = $xml->xpath('/*/rapport[@id="'.$info2["general"]["id"].'"]');
+		unset($element2[0]);
+		// Ajout de la nouvelle entree
+		$rapport=$xml->addChild('rapport');
+		foreach ($info2["general"] as $key_g=>$info_g)
+			$rapport->addAttribute($key_g,$info_g);
+		if (isset($info2["App"]))
+		{	
+			foreach ($info2["App"] as $info_g2)
+			{
+				$package=$rapport->addChild("package");
+				$package->addAttribute("id",$info_g2["ID"]);
+				$package->addAttribute("revision",$info_g2["Revision"]);
+				$package->addAttribute("reboot",$info_g2["Reboot"]);
+				$package->addAttribute("status",$info_g2["Status"]);
+			}
 		}
 	}
 }
-
 $xml->asXML("/var/se3/unattended/install/wpkg/rapports/rapports.xml");
 ?>
 </body>
