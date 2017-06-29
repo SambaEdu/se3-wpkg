@@ -1,4 +1,4 @@
-se3-wpkg (0.85~4) unstable; urgency=low
+se3-wpkg (0.90~1) unstable; urgency=low
 
   * Correctif sur le code php pourri
   * Correctif sur la couleur des liens
@@ -7,8 +7,10 @@ se3-wpkg (0.85~4) unstable; urgency=low
   * Correctif sur une erreur de tri de la page admin.hmtl
   * Ajout de lien dans le menu
   * Nouvelle page de generation de rapports.xml
+  * Correction sur le blocage de la generation de wpkg.utilisateur.xml
+  * Correction plus fiable du bug de rafraichissement
 
- -- Laurent Joly <laurentjoly@orange.fr>  Thu, 29 Jun 2017 00:08:30 +0200
+ -- Laurent Joly <laurentjoly@orange.fr>  Thu, 29 Jun 2017 02:08:30 +0200
 
 se3-wpkg (0.80) unstable; urgency=low
 
