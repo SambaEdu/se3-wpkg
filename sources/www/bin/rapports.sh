@@ -6,6 +6,7 @@
 
 RAPPORTDIR="/var/se3/unattended/install/wpkg/rapports"
 RAPPORTXML="rapports.xml"
+RAPPORTMD5XML="rapports_md5.xml"
 
 cd $RAPPORTDIR
 find $RAPPORTDIR/. -mtime +365 -delete 
@@ -39,9 +40,16 @@ fi
 if [ ! -e $RAPPORTXML ] ; then
     echo "Création d'un fichier vide rapports.xml."
     echo '<?xml version="1.0" encoding="UTF-8"?>' > $RAPPORTXML
-    echo '<!-- Généré par SambaEdu. Ne pas modifier -->' >> $RAPPORTXML
+    echo '<!-- Genere par SambaEdu. Ne pas modifier -->' >> $RAPPORTXML
     echo '<rapports />' >> $RAPPORTXML
     NewRapports=1
+fi
+
+if [ ! -e $RAPPORTMD5XML ] ; then
+    echo "Création d'un fichier vide rapports_md5.xml."
+    echo '<?xml version="1.0" encoding="UTF-8"?>' > $RAPPORTMD5XML
+    echo '<!-- Genere par SambaEdu. Ne pas modifier -->' >> $RAPPORTMD5XML
+    echo '<rapports />' >> $RAPPORTMD5XML
 fi
 
 
