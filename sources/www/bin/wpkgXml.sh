@@ -18,22 +18,22 @@ else
     cd "$wpkgroot"
     
     # Mise à jour de rapports/rapports.xml
-    if ( ls -rt1 rapports/*.txt rapports/rapports.xml | tail -n 1 | grep -v 'rapports/rapports.xml' >/dev/null ); then
+ #   if ( ls -rt1 rapports/*.txt rapports/rapports.xml | tail -n 1 | grep -v 'rapports/rapports.xml' >/dev/null ); then
         source $wpkgwww/bin/rapports.sh
-    fi
+ #   fi
 	cd "$wpkgroot"
     NewWPkg=0
     if [ ! -e "tmp/wpkg.$1.xml" ] ; then
         echo "wpkg.$1.xml n'existait pas."
         NewWPkg=1
     else
-        if [ packages.xml -nt tmp/wpkg.$1.xml ] || 
-            [ profiles.xml -nt tmp/wpkg.$1.xml ] ||
-            [ hosts.xml -nt tmp/wpkg.$1.xml ] ||
-            [ droits.xml -nt tmp/wpkg.$1.xml ] ||
-            [ rapports/rapports.xml -nt tmp/wpkg.$1.xml ] ; then
+#        if [ packages.xml -nt tmp/wpkg.$1.xml ] || 
+#            [ profiles.xml -nt tmp/wpkg.$1.xml ] ||
+#            [ hosts.xml -nt tmp/wpkg.$1.xml ] ||
+#            [ droits.xml -nt tmp/wpkg.$1.xml ] ||
+#            [ rapports/rapports.xml -nt tmp/wpkg.$1.xml ] ; then
             NewWPkg=1
-        fi
+#        fi
     fi    
     if [ "$NewWPkg" == "1" ] ;then
         echo "Mise à jour de wpkg.$1.xml."
