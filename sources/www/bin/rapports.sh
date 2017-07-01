@@ -56,5 +56,5 @@ fi
 
 rm -f $fich_lock
 
-cd -
+cd - > /dev/null 
 exit 0
