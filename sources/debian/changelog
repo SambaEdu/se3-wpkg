@@ -1,4 +1,4 @@
-se3-wpkg (0.90~5) unstable; urgency=low
+se3-wpkg (0.90) unstable; urgency=low
 
   * Correctif sur le code php pourri
   * Correctif sur la couleur des liens
