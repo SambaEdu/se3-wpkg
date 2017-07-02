@@ -1,16 +1,18 @@
-se3-wpkg (0.90~4) unstable; urgency=low
+se3-wpkg (0.90~5) unstable; urgency=low
 
   * Correctif sur le code php pourri
   * Correctif sur la couleur des liens
   * Nouvelle page listant les applications du serveur
   * Nouvelle page listant les applications du serveur dans un parc donne
   * Correctif sur une erreur de tri de la page admin.hmtl
+  * Correctif sur la mauvaise détection de IE 11+
   * Ajout d'un lien dans le menu
   * Nouvelle page de generation ou mise a jour de rapports.xml
   * Correction sur le blocage de la generation de wpkg.utilisateur.xml
   * Correction plus fiable du bug de rafraichissement
+  * Ajout des icones indiquant l'OS des postes
 
- -- Laurent Joly <laurentjoly@orange.fr>  Sat, 01 Jul 2017 22:27:21 +0200
+ -- Laurent Joly <laurentjoly@orange.fr>  Sun, 02 Jul 2017 03:28:21 +0200
 
 se3-wpkg (0.80) unstable; urgency=low
 
