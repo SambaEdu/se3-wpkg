@@ -106,6 +106,7 @@
 							<thead id="headTableau">
 								<tr>
 									<th style="cursor:ne-resize;" onclick="tri(1,event);">Poste</th>
+									<th style="cursor:ne-resize;">OS</th>
 									<th style="cursor:ne-resize;" onclick="tri(2,event);" title="Nbre d'appli. installées / Nbre d'appli. souhaitées" >Nbre d'appli.</th>
 									<th style="cursor:ne-resize;" onclick="tri(3,event);" title="Correspondance entre l'état souhaité et actuel du poste">Synchro.</th>
 									<th style="cursor:ne-resize;" onclick="tri(4,event);">Date du dernier rapport</th>
@@ -193,6 +194,23 @@
 <xsl:text>&lt;/td&gt;</xsl:text>
 <xsl:choose>
 	<xsl:when test="$CePoste">
+		<xsl:variable name="typewindows" select="$CePoste/@typewin"/>
+		<xsl:text>&lt;td bgcolor="white"&gt;</xsl:text>
+		<xsl:choose>
+			<xsl:when test="$typewindows='Windows XP'">
+				<xsl:text>&lt;img src="../elements/images/winxp.png" width="20" height="20"&gt;</xsl:text>
+			</xsl:when>
+			<xsl:when test="$typewindows='Windows 7'">
+				<xsl:text>&lt;img src="../elements/images/win7.png" width="20" height="20"&gt;</xsl:text>
+			</xsl:when>
+			<xsl:when test="$typewindows='Windows 10'">
+				<xsl:text>&lt;img src="../elements/images/win10.png" width="20" height="20"&gt;</xsl:text>
+			</xsl:when>
+				<xsl:otherwise>
+				</xsl:otherwise>
+		</xsl:choose>
+		<xsl:text>&lt;/td&gt;</xsl:text>
+	
 		<xsl:choose>
 			<xsl:when test="$CePoste/erreur">
 				<xsl:text>&lt;td style="font-size:10px;background-color:#FFA500;" &gt;&lt;div style="width:120;color:red;"&gt;' + "</xsl:text>
@@ -201,32 +219,32 @@
 			</xsl:when>
 			<xsl:otherwise>
 				<xsl:text>&lt;td align="center" style="font-weight: bold;"&gt;</xsl:text>
-<xsl:value-of select="$nPackagesInstalled" /><xsl:text> / </xsl:text><xsl:value-of select="$nPackagesToHost" />
+				<xsl:value-of select="$nPackagesInstalled" /><xsl:text> / </xsl:text><xsl:value-of select="$nPackagesToHost" />
 				<xsl:text>&lt;/td&gt;</xsl:text>
 			</xsl:otherwise>
 		</xsl:choose>
 		<xsl:text>&lt;td&gt;</xsl:text>
 		<xsl:choose>
 			<xsl:when test="$CePoste/@logfile">
-<xsl:value-of select="$Synchro" /><xsl:text>&lt;/td&gt;&lt;td&gt;</xsl:text>
+				<xsl:value-of select="$Synchro" /><xsl:text>&lt;/td&gt;&lt;td&gt;</xsl:text>
 				<!-- Fichier log disponible -->
 				<xsl:text>&lt;span class="</xsl:text><xsl:value-of select="$StyleLink" /><xsl:text>" title="</xsl:text>
-<xsl:value-of select="$CePoste/@logfile" />
+				<xsl:value-of select="$CePoste/@logfile" />
 				<xsl:text>" onclick="javascript:window.open(&amp;quot;index.php?logfile=</xsl:text>
-<xsl:value-of select="$CePoste/@logfile" />
+				<xsl:value-of select="$CePoste/@logfile" />
 				<xsl:text>&amp;quot;, &amp;quot;_blank&amp;quot;);"&gt;</xsl:text>
-<xsl:value-of select="$CePoste/@date" /><xsl:text> à </xsl:text><xsl:value-of select="$CePoste/@time" />
+				<xsl:value-of select="$CePoste/@date" /><xsl:text> à </xsl:text><xsl:value-of select="$CePoste/@time" />
 				<xsl:text>&lt;/span&gt;</xsl:text>
 			</xsl:when>
 			<xsl:otherwise>
 			<!-- Pas de fichier log disponible -->
-<xsl:value-of select="$CePoste/@date" /><xsl:text> à </xsl:text><xsl:value-of select="$CePoste/@time" />
+			<xsl:value-of select="$CePoste/@date" /><xsl:text> à </xsl:text><xsl:value-of select="$CePoste/@time" />
 			</xsl:otherwise>
 		</xsl:choose>
 		<xsl:text>&lt;/td&gt;&lt;td&gt;</xsl:text>
-<xsl:value-of select="$CePoste/@mac" />
+		<xsl:value-of select="$CePoste/@mac" />
 		<xsl:text>&lt;/td&gt;&lt;td&gt;</xsl:text>
-<xsl:value-of select="$CePoste/@ip" />
+		<xsl:value-of select="$CePoste/@ip" />
 		<xsl:text>&lt;/td&gt;</xsl:text>
 				
 	</xsl:when>

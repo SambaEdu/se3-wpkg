@@ -125,6 +125,7 @@ DemandPackages = </xsl:text>
 					<table class="postes">
 						<tr>
 							<th>Poste</th>
+							<th>OS</th>
 							<th title="Nbre d'appli. installées / Nbre d'appli. souhaitées" >Nbre d'appli.</th>
 							<th title="Cliquer sur la date du rapport pour voir le fichier de log d'exécution de ce poste">Date du dernier rapport</th>
 							<th>Adresse MAC</th>
@@ -137,6 +138,24 @@ DemandPackages = </xsl:text>
 							<xsl:choose>
 								<xsl:when test="$RapportDuPoste">
 									<!-- Si un rapport existe pour ce poste -->
+									
+									<xsl:variable name="typewindows" select="$RapportDuPoste/@typewin"/>
+									<td>
+									<xsl:choose>
+										<xsl:when test="$typewindows='Windows XP'">
+											<img src="../elements/images/winxp.png" width="20" height="20"/>
+										</xsl:when>
+										<xsl:when test="$typewindows='Windows 7'">
+											<img src="../elements/images/win7.png" width="20" height="20"/>
+										</xsl:when>
+										<xsl:when test="$typewindows='Windows 10'">
+											<img src="../elements/images/win10.png" width="20" height="20"/>
+										</xsl:when>
+											<xsl:otherwise>
+											</xsl:otherwise>
+									</xsl:choose>
+									</td>
+									
 									<xsl:choose>
 										<xsl:when test="$RapportDuPoste/erreur">
 											<td style="font-size:10px;background-color:#FFA500;" ><xsl:value-of select="$RapportDuPoste/erreur/@str" /></td>

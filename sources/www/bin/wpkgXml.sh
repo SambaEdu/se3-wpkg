@@ -19,7 +19,7 @@ else
     
     # Mise à jour de rapports/rapports.xml
  #   if ( ls -rt1 rapports/*.txt rapports/rapports.xml | tail -n 1 | grep -v 'rapports/rapports.xml' >/dev/null ); then
-        bash $wpkgwww/bin/rapports.sh
+        /bin/bash $wpkgwww/bin/rapports.sh
  #   fi
  
 	cd "$wpkgroot"

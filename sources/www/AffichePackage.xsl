@@ -280,6 +280,7 @@
 							<thead id="headTableau">
 								<tr>
 									<th style="cursor:ne-resize;" onclick="tri(1,event);">Poste</th>
+									<th style="cursor:ne-resize;">OS</th>
 									<th style="cursor:ne-resize;" onclick="tri(2,event);" title="&apos;Installée&apos; ou &apos;Non installée&apos;.   En rouge si l'état ne correspond pas à la demande">
 										<xsl:choose>
 											<xsl:when test="$idPackage = ''">Etat de ?</xsl:when>
@@ -400,6 +401,22 @@
 	<xsl:choose>
 		<xsl:when test="$CePoste">
 			<!-- Si un rapport existe pour ce poste -->
+			<xsl:variable name="typewindows" select="$CePoste/@typewin"/>
+			<xsl:text>&lt;td bgcolor="white"&gt;</xsl:text>
+			<xsl:choose>
+				<xsl:when test="$typewindows='Windows XP'">
+					<xsl:text>&lt;img src="../elements/images/winxp.png" width="20" height="20"&gt;</xsl:text>
+				</xsl:when>
+				<xsl:when test="$typewindows='Windows 7'">
+					<xsl:text>&lt;img src="../elements/images/win7.png" width="20" height="20"&gt;</xsl:text>
+				</xsl:when>
+				<xsl:when test="$typewindows='Windows 10'">
+					<xsl:text>&lt;img src="../elements/images/win10.png" width="20" height="20"&gt;</xsl:text>
+				</xsl:when>
+					<xsl:otherwise>
+					</xsl:otherwise>
+			</xsl:choose>
+			<xsl:text>&lt;/td&gt;</xsl:text>
 			
 			<xsl:variable name="reboot" select="$CePackageDuPoste/@reboot" />
 			<xsl:text>&lt;td align="center" style="font-weight: bold;"&gt;</xsl:text>
