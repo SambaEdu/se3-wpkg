@@ -88,7 +88,7 @@
 			if (window.XSLTProcessor && window.XMLHttpRequest) {
 				// Navigateur type Firefox
 				window.nav='firefox'
-			} else if (window.ActiveXObject) {
+			} else if (window.ActiveXObject || "ActiveXObject" in window) {
 				window.nav = "ie";				
 			} else {
 				alert("Pas de processeur xml pour ce navigateur");
