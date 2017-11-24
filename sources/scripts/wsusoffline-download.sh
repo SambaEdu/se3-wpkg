@@ -127,6 +127,18 @@ TESTFREESPACE()
 	fi
 }
 
+function PRESENCEXML()
+{
+WSUSACTIF="$(grep wsusoffline /var/se3/unattended/install/wpkg/profiles.xml)"
+WSUSPRESENNT="$(grep wsusoffline /var/se3/unattended/install/wpkg/packages.xml)"
+
+if [ -z "$WSUSACTIF" ] && [ -n "$WSUSPRESENNT" ]; then
+	echo "Wsus présent masi pas actif, sortie du script"
+# 	exit 0
+fi
+}
+
+
 TESTFREESPACE
 
 ########### Suppression de l'ancien fichier temoin "version.txt" ###########
