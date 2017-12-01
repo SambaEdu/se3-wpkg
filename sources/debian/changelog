@@ -1,3 +1,9 @@
+se3-wpkg (0.91~) unstable; urgency=low
+
+  * Modification du fonctionnement de wsusoffline-download.sh si l'application n'est pas active dans l'interface
+  
+ -- Franck Molle <franck.molle@sambaedu.org>  Fri, 01 Dec 2017 22:50:20 +0200
+
 se3-wpkg (0.90) unstable; urgency=low
 
   * Correctif sur le code php pourri

@@ -133,13 +133,15 @@ WSUSACTIF="$(grep wsusoffline /var/se3/unattended/install/wpkg/profiles.xml)"
 WSUSPRESENNT="$(grep wsusoffline /var/se3/unattended/install/wpkg/packages.xml)"
 
 if [ -z "$WSUSACTIF" ] && [ -n "$WSUSPRESENNT" ]; then
-	echo "Wsus présent masi pas actif, sortie du script"
-# 	exit 0
+	echo "Wsus présent mais pas actif, sortie du script"
+ 	exit 0
 fi
 }
 
 
 TESTFREESPACE
+
+PRESENCEXML
 
 ########### Suppression de l'ancien fichier temoin "version.txt" ###########
 [ -e /var/se3/unattended/install/wsusoffline/version.txt ] && rm -f /var/se3/unattended/install/wsusoffline/version.txt
