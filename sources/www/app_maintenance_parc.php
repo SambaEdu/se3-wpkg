@@ -77,12 +77,12 @@
 		$post_action="";
 	
 	$result_xml="";
-	if ($post_action=="Annuler les modificaitons")
+	if ($post_action=="Annuler les modifications")
 	{
 		header("Location: app_maintenance.php?tri2=".$tri2."&Appli=".$get_Appli."&parc=".$get_parc."&tous=".$get_tous."&ok=".$get_ok."&warning=".$get_warning."&error=".$get_error);
 		exit;
 	}
-	elseif ($post_action=="Valider les modificaitons")
+	elseif ($post_action=="Valider les modifications")
 	{
 		if (isset($_POST["parc"]))
 			$post_parc=$_POST["parc"];
@@ -95,6 +95,7 @@
 		if ($tmp_result_xml["in"]>1)
 			$result_xml.="s";
 		$result_xml.=".</center><br>";
+		include("wpkg_lib_load_xml.php");
 	}
 	
 	echo "<script>\n";
@@ -143,13 +144,13 @@
 	echo "<table cellspadding='2' cellspacing='1' border='0' align='center' bgcolor='black'>\n";
 	echo "<tr bgcolor='black'>";
 		echo "<td align='center' colspan='2' width='400'>";
-		echo "<input type='submit' name='action' value='Valider les modificaitons'>";
+		echo "<input type='submit' name='action' value='Valider les modifications'>";
 		echo "</td>";
 		echo "<th align='center' width='200' style='color:white'>";
 		echo "<input type='checkbox' onchange='checkAll()' name='chk[]' /> Tous/Aucun";
 		echo "</th>";
 		echo "<td align='center' colspan='2' width='400'>";
-		echo "<input type='submit' name='action' value='Annuler les modificaitons'>";
+		echo "<input type='submit' name='action' value='Annuler les modifications'>";
 		echo "</td>";
 	echo "</tr>\n";
 
@@ -180,6 +181,10 @@
 			$i=0;
 			echo "</tr>\n";
 			echo "<tr bgcolor='white'>";
+		}
+		if (!is_array($liste_parc_app[$get_Appli]))
+		{
+			$liste_parc_app[$get_Appli]=array();
 		}
 		echo "<td align='left' width='200'>";
 		echo "<table width='100%'><tr>";

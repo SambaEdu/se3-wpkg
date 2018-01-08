@@ -14,35 +14,38 @@
 
 // définition des style couleurs par defaut
 
-$warning_bg = "#FF0000";
-$warning_txt = "#FFFFFF";
-$warning_lnk = "#FFFF00";
-$error_bg = "#FFFF00";
-$error_txt = "#000000";
-$error_lnk = "#415594";
-$ok_bg = "#00FF00";
-$ok_txt = "#000000";
-$ok_lnk = "#415594";
-$unknown_bg = "#FFFFFF";
-$unknown_txt = "#000000";
-$unknown_lnk = "#415594";
-$regular_lnk = "#0080ff";
-$wintype_txt = "#FFF8DC";
+	$warning_bg = "#FF0000";
+	$warning_txt = "#FFFFFF";
+	$warning_lnk = "#FFFF00";
+	$error_bg = "#FFFF00";
+	$error_txt = "#000000";
+	$error_lnk = "#415594";
+	$ok_bg = "#00FF00";
+	$ok_txt = "#000000";
+	$ok_lnk = "#415594";
+	$unknown_bg = "#FFFFFF";
+	$unknown_txt = "#000000";
+	$unknown_lnk = "#415594";
+	$regular_lnk = "#0080ff";
+	$wintype_txt = "#FFF8DC";
 
 
-$dep_entite_bg = "#0000FF";
-$dep_entite_txt = "#FFFFFF";
-$dep_entite_lnk = "#FF0000";
-$dep_parc_bg = "#0080FF";
-$dep_parc_txt = "#000000";
-$dep_parc_lnk = "#FF0000";
-$dep_depend_bg = "#00FFFF";
-$dep_depend_txt = "#000000";
-$dep_depend_lnk = "#FF0000";
-$dep_no_bg = "#FFFFFF";
-$dep_no_txt = "#000000";
-$dep_no_lnk = "#FF0000";
+	$dep_entite_bg = "#0000FF";
+	$dep_entite_txt = "#FFFFFF";
+	$dep_entite_lnk = "#FF0000";
+	$dep_parc_bg = "#0080FF";
+	$dep_parc_txt = "#000000";
+	$dep_parc_lnk = "#FF0000";
+	$dep_depend_bg = "#00FFFF";
+	$dep_depend_txt = "#000000";
+	$dep_depend_lnk = "#FF0000";
+	$dep_no_bg = "#FFFFFF";
+	$dep_no_txt = "#000000";
+	$dep_no_lnk = "#FF0000";
 
+// localisation wpkg
+
+	$url_wpkg = "/var/se3/unattended/install";
 
 // localisation des xml de wpkg
 
@@ -53,12 +56,13 @@ $dep_no_lnk = "#FF0000";
 	$url_hosts = "/var/se3/unattended/install/wpkg/hosts.xml";
 	$url_forum = "/var/www/se3/wpkg/forum.xml";
 
-	$xml_packages = simplexml_load_file($url_packages);
-	$xml_profiles = simplexml_load_file($url_profiles);
-	$xml_rapports = simplexml_load_file($url_rapports);
-	$xml_time = simplexml_load_file($url_time);
-	$xml_hosts = simplexml_load_file($url_hosts);
-	$xml_forum = simplexml_load_file($url_forum);
+// Chargement des xml avec simpleXML
+
+	include("wpkg_lib_load_xml.php");
+
+// Liste des applications protegees
+
+	$list_protected_app=array("wsusoffline", "ocs-client");
 
 // listes des fonctions
 /*
@@ -71,9 +75,11 @@ $dep_no_lnk = "#FF0000";
 	get_list_wpkg_poste_parc($xml_profiles) : liste des postes par parc
 	get_list_wpkg_poste_app($xml_profiles, $xml_hosts) : liste des postes demandes pour une appli
 	get_list_wpkg_depend_app($xml_packages) : liste des dependances d une appli
-	get_list_wpkg_poste_app_all($xml_profiles, $xml_hosts,$xml_packages) : liste complete des postes pour une appli
+	get_list_wpkg_required_by_app($xml_packages) : liste des applis dependant d une appli
+	get_list_wpkg_poste_app_all($xml_profiles,$xml_hosts,$xml_packages) : liste complete des postes pour une appli
 	get_list_wpkg_rapports_statut_poste_app($xml_rapports) : status des app installees sur un poste
 	get_list_wpkg_rapports_statut_app($xml_rapports) : status d une app installee
+	get_list_wpkg_file_app($xml_packages, $appli) : liste des fichiers d'une application donnee
 	
 	---
 	
@@ -213,6 +219,19 @@ $dep_no_lnk = "#FF0000";
 		return $list_profiles;
 	}
 	
+	function get_list_wpkg_required_by_app($xml_packages)
+	{
+		$list_profiles=array();
+		foreach ($xml_packages->package as $package)
+		{
+			foreach ($package->depends as $package2)
+			{
+				$list_profiles[(string) $package2["package-id"]][] = (string) $package["id"];
+			}
+		}
+		return $list_profiles;
+	}
+	
 	function get_list_wpkg_poste_app_all($xml_profiles,$xml_hosts,$xml_packages)
 	{
 		$list_parc=get_list_wpkg_parcs($xml_profiles);
@@ -289,6 +308,23 @@ $dep_no_lnk = "#FF0000";
 			}
 		}
 		return $liste_statuts;
+	}
+	
+	
+	function get_list_wpkg_file_app($xml_packages, $appli)
+	{
+		$liste_fichier=array();
+		foreach ($xml_packages->package as $package)
+		{
+			if ((string) $package["id"]==$appli)
+			{
+				foreach ($package->download as $download)
+				{
+					$liste_fichier[]=(string) $download["saveto"];
+				}
+			}
+		}
+		return $liste_fichier;
 	}
 	
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
