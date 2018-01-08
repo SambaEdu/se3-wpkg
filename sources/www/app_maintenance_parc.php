@@ -136,6 +136,11 @@
 		echo "D&#233;ploiement non demand&#233; pour ce parc";
 		echo "</td>\n";
 	echo "</tr>\n";
+	echo "<tr bgcolor='white'>\n";
+		echo "<th colspan='3'>";
+		echo "<a href='app_maintenance.php?parc=".$get_parc."&warning=".$get_warning."&error=".$get_error."&ok=".$get_ok."&tous=".$get_tous."&Appli=".$get_Appli."&tri2=".$tri2."' style='color:".$regular_lnk."'>Retour</a>";
+		echo "</th>\n";
+	echo "</tr>\n";
 	echo "</table><br>\n";
 
 	echo $result_xml;
