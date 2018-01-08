@@ -1,3 +1,12 @@
+se3-wpkg (2.00~a0) unstable; urgency=low
+
+  * creation d'une interface wpkg pour les applications
+  * ajout d'un cron pour la generation du rapports.xml toutes les 5 minutes
+  * ajout d'un cron pour la generation de forum.xml toutes les nuits
+  * ajout d'une fonction de nettoyage de timeStamps.xml
+  
+ -- Laurent Joly <laurentjoly@orange.fr>  Mon, 08 Jan 2018 01:50:20 +0200
+
 se3-wpkg (0.91~) unstable; urgency=low
 
   * Modification du fonctionnement de wsusoffline-download.sh si l'application n'est pas active dans l'interface
