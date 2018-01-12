@@ -389,22 +389,22 @@
 						$liste_status["NotOk"][]=$host_id;
 					}
 				}
-				elseif ($liste_appli_status[$host_id]["status"]=="Not Installed")
-				{
-					$liste_status["Ok"][]=$host_id;
-				}
-				else
+				elseif ($liste_appli_status[$host_id]["status"]=="Installed")
 				{
 					$liste_status["NotOk"][]=$host_id;
 				}
+				else
+				{
+					$liste_status["Ok"][]=$host_id;
+				}
 			}
-			elseif ($liste_appli_status[$host_id]["status"]=="Not Installed")
+			elseif ($liste_appli_status[$host_id]["status"]=="Installed")
 			{
-				$liste_status["Ok"][]=$host_id;
+				$liste_status["NotOk"][]=$host_id;
 			}
 			else
 			{
-				$liste_status["NotOk"][]=$host_id;
+				$liste_status["Ok"][]=$host_id;
 			}
 		}
 		return $liste_status;
