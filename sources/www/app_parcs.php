@@ -149,6 +149,7 @@
 				$list_poste[$i]["bg"]=$unknown_bg;
 				$list_poste[$i]["txt"]=$unknown_txt;
 				$list_poste[$i]["lnk"]=$unknown_lnk;
+				$list_poste[$i]["wpkg"]=min($get_tous,$get_ok);
 			}
 			$list_poste[$i]["status"]="Inconnu";
 			$list_poste[$i]["revision"]="-";
