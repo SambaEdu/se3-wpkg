@@ -42,7 +42,7 @@
 	echo "<h1>Liste des applications du serveur</h1>";
 		
 	$liste_appli=get_list_wpkg_app($xml_packages, $xml_time);
-	$liste_appli_postes=get_list_wpkg_poste_app_all($xml_profiles, $xml_hosts, $xml_packages);
+	$liste_appli_postes=get_list_wpkg_poste_app_all($xml_profiles, $xml_packages);
 	$liste_appli_status=get_list_wpkg_rapports_statut_app($xml_rapports);
 	$liste_hosts=get_list_wpkg_hosts($xml_hosts);
 	$svn_info=get_list_wpkg_svn_info($xml_forum);

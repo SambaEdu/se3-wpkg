@@ -162,7 +162,7 @@
 		echo "</td>";
 	echo "</tr>\n";
 	
-	$list_app_hosts_all=get_list_wpkg_poste_app_all($xml_profiles, $xml_hosts, $xml_packages);
+	$list_app_hosts_all=get_list_wpkg_poste_app_all($xml_profiles, $xml_packages);
 	$list_app_hosts=get_list_wpkg_poste_app($xml_profiles, $xml_hosts);
 	
 	$liste_parc_app=get_list_wpkg_parc_app($xml_profiles);

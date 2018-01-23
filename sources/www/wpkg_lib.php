@@ -76,10 +76,11 @@
 	get_list_wpkg_poste_app($xml_profiles, $xml_hosts) : liste des postes demandes pour une appli
 	get_list_wpkg_depend_app($xml_packages) : liste des dependances d une appli
 	get_list_wpkg_required_by_app($xml_packages) : liste des applis dependant d une appli
-	get_list_wpkg_poste_app_all($xml_profiles,$xml_hosts,$xml_packages) : liste complete des postes pour une appli
+	get_list_wpkg_poste_app_all($xml_profiles,$xml_packages) : liste complete des postes pour une appli
 	get_list_wpkg_rapports_statut_poste_app($xml_rapports) : status des app installees sur un poste
 	get_list_wpkg_rapports_statut_app($xml_rapports) : status d une app installee
 	get_list_wpkg_file_app($xml_packages, $appli) : liste des fichiers d'une application donnee
+	get_list_wpkg_postes_status($liste_hosts,$xml_packages,$xml_rapports,$xml_profiles,$xml_hosts) : Liste de l'état des postes
 	
 	---
 	
@@ -232,11 +233,10 @@
 		return $list_profiles;
 	}
 	
-	function get_list_wpkg_poste_app_all($xml_profiles,$xml_hosts,$xml_packages)
+	function get_list_wpkg_poste_app_all($xml_profiles,$xml_packages)
 	{
 		$list_parc=get_list_wpkg_parcs($xml_profiles);
 		$poste_parc=get_list_wpkg_poste_parc($xml_profiles);
-		$list_host=get_list_wpkg_hosts($xml_hosts);
 		$list_depend=get_list_wpkg_depend_app($xml_packages);
 		$list_profiles=array();
 		foreach ($xml_profiles->profile as $profile1)
@@ -321,10 +321,106 @@
 				foreach ($package->download as $download)
 				{
 					$liste_fichier[]=(string) $download["saveto"];
-				}
+				}1
 			}
 		}
 		return $liste_fichier;
+	}
+
+	function get_list_wpkg_postes_status($id_parc,$xml_packages,$xml_rapports,$xml_profiles)
+	{
+		
+		$list_parc=get_list_wpkg_parcs($xml_profiles); // liste des parcs
+		$poste_parc=get_list_wpkg_poste_parc($xml_profiles); // liste des postes par parc
+		$list_depend=get_list_wpkg_depend_app($xml_packages); // Liste des dépendances
+		$list_profiles=array(); // liste des statuts des apps pour chaque poste
+		$list_app_info=array(); // liste des infos pour chaque app
+		$liste_statuts=array(); // liste des statuts des postes du parc
+
+		if (!array_key_exists($id_parc,$poste_parc))
+			return "-1";
+		if (count($poste_parc[$id_parc])==0)
+			return "0";
+		
+		foreach ($xml_profiles->profile as $profile1)
+		{
+			foreach ($profile1->package as $profile2)
+			{
+				if (array_key_exists((string) $profile1["id"],$poste_parc))
+				{
+					foreach ($poste_parc[(string) $profile1["id"]] as $poste)
+					{
+						$list_profiles[$poste]["app"][(string) $profile2["package-id"]]["deployed"]=1;
+						if (isset($list_depend[(string) $profile2["package-id"]]))
+						{
+							foreach ($list_depend[(string) $profile2["package-id"]] as $depend)
+							{
+								$list_profiles[$poste]["app"][$depend]["deployed"]=1;
+							}
+						}
+					}
+				}
+				elseif (!in_array((string) $profile1["id"], $list_parc))
+				{
+					$list_profiles[(string) $profile1["id"]]["app"][(string) $profile2["package-id"]]["deployed"]=1;
+					if (isset($list_depend[(string) $profile2["package-id"]]))
+					{
+						foreach ($list_depend[(string) $profile2["package-id"]] as $depend)
+						{
+							$list_profiles[(string) $profile1["id"]]["app"][$depend]["deployed"]=1;
+						}
+					}
+				}
+			}
+		}
+		foreach ($xml_packages->package as $app)
+		{
+			$list_app_info[(string) $app["id"]]["id"] = (string) $app["id"];
+			$list_app_info[(string) $app["id"]]["revision"] = (string) $app["revision"];
+		}
+		
+		foreach ($xml_rapports->rapport as $rapport)
+		{
+			if (in_array((string) $rapport["id"],$poste_parc['$id_parc']))
+			{
+				$list_profiles[(string) $rapport["id"]]["info"] = array("datetime"=>(string) $rapport["datetime"],
+																		"date"=>(string) $rapport["date"],
+																		"time"=>(string) $rapport["time"],
+																		"mac"=>(string) $rapport["mac"],
+																		"ip"=>(string) $rapport["ip"],
+																		"typewin"=>(string) $rapport["typewin"],
+																		"logfile"=>(string) $rapport["logfile"]);
+				foreach ($rapport->package as $rapport2)
+				{
+					$list_profiles[(string) $rapport["id"]]["app"][(string) $rapport2["id"]]["installed"]=$rapport2["status"];
+					$list_profiles[(string) $rapport["id"]]["app"][(string) $rapport2["id"]]["revision"]=$rapport2["revision"];
+				}
+			}
+		}
+		
+		foreach ($list_profiles as $poste_nom=>$info_poste)
+		{
+			$liste_statuts[$poste_nom]["info"]=$info_poste["info"];
+			$liste_statuts[$poste_nom]["status"] = array("ok"=>0
+														,"maj"=>0
+														,"notok+"=>0
+														,"notok-"=>0);
+			foreach ($info_poste["app"] as $app_nom=>$info_app_poste)
+			{
+				if ($info_app_poste["deployed"]==1 and $info_app_poste["installed"]=="Installed")
+				{
+					if ($info_app_poste["revision"]==$list_app_info[$app_nom]["revision"])
+						$liste_statuts[$poste_nom]["status"]["ok"]++;
+					else
+						$liste_statuts[$poste_nom]["status"]["maj"]++;
+				}
+				elseif ($info_app_poste["deployed"]==0 and $info_app_poste["installed"]=="Installed")
+					$liste_statuts[$poste_nom]["status"]["notok+"]++;
+				elseif ($info_app_poste["deployed"]==1 and $info_app_poste["installed"]=="Not Installed")
+					$liste_statuts[$poste_nom]["status"]["notok-"]++;
+			}
+		}
+		return $liste_statuts;
 	}
 	
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -359,7 +455,7 @@
 		fclose($XP);
 		return $XP_actif;
 	}
-	
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	function get_list_wpkg_app_status($liste_hosts,$liste_appli_postes,$liste_appli_status,$revision)
