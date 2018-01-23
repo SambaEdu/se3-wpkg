@@ -321,7 +321,7 @@
 				foreach ($package->download as $download)
 				{
 					$liste_fichier[]=(string) $download["saveto"];
-				}1
+				}
 			}
 		}
 		return $liste_fichier;
@@ -381,7 +381,7 @@
 		
 		foreach ($xml_rapports->rapport as $rapport)
 		{
-			if (in_array((string) $rapport["id"],$poste_parc['$id_parc']))
+			if (in_array((string) $rapport["id"],$poste_parc[$id_parc]))
 			{
 				$list_profiles[(string) $rapport["id"]]["info"] = array("datetime"=>(string) $rapport["datetime"],
 																		"date"=>(string) $rapport["date"],
