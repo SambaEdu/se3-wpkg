@@ -1,11 +1,12 @@
-se3-wpkg (2.00~a1) unstable; urgency=low
+se3-wpkg (2.00~a3) unstable; urgency=low
 
   * creation d'une interface wpkg pour les applications
   * ajout d'un cron pour la generation du rapports.xml toutes les 5 minutes
   * ajout d'un cron pour la generation de forum.xml toutes les nuits
   * ajout d'une fonction de nettoyage de timeStamps.xml
+  * creation d'une interface wpkg pour les parcs
   
- -- Laurent Joly <laurentjoly@orange.fr>  Mon, 08 Jan 2018 01:50:20 +0200
+ -- Laurent Joly <laurentjoly@orange.fr>  Mon, 23 Jan 2018 19:30:20 +0200
 
 se3-wpkg (0.91~) unstable; urgency=low
 
