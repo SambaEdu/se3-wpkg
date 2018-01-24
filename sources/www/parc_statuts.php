@@ -82,7 +82,7 @@
 	$page_id=1;
 	include ("parc_top.php");
 	
-	$list_poste=liste_poste_infos["postes"];
+	$list_poste=$liste_poste_infos["postes"];
 	$tri_poste=array();
 	$tri_status=array();
 	$tri_date=array();
@@ -96,7 +96,7 @@
 		$tri_status[]=$row["info"]["status"];
 		$tri_date[]=$row["info"]["datetime"];
 		$tri_ip[]=ip2long($row["info"]["ip"]);
-		$tri_mac[]=$tri_mac=$row["info"]["mac"];
+		$tri_mac[]=$row["info"]["mac"];
 		$tri_nb_app[]=$row["info"]["nb_app"];
 	}
 	
@@ -266,22 +266,42 @@
 	echo "' style='color:".$regular_lnk."'>Adresse mac</a></th>";
 	echo "</tr>\n";
 	
-	foreach ($list_poste as $lp)
+	foreach ($list_poste as $nom_poste=>$lp)
 	{
-		if ($lp["wpkg"]==1)
+		switch ($lp["info"]["status"])
 		{
-			echo "<tr bgcolor='".$lp["bg"]."' style='color: ".$lp["txt"]."'>";
-			echo "<td align='center'><a href='poste_info.php' style='color: ".$lp["lnk"]."'>".$lp["poste"]."</a></td>";
-			echo "<td align='center' bgcolor='".$wintype_txt."'>";
-			echo '<img src="../elements/images/'.$lp["typewin"].'" width="20" height="20">';
-			echo "</td>";
-			echo "<td align='center'>".$lp["status"]."</td>";
-			echo "<td align='center'>".$lp["revision"]."</td>";
-			echo "<td align='center'><a href='index.php?logfile=".$lp["logfile"]."' target='rapport_poste' style='color: ".$lp["lnk"]."'>".$lp["date"]." à ".$lp["time"]."</a></td>";
-			echo "<td align='center'>".$lp["ip"]."</td>";
-			echo "<td align='center'>".$lp["mac"]."</td>";
-			echo "</tr>\n";
+			case 0:
+				$bg=ok_bg;
+				$lnk=ok_lnk;
+				$txt=ok_txt;
+				break;
+			case 1:
+				$bg=error_bg;
+				$lnk=error_lnk;
+				$txt=error_txt;
+				break;
+			case 2:
+				$bg=warning_bg;
+				$lnk=warning_lnk;
+				$txt=warning_txt;
+				break;
 		}
+		
+			echo "<tr bgcolor='".$bg."' style='color: ".$txt."'>";
+			echo "<td align='center'><a href='poste_info.php' style='color: ".$lnk."'>".$nom_poste."</a></td>";
+			echo "<td align='center' bgcolor='".$wintype_txt."'>";
+			echo '<img src="../elements/images/'.$lp["info"]["typewin"].'" width="20" height="20">';
+			echo "</td>";
+			echo "<td align='center'>".$lp["info"]["status"]."</td>";
+			echo "<td align='center'>".$lp["info"]["nb_app"]."</td>";
+			echo "<td align='center'><a href='index.php?logfile=".$lp["info"]["logfile"]."' target='rapport_poste' style='color: ".$lnk."'>".$lp["info"]["date"]." à ".$lp["info"]["time"]."</a></td>";
+			echo "<td align='center'>".$lp["info"]["ip"]."</td>";
+			echo "<td align='center'>".$lp["info"]["mac"]."</td>";
+			echo "<td align='center'>".$lp["status"]["ok"]."</td>";
+			echo "<td align='center'>".$lp["status"]["maj"]."</td>";
+			echo "<td align='center'>".$lp["status"]["notok-"]."</td>";
+			echo "<td align='center'>".$lp["status"]["notok+"]."</td>";
+			echo "</tr>\n";
 	}
 	echo "</table>\n";
 	
