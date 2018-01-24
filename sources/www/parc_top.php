@@ -3,8 +3,7 @@
 	// recuperation des donnees
 	$liste_hosts=get_list_wpkg_hosts($xml_hosts);
 	asort($liste_hosts);
-	$liste_postes_parc=get_list_wpkg_poste_parc($xml_profiles);
-	$liste_parcs=array_keys($liste_postes_parc);
+	$liste_parcs=get_list_wpkg_parcs($xml_profiles);
 	asort($liste_parcs);
 	if (!in_array($get_parc,$liste_parcs))
 		header("Location: parc_statuts.php");

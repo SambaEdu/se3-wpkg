@@ -333,6 +333,7 @@
 		$list_parc=get_list_wpkg_parcs($xml_profiles); // liste des parcs
 		$poste_parc=get_list_wpkg_poste_parc($xml_profiles); // liste des postes par parc
 		$list_depend=get_list_wpkg_depend_app($xml_packages); // Liste des dépendances
+		$list_profiles_tmp=array(); // liste des statuts des apps pour chaque poste
 		$list_profiles=array(); // liste des statuts des apps pour chaque poste
 		$list_app_info=array(); // liste des infos pour chaque app
 		$liste_statuts=array(); // liste des statuts des postes du parc
@@ -350,24 +351,24 @@
 				{
 					foreach ($poste_parc[(string) $profile1["id"]] as $poste)
 					{
-						$list_profiles[$poste]["app"][(string) $profile2["package-id"]]["deployed"]=1;
+						$list_profiles_tmp[$poste]["app"][(string) $profile2["package-id"]]["deployed"]=1;
 						if (isset($list_depend[(string) $profile2["package-id"]]))
 						{
 							foreach ($list_depend[(string) $profile2["package-id"]] as $depend)
 							{
-								$list_profiles[$poste]["app"][$depend]["deployed"]=1;
+								$list_profiles_tmp[$poste]["app"][$depend]["deployed"]=1;
 							}
 						}
 					}
 				}
 				elseif (!in_array((string) $profile1["id"], $list_parc))
 				{
-					$list_profiles[(string) $profile1["id"]]["app"][(string) $profile2["package-id"]]["deployed"]=1;
+					$list_profiles_tmp[(string) $profile1["id"]]["app"][(string) $profile2["package-id"]]["deployed"]=1;
 					if (isset($list_depend[(string) $profile2["package-id"]]))
 					{
 						foreach ($list_depend[(string) $profile2["package-id"]] as $depend)
 						{
-							$list_profiles[(string) $profile1["id"]]["app"][$depend]["deployed"]=1;
+							$list_profiles_tmp[(string) $profile1["id"]]["app"][$depend]["deployed"]=1;
 						}
 					}
 				}
@@ -390,6 +391,7 @@
 																		"ip"=>(string) $rapport["ip"],
 																		"typewin"=>(string) $rapport["typewin"],
 																		"logfile"=>(string) $rapport["logfile"]);
+				$list_profiles[(string) $rapport["id"]]["app"]=$list_profiles_tmp[(string) $rapport["id"]]["app"];													
 				foreach ($rapport->package as $rapport2)
 				{
 					$list_profiles[(string) $rapport["id"]]["app"][(string) $rapport2["id"]]["installed"]=$rapport2["status"];

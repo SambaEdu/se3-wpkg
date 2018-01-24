@@ -50,7 +50,7 @@
 	if (isset($_GET['parc']))
 		$get_parc=$purifier->purify($_GET['parc']);
 	else
-		$get_parc="";
+		$get_parc="_TousLesPostes";
 	if (isset($_GET["warning"]))
 		$get_warning=$purifier->purify($_GET["warning"])+0;
 	else
@@ -151,7 +151,7 @@
 	else
 		echo "2";
 	echo "' style='color:".$regular_lnk."'>Statut</a></th>";
-	echo "<th width='240' colspan='4'>Applications</th>";
+	echo "<th width='180' colspan='3'>Applications</th>";
 	echo "<th width='200' rowspan='2'><a href='?parc=".$get_parc."&Appli=".$get_Appli."&warning=".$get_warning."&error=".$get_error."&ok=".$get_ok."&tous=".$get_tous."&tri2=";
 	if ($tri2==6)
 		echo "7";
@@ -179,7 +179,6 @@
 	else
 		echo "4";
 	echo "' style='color:".$regular_lnk."'>Nombre</a></th>";
-	echo "<th width='60'>A jour</th>";
 	echo "<th width='60'>Pas &#224; jour</th>";
 	echo "<th width='60'>En erreur</th>";
 	echo "</tr>\n";
@@ -241,7 +240,6 @@
 			}
 			echo "</td>";
 			echo "<td align='center'>".$lp["info"]["nb_app"]."</td>";
-			echo "<td align='center'>".$lp["status"]["ok"]."</td>";
 			echo "<td align='center'>".$lp["status"]["maj"]."</td>";
 			echo "<td align='center'>(-".$lp["status"]["notok-"]."/+".$lp["status"]["notok+"].")</td>";
 			echo "<td align='center'><a href='index.php?logfile=".$lp["info"]["logfile"]."' target='rapport_poste' style='color: ".$lnk."'>".$lp["info"]["date"]." à ".$lp["info"]["time"]."</a></td>";
