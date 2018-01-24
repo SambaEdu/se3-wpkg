@@ -400,8 +400,7 @@
 		
 		$liste_statuts["parc"]=array("ok"=>0
 									,"maj"=>0
-									,"notok+"=>0
-									,"notok-"=>0
+									,"notok"=>0
 									,"nb_postes"=>0);
 		foreach ($list_profiles as $poste_nom=>$info_poste)
 		{
@@ -409,27 +408,47 @@
 			$liste_statuts["postes"][$poste_nom]["status"]=array("ok"=>0
 																,"maj"=>0
 																,"notok"=>0);
+			$liste_statuts["postes"][$poste_nom]["info"]["nb_app"]=0;
+			$liste_statuts["postes"][$poste_nom]["info"]["status"]=0;
 			$liste_statuts["parc"]["nb_postes"]++;
 			foreach ($info_poste["app"] as $app_nom=>$info_app_poste)
 			{
 				if ($info_app_poste["deployed"]==1 and $info_app_poste["installed"]=="Installed")
 				{
 					if ($info_app_poste["revision"]==$list_app_info[$app_nom]["revision"])
+					{
 						$liste_statuts["postes"][$poste_nom]["status"]["ok"]++;
+						$liste_statuts["postes"][$poste_nom]["info"]["nb_app"]++;
+					}
 					else
+					{
 						$liste_statuts["postes"][$poste_nom]["status"]["maj"]++;
+						$liste_statuts["postes"][$poste_nom]["info"]["nb_app"]++;
+					}
 				}
 				elseif ($info_app_poste["deployed"]==0 and $info_app_poste["installed"]=="Installed")
 					$liste_statuts["postes"][$poste_nom]["status"]["notok+"]++;
 				elseif ($info_app_poste["deployed"]==1 and $info_app_poste["installed"]=="Not Installed")
+				{
 					$liste_statuts["postes"][$poste_nom]["status"]["notok-"]++;
+					$liste_statuts["postes"][$poste_nom]["info"]["nb_app"]++;
+				}
 			}
 			if ($liste_statuts["postes"][$poste_nom]["status"]["notok-"]+$liste_statuts["postes"][$poste_nom]["status"]["notok+"]>0)
+			{
 				$liste_statuts["parc"]["notok"]++;
+				$liste_statuts["postes"][$poste_nom]["info"]["status"]=2;
+			}
 			elseif ($liste_statuts["postes"][$poste_nom]["status"]["maj"]>0)
+			{
 				$liste_statuts["parc"]["maj"]++;
+				$liste_statuts["postes"][$poste_nom]["info"]["status"]=1;
+			}
 			else
+			{
 				$liste_statuts["parc"]["ok"]++;
+				$liste_statuts["postes"][$poste_nom]["info"]["status"]=0;
+			}
 		}
 		return $liste_statuts;
 	}

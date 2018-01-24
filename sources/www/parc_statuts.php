@@ -82,110 +82,22 @@
 	$page_id=1;
 	include ("parc_top.php");
 	
-	print_r(get_list_wpkg_postes_status($id_parc,$xml_packages,$xml_rapports,$xml_profiles));
+	$list_poste=liste_poste_infos["postes"];
+	$tri_poste=array();
+	$tri_status=array();
+	$tri_date=array();
+	$tri_ip=array();
+	$tri_mac=array();
+	$tri_nb_app=array();
 	
-	$list_poste=array();
-	$parc_poste_status=array("Ok"=>0, "NotOk"=>0, "MaJ"=>0, "Total"=>0);
-	$i=0;
-	
-	foreach ($liste_postes_parc[$get_parc] as $poste_parc)
+	foreach ($list_poste as $key=>$row)
 	{
-		$info_poste=$liste_rapports_status_poste[$poste_parc]["info"];
-		$info_app=$liste_rapports_status_poste[$poste_parc][$get_Appli];
-		
-		if (in_array($poste_parc,$liste_status_tmp["NotOk"]))
-		{
-			$list_poste[$i]["wpkg"]=$get_warning;
-			$list_poste[$i]["wpkg_status"]=3;
-			$list_poste[$i]["bg"]=$warning_bg;
-			$list_poste[$i]["txt"]=$warning_txt;
-			$list_poste[$i]["lnk"]=$warning_lnk;
-			$parc_poste_status["NotOk"]++;
-			$parc_poste_status["Total"]++;
-		}
-		elseif (in_array($poste_parc,$liste_status_tmp["MaJ"]))
-		{
-			$list_poste[$i]["wpkg"]=$get_error;
-			$list_poste[$i]["wpkg_status"]=2;
-			$list_poste[$i]["bg"]=$error_bg;
-			$list_poste[$i]["txt"]=$error_txt;
-			$list_poste[$i]["lnk"]=$error_lnk;
-			$parc_poste_status["MaJ"]++;
-			$parc_poste_status["Total"]++;
-		}
-		else
-		{
-			$list_poste[$i]["wpkg"]=$get_ok;
-			$list_poste[$i]["wpkg_status"]=1;
-			$list_poste[$i]["bg"]=$ok_bg;
-			$list_poste[$i]["txt"]=$ok_txt;
-			$list_poste[$i]["lnk"]=$ok_lnk;
-			$parc_poste_status["Ok"]++;
-			$parc_poste_status["Total"]++;
-		}
-		
-		if ($info_app!="")
-		{	
-			if ($info_app["status"]=="Installed")
-			{
-				$list_poste[$i]["status"]="Installé";
-			}
-			else
-			{
-				$list_poste[$i]["status"]="Non Installé";
-				if ($list_poste[$i]["wpkg_status"]==1)
-				{
-					$list_poste[$i]["bg"]=$unknown_bg;
-					$list_poste[$i]["txt"]=$unknown_txt;
-					$list_poste[$i]["lnk"]=$unknown_lnk;
-					$list_poste[$i]["wpkg"]=min($get_tous,$get_ok);
-				}
-			}
-			$list_poste[$i]["revision"]=$info_app["revision"];
-		}
-		else
-		{
-			if ($list_poste[$i]["wpkg_status"]==1)
-			{
-				$list_poste[$i]["bg"]=$unknown_bg;
-				$list_poste[$i]["txt"]=$unknown_txt;
-				$list_poste[$i]["lnk"]=$unknown_lnk;
-				$list_poste[$i]["wpkg"]=min($get_tous,$get_ok);
-			}
-			$list_poste[$i]["status"]="Inconnu";
-			$list_poste[$i]["revision"]="-";
-		}
-		$list_poste[$i]["poste"]=$poste_parc;
-		switch ($info_poste["typewin"])
-		{
-			case 'Windows XP':
-				$list_poste[$i]["typewin"]="winxp.png";
-				break;
-			case 'Windows 7':
-				$list_poste[$i]["typewin"]="win7.png";
-				break;
-			case 'Windows 10':
-				$list_poste[$i]["typewin"]="win10.png";
-				break;
-			default:
-				$list_poste[$i]["typewin"]="vide.png";
-				break;
-		}
-		$list_poste[$i]["logfile"]=$info_poste["logfile"];
-		$list_poste[$i]["date"]=$info_poste["date"];
-		$list_poste[$i]["time"]=$info_poste["time"];
-		$list_poste[$i]["datetime"]=$info_poste["datetime"];
-		$list_poste[$i]["ip"]=$info_poste["ip"];
-		$list_poste[$i]["mac"]=$info_poste["mac"];
-		
-		$tri_poste[$i]=$list_poste[$i]["poste"];
-		$tri_status[$i]=$list_poste[$i]["status"];
-		$tri_revision[$i]=$list_poste[$i]["revision"];
-		$tri_date[$i]=$list_poste[$i]["datetime"];
-		$tri_ip[$i]=ip2long($list_poste[$i]["ip"]);
-		$tri_mac[$i]=$list_poste[$i]["mac"];
-		
-		$i++;
+		$tri_poste[]=$key;
+		$tri_status[]=$row["info"]["status"];
+		$tri_date[]=$row["info"]["datetime"];
+		$tri_ip[]=ip2long($row["info"]["ip"]);
+		$tri_mac[]=$tri_mac=$row["info"]["mac"];
+		$tri_nb_app[]=$row["info"]["nb_app"];
 	}
 	
 	if ($list_poste)
@@ -205,10 +117,10 @@
 			array_multisort($tri_status, SORT_DESC, $tri_poste, SORT_ASC, $list_poste);
 			break;
 			case 4:
-			array_multisort($tri_revision, SORT_DESC, $tri_poste, SORT_ASC, $list_poste);
+			array_multisort($tri_nb_app, SORT_DESC, $tri_poste, SORT_ASC, $list_poste);
 			break;
 			case 5:
-			array_multisort($tri_revision, SORT_ASC, $tri_poste, SORT_ASC, $list_poste);
+			array_multisort($tri_nb_app, SORT_ASC, $tri_poste, SORT_ASC, $list_poste);
 			break;
 			case 6:
 			array_multisort($tri_date, SORT_DESC, $tri_poste, SORT_ASC, $list_poste);

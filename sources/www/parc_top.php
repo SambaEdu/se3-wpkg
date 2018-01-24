@@ -5,10 +5,9 @@
 	asort($liste_hosts);
 	$liste_parcs=array_keys($liste_postes_parc);
 	asort($liste_parcs);
-	if (!array_key_exists($get_parc,$liste_parcs))
-		header("Location: parc_status.php");
+	if (!in_array($get_parc,$liste_parcs))
+		header("Location: parc_statuts.php");
 	$liste_poste_infos=get_list_wpkg_postes_status($get_parc,$xml_packages,$xml_rapports,$xml_profiles);
-	ksort($liste_poste_infos["postes"]);
 
 	echo "<h1>Gestion des parcs</h1>\n";
 
