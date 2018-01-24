@@ -407,7 +407,8 @@
 			$liste_statuts["postes"][$poste_nom]["info"]=$info_poste["info"];
 			$liste_statuts["postes"][$poste_nom]["status"]=array("ok"=>0
 																,"maj"=>0
-																,"notok"=>0);
+																,"notok+"=>0
+																,"notok-"=>0);
 			$liste_statuts["postes"][$poste_nom]["info"]["nb_app"]=0;
 			$liste_statuts["postes"][$poste_nom]["info"]["status"]=0;
 			$liste_statuts["parc"]["nb_postes"]++;

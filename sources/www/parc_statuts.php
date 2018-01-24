@@ -271,26 +271,42 @@
 		switch ($lp["info"]["status"])
 		{
 			case 0:
-				$bg=ok_bg;
-				$lnk=ok_lnk;
-				$txt=ok_txt;
+				$bg=$ok_bg;
+				$lnk=$ok_lnk;
+				$txt=$ok_txt;
 				break;
 			case 1:
-				$bg=error_bg;
-				$lnk=error_lnk;
-				$txt=error_txt;
+				$bg=$error_bg;
+				$lnk=$error_lnk;
+				$txt=$error_txt;
 				break;
 			case 2:
-				$bg=warning_bg;
-				$lnk=warning_lnk;
-				$txt=warning_txt;
+				$bg=$warning_bg;
+				$lnk=$warning_lnk;
+				$txt=$warning_txt;
 				break;
 		}
 		
 			echo "<tr bgcolor='".$bg."' style='color: ".$txt."'>";
 			echo "<td align='center'><a href='poste_info.php' style='color: ".$lnk."'>".$nom_poste."</a></td>";
 			echo "<td align='center' bgcolor='".$wintype_txt."'>";
-			echo '<img src="../elements/images/'.$lp["info"]["typewin"].'" width="20" height="20">';
+			echo '<img src="../elements/images/';
+			switch ($info_poste["typewin"])
+			{
+				case 'Windows XP':
+					echo "winxp.png";
+					break;
+				case 'Windows 7':
+					echo "win7.png";
+					break;
+				case 'Windows 10':
+					echo "win10.png";
+					break;
+				default:
+					echo "vide.png";
+					break;
+			}
+			echo '" width="20" height="20">';
 			echo "</td>";
 			echo "<td align='center'>".$lp["info"]["status"]."</td>";
 			echo "<td align='center'>".$lp["info"]["nb_app"]."</td>";
