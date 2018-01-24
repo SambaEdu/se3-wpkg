@@ -3,6 +3,7 @@
 	// recuperation des donnees
 	$liste_hosts=get_list_wpkg_hosts($xml_hosts);
 	asort($liste_hosts);
+	$liste_postes_parc=get_list_wpkg_poste_parc($xml_profiles);
 	$liste_parcs=array_keys($liste_postes_parc);
 	asort($liste_parcs);
 	if (!in_array($get_parc,$liste_parcs))
@@ -63,15 +64,48 @@
 	echo "<td align='center'";
 	//if ($liste_poste_infos["parc"]["ok"]>0)
 		echo " bgcolor='".$ok_bg."' style='color:".$ok_txt."'";
-	echo ">".$liste_poste_infos["parc"]["ok"]."</td>";
+	echo ">".$liste_poste_infos["parc"]["ok"]."<br>";
+		echo "<select name='ok'>";
+		echo "<option value='1'";
+		if ($get_ok==1)
+			echo " selected";
+		echo ">Afficher</option>";
+		echo "<option value='0'";
+		if ($get_ok==0)
+			echo " selected";
+		echo ">Masquer</option>";
+		echo "</select>";
+	echo "</td>";
 	echo "<td align='center'";
 	//if ($liste_poste_infos["parc"]["notok"]>0)
 		echo " bgcolor='".$warning_bg."' style='color:".$warning_txt."'";
-	echo ">".$liste_poste_infos["parc"]["notok"]."</td>";
+	echo ">".$liste_poste_infos["parc"]["notok"]."<br>";
+		echo "<select name='warning'>";
+		echo "<option value='1'";
+		if ($get_warning==1)
+			echo " selected";
+		echo ">Afficher</option>";
+		echo "<option value='0'";
+		if ($get_warning==0)
+			echo " selected";
+		echo ">Masquer</option>";
+		echo "</select>";
+	echo "</td>";
 	echo "<td align='center'";
 	//if ($liste_poste_infos["parc"]["maj"]>0)
 		echo " bgcolor='".$error_bg."' style='color:".$error_txt."'";
-	echo ">".$liste_poste_infos["parc"]["maj"]."</td>";
+	echo ">".$liste_poste_infos["parc"]["maj"]."<br>";
+		echo "<select name='error'>";
+		echo "<option value='1'";
+		if ($get_error==1)
+			echo " selected";
+		echo ">Afficher</option>";
+		echo "<option value='0'";
+		if ($get_error==0)
+			echo " selected";
+		echo ">Masquer</option>";
+		echo "</select>";
+	echo "</td>";
 	echo "</tr>\n";
 	echo "</table>\n";
 	echo "<br>\n";

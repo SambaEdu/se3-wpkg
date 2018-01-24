@@ -68,16 +68,6 @@
 	else
 		$get_tous=0;
 	
-	$liste_rapports_status_poste = get_list_wpkg_rapports_statut_poste_app($xml_rapports);
-	$liste_postes_parc=get_list_wpkg_poste_parc($xml_profiles);
-	$liste_parcs=array_keys($liste_postes_parc);
-	asort($liste_parcs);
-	
-	if (!count($liste_postes_parc[$get_parc]))
-	{
-		$get_parc="_TousLesPostes";
-	}
-	
 	echo "<form method='get' action=''>\n";
 	$page_id=1;
 	include ("parc_top.php");
@@ -144,126 +134,54 @@
 			array_multisort($tri_poste, SORT_ASC, $list_poste);
 			break;
 		}
-	}
-	
-	echo "<table cellspadding='2' cellspacing='1' border='0' align='center' bgcolor='black'>\n";
-	echo "<tr bgcolor='white' height='30' valing='center'>";
-	echo "<th width='200'>Parc</th>";
-	echo "<th width='200'>Nombre de postes</th>";
-	echo "<th width='200'>Postes à jour</th>";
-	echo "<th width='200'>Postes en erreur</th>";
-	echo "<th width='200'>Postes pas à jour</th>";
-	echo "</tr>\n";
-	echo "<tr bgcolor='white' height='30' valing='center'>";
-	echo "<td align='center'>";
-		echo $get_parc."<br>";
-		echo "<select name='parc'>";
-		foreach ($liste_parcs as $l_parc)
-		{
-			echo "<option value='".$l_parc."'";
-			if ($l_parc==$get_parc)
-				echo " selected";
-			echo ">".$l_parc."</option>";
-		}
-		echo "</select>";
-	echo "</td>\n";
-	echo "<td align='center'>";
-		echo $parc_poste_status["Total"]."<br>";
-		echo "<select name='tous'>";
-		echo "<option value='1'";
-		if ($get_tous==1)
-			echo " selected";
-		echo ">Afficher Tous</option>";
-		echo "<option value='0'";
-		if ($get_tous==0)
-			echo " selected";
-		echo ">Afficher Postes d&#233;ploy&#233;s</option>";
-		echo "</select>";
-	echo "</td>\n";
-	echo "<td align='center' bgcolor='".$ok_bg."' style='color:".$ok_txt."'>";
-		echo $parc_poste_status["Ok"]."<br>";
-		echo "<select name='ok'>";
-		echo "<option value='1'";
-		if ($get_ok==1)
-			echo " selected";
-		echo ">Afficher</option>";
-		echo "<option value='0'";
-		if ($get_ok==0)
-			echo " selected";
-		echo ">Masquer</option>";
-		echo "</select>";
-	echo "</td>\n";
-	echo "<td align='center' bgcolor='".$warning_bg."' style='color:".$warning_txt."'>";
-		echo $parc_poste_status["NotOk"]."<br>";
-		echo "<select name='warning'>";
-		echo "<option value='1'";
-		if ($get_warning==1)
-			echo " selected";
-		echo ">Afficher</option>";
-		echo "<option value='0'";
-		if ($get_warning==0)
-			echo " selected";
-		echo ">Masquer</option>";
-		echo "</select>";
-	echo "</td>\n";
-	echo "<td align='center' bgcolor='".$error_bg."' style='color:".$error_txt."'>";
-		echo $parc_poste_status["MaJ"]."<br>";
-		echo "<select name='error'>";
-		echo "<option value='1'";
-		if ($get_error==1)
-			echo " selected";
-		echo ">Afficher</option>";
-		echo "<option value='0'";
-		if ($get_error==0)
-			echo " selected";
-		echo ">Masquer</option>";
-		echo "</select>";
-	echo "</td>\n";
-	echo "</tr>\n";
-	echo "</table>\n";
-	echo "<br>\n";
-	echo "</form>\n";
-	
+	}	
 	
 	echo "<table cellspadding='2' cellspacing='1' border='0' align='center' bgcolor='black'>\n";
 	echo "<tr style='color:white'>";
-	echo "<th width='120'><a href='?parc=".$get_parc."&Appli=".$get_Appli."&warning=".$get_warning."&error=".$get_error."&ok=".$get_ok."&tous=".$get_tous."&tri2=";
+	echo "<th width='120' rowspan='2'><a href='?parc=".$get_parc."&Appli=".$get_Appli."&warning=".$get_warning."&error=".$get_error."&ok=".$get_ok."&tous=".$get_tous."&tri2=";
 	if ($tri2==0)
 		echo "1";
 	else
 		echo "0";
 	echo "' style='color:".$regular_lnk."'>Nom du poste</a></th>";
-	echo "<th width='50'>OS</th>";
-	echo "<th width='120'><a href='?parc=".$get_parc."&Appli=".$get_Appli."&warning=".$get_warning."&error=".$get_error."&ok=".$get_ok."&tous=".$get_tous."&tri2=";
+	echo "<th width='50' rowspan='2'>OS</th>";
+	echo "<th width='120' rowspan='2'><a href='?parc=".$get_parc."&Appli=".$get_Appli."&warning=".$get_warning."&error=".$get_error."&ok=".$get_ok."&tous=".$get_tous."&tri2=";
 	if ($tri2==2)
 		echo "3";
 	else
 		echo "2";
 	echo "' style='color:".$regular_lnk."'>Statut</a></th>";
-	echo "<th width='120'><a href='?parc=".$get_parc."&Appli=".$get_Appli."&warning=".$get_warning."&error=".$get_error."&ok=".$get_ok."&tous=".$get_tous."&tri2=";
-	if ($tri2==4)
-		echo "5";
-	else
-		echo "4";
-	echo "' style='color:".$regular_lnk."'>Version</a></th>";
-	echo "<th width='200'><a href='?parc=".$get_parc."&Appli=".$get_Appli."&warning=".$get_warning."&error=".$get_error."&ok=".$get_ok."&tous=".$get_tous."&tri2=";
+	echo "<th width='240' colspan='4'>Applications</th>";
+	echo "<th width='200' rowspan='2'><a href='?parc=".$get_parc."&Appli=".$get_Appli."&warning=".$get_warning."&error=".$get_error."&ok=".$get_ok."&tous=".$get_tous."&tri2=";
 	if ($tri2==6)
 		echo "7";
 	else
 		echo "6";
 	echo "' style='color:".$regular_lnk."'>Date du dernier rapport</a></th>";
-	echo "<th width='120'><a href='?parc=".$get_parc."&Appli=".$get_Appli."&warning=".$get_warning."&error=".$get_error."&ok=".$get_ok."&tous=".$get_tous."&tri2=";
+	echo "<th width='120' rowspan='2'><a href='?parc=".$get_parc."&Appli=".$get_Appli."&warning=".$get_warning."&error=".$get_error."&ok=".$get_ok."&tous=".$get_tous."&tri2=";
 	if ($tri2==8)
 		echo "9";
 	else
 		echo "8";
 	echo "' style='color:".$regular_lnk."'>Adresse ip</a></th>";
-	echo "<th width='160'><a href='?parc=".$get_parc."&Appli=".$get_Appli."&warning=".$get_warning."&error=".$get_error."&ok=".$get_ok."&tous=".$get_tous."&tri2=";
+	echo "<th width='160' rowspan='2'><a href='?parc=".$get_parc."&Appli=".$get_Appli."&warning=".$get_warning."&error=".$get_error."&ok=".$get_ok."&tous=".$get_tous."&tri2=";
 	if ($tri2==10)
 		echo "11";
 	else
 		echo "10";
 	echo "' style='color:".$regular_lnk."'>Adresse mac</a></th>";
+	echo "</tr>\n";
+	
+	echo "<tr style='color:white'>";
+	echo "<th width='60'><a href='?parc=".$get_parc."&Appli=".$get_Appli."&warning=".$get_warning."&error=".$get_error."&ok=".$get_ok."&tous=".$get_tous."&tri2=";
+	if ($tri2==4)
+		echo "5";
+	else
+		echo "4";
+	echo "' style='color:".$regular_lnk."'>Nombre</a></th>";
+	echo "<th width='60'>A jour</th>";
+	echo "<th width='60'>Pas &#224; jour</th>";
+	echo "<th width='60'>En erreur</th>";
 	echo "</tr>\n";
 	
 	foreach ($list_poste as $nom_poste=>$lp)
@@ -291,7 +209,7 @@
 			echo "<td align='center'><a href='poste_info.php' style='color: ".$lnk."'>".$nom_poste."</a></td>";
 			echo "<td align='center' bgcolor='".$wintype_txt."'>";
 			echo '<img src="../elements/images/';
-			switch ($info_poste["typewin"])
+			switch ($lp["info"]["typewin"])
 			{
 				case 'Windows XP':
 					echo "winxp.png";
@@ -308,15 +226,27 @@
 			}
 			echo '" width="20" height="20">';
 			echo "</td>";
-			echo "<td align='center'>".$lp["info"]["status"]."</td>";
+			echo "<td align='center'>";
+			switch ($lp["info"]["status"])
+			{
+				case 0:
+					echo "A jour";
+					break;
+				case 1:
+					echo "Pas &#224; jour";
+					break;
+				case 2:
+					echo "En erreur";
+					break;
+			}
+			echo "</td>";
 			echo "<td align='center'>".$lp["info"]["nb_app"]."</td>";
+			echo "<td align='center'>".$lp["status"]["ok"]."</td>";
+			echo "<td align='center'>".$lp["status"]["maj"]."</td>";
+			echo "<td align='center'>(-".$lp["status"]["notok-"]."/+".$lp["status"]["notok+"].")</td>";
 			echo "<td align='center'><a href='index.php?logfile=".$lp["info"]["logfile"]."' target='rapport_poste' style='color: ".$lnk."'>".$lp["info"]["date"]." à ".$lp["info"]["time"]."</a></td>";
 			echo "<td align='center'>".$lp["info"]["ip"]."</td>";
 			echo "<td align='center'>".$lp["info"]["mac"]."</td>";
-			echo "<td align='center'>".$lp["status"]["ok"]."</td>";
-			echo "<td align='center'>".$lp["status"]["maj"]."</td>";
-			echo "<td align='center'>".$lp["status"]["notok-"]."</td>";
-			echo "<td align='center'>".$lp["status"]["notok+"]."</td>";
 			echo "</tr>\n";
 	}
 	echo "</table>\n";
