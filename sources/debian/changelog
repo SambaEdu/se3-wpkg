@@ -1,4 +1,4 @@
-se3-wpkg (2.00~a3) unstable; urgency=low
+se3-wpkg (2.00~a4) unstable; urgency=low
 
   * creation d'une interface wpkg pour les applications
   * ajout d'un cron pour la generation du rapports.xml toutes les 5 minutes
