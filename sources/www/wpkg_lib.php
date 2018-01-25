@@ -390,8 +390,9 @@
 																		"mac"=>(string) $rapport["mac"],
 																		"ip"=>(string) $rapport["ip"],
 																		"typewin"=>(string) $rapport["typewin"],
-																		"logfile"=>(string) $rapport["logfile"]);
-				$list_profiles[(string) $rapport["id"]]["app"]=$list_profiles_tmp[(string) $rapport["id"]]["app"];													
+																		"logfile"=>(string) $rapport["logfile"],
+																		"nb_app"=>count($list_profiles_tmp[(string) $rapport["id"]]["app"]));
+				$list_profiles[(string) $rapport["id"]]["app"]=$list_profiles_tmp[(string) $rapport["id"]]["app"];	
 				foreach ($rapport->package as $rapport2)
 				{
 					$list_profiles[(string) $rapport["id"]]["app"][(string) $rapport2["id"]]["installed"]=$rapport2["status"];
@@ -411,7 +412,7 @@
 																,"maj"=>0
 																,"notok+"=>0
 																,"notok-"=>0);
-			$liste_statuts["postes"][$poste_nom]["info"]["nb_app"]=0;
+			//$liste_statuts["postes"][$poste_nom]["info"]["nb_app"]=0;
 			$liste_statuts["postes"][$poste_nom]["info"]["status"]=0;
 			$liste_statuts["parc"]["nb_postes"]++;
 			foreach ($info_poste["app"] as $app_nom=>$info_app_poste)
@@ -421,12 +422,12 @@
 					if ($info_app_poste["revision"]==$list_app_info[$app_nom]["revision"])
 					{
 						$liste_statuts["postes"][$poste_nom]["status"]["ok"]++;
-						$liste_statuts["postes"][$poste_nom]["info"]["nb_app"]++;
+						//$liste_statuts["postes"][$poste_nom]["info"]["nb_app"]++;
 					}
 					else
 					{
 						$liste_statuts["postes"][$poste_nom]["status"]["maj"]++;
-						$liste_statuts["postes"][$poste_nom]["info"]["nb_app"]++;
+						//$liste_statuts["postes"][$poste_nom]["info"]["nb_app"]++;
 					}
 				}
 				elseif ($info_app_poste["deployed"]==0 and $info_app_poste["installed"]=="Installed")
@@ -434,7 +435,7 @@
 				elseif ($info_app_poste["deployed"]==1 and $info_app_poste["installed"]=="Not Installed")
 				{
 					$liste_statuts["postes"][$poste_nom]["status"]["notok-"]++;
-					$liste_statuts["postes"][$poste_nom]["info"]["nb_app"]++;
+					//$liste_statuts["postes"][$poste_nom]["info"]["nb_app"]++;
 				}
 			}
 			if ($liste_statuts["postes"][$poste_nom]["status"]["notok-"]+$liste_statuts["postes"][$poste_nom]["status"]["notok+"]>0)
