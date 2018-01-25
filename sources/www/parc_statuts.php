@@ -68,7 +68,10 @@
 	$page_id=1;
 	include ("parc_top.php");
 	
-	$list_poste=$liste_poste_infos["postes"];
+	if (is_array(@$liste_poste_infos["postes"]))
+		$list_poste=$liste_poste_infos["postes"];
+	else
+		$list_poste=array();
 	$tri_poste=array();
 	$tri_status=array();
 	$tri_date=array();

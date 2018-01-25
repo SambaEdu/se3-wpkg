@@ -59,11 +59,11 @@
 	echo "<th width='150'>Postes pas &#224; jour</th>";
 	echo "</tr>\n";
 	echo "<tr bgcolor='white' height='30' valing='center'>";
-	echo "<td align='center'>".($liste_poste_infos["parc"]["nb_postes"]+0)."</td>";
+	echo "<td align='center'>".(@$liste_poste_infos["parc"]["nb_postes"]+0)."</td>";
 	echo "<td align='center'";
 	//if ($liste_poste_infos["parc"]["ok"]>0)
 		echo " bgcolor='".$ok_bg."' style='color:".$ok_txt."'";
-	echo ">".$liste_poste_infos["parc"]["ok"]."<br>";
+	echo ">".@$liste_poste_infos["parc"]["ok"]."<br>";
 		echo "<select name='ok'>";
 		echo "<option value='1'";
 		if ($get_ok==1)
@@ -78,7 +78,7 @@
 	echo "<td align='center'";
 	//if ($liste_poste_infos["parc"]["notok"]>0)
 		echo " bgcolor='".$warning_bg."' style='color:".$warning_txt."'";
-	echo ">".$liste_poste_infos["parc"]["notok"]."<br>";
+	echo ">".@$liste_poste_infos["parc"]["notok"]."<br>";
 		echo "<select name='warning'>";
 		echo "<option value='1'";
 		if ($get_warning==1)
@@ -93,7 +93,7 @@
 	echo "<td align='center'";
 	//if ($liste_poste_infos["parc"]["maj"]>0)
 		echo " bgcolor='".$error_bg."' style='color:".$error_txt."'";
-	echo ">".$liste_poste_infos["parc"]["maj"]."<br>";
+	echo ">".@$liste_poste_infos["parc"]["maj"]."<br>";
 		echo "<select name='error'>";
 		echo "<option value='1'";
 		if ($get_error==1)
