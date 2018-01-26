@@ -18,11 +18,11 @@
 	echo "<tr bgcolor='white' height='30' valing='center'>";
 	if ($page_id==1)
 	{
-		echo "<th width='220' bgcolor='black' style='color:white'>Etat de parcs</th>";
+		echo "<th width='220' bgcolor='black' style='color:white'>Etat du parc</th>";
 	}
 	else
 	{
-		echo "<th width='220'><a href='parc_statuts.php?parc=".$get_parc."&warning=".$get_warning."&error=".$get_error."&ok=".$get_ok."&Appli=".$get_Appli."&tri2=".$tri2."' style='color:".$regular_lnk."'>Etat des parcs</a></th>";
+		echo "<th width='220'><a href='parc_statuts.php?parc=".$get_parc."&warning=".$get_warning."&error=".$get_error."&ok=".$get_ok."&tri2=".$tri2."' style='color:".$regular_lnk."'>Etat du parc</a></th>";
 	}
 	if ($page_id==2)
 	{
@@ -30,7 +30,7 @@
 	}
 	else
 	{
-		echo "<th width='220'><a href='parc_maintenance.php?parc=".$get_parc."&warning=".$get_warning."&error=".$get_error."&ok=".$get_ok."&Appli=".$get_Appli."&tri2=".$tri2."' style='color:".$regular_lnk."'>Gestion</a></th>";
+		echo "<th width='220'><a href='parc_maintenance.php?parc=".$get_parc."&warning=".$get_warning."&error=".$get_error."&ok=".$get_ok."&tri2=".$tri2."' style='color:".$regular_lnk."'>Gestion</a></th>";
 	}
 	echo "</tr>\n";
 	echo "<tr bgcolor='black' height='30' valing='center'>";

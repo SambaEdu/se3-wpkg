@@ -67,6 +67,7 @@
 	echo "<form method='get' action=''>\n";
 	$page_id=1;
 	include ("parc_top.php");
+	echo "</form>\n";
 	
 	if (is_array(@$liste_poste_infos["postes"]))
 		$list_poste=$liste_poste_infos["postes"];
@@ -137,33 +138,33 @@
 	
 	echo "<table cellspadding='2' cellspacing='1' border='0' align='center' bgcolor='black'>\n";
 	echo "<tr style='color:white'>";
-	echo "<th width='120' rowspan='2'><a href='?parc=".$get_parc."&Appli=".$get_Appli."&warning=".$get_warning."&error=".$get_error."&ok=".$get_ok."&tri2=";
+	echo "<th width='120' rowspan='2'><a href='?parc=".$get_parc."&warning=".$get_warning."&error=".$get_error."&ok=".$get_ok."&tri2=";
 	if ($tri2==0)
 		echo "1";
 	else
 		echo "0";
 	echo "' style='color:".$regular_lnk."'>Nom du poste</a></th>";
 	echo "<th width='50' rowspan='2'>OS</th>";
-	echo "<th width='120' rowspan='2'><a href='?parc=".$get_parc."&Appli=".$get_Appli."&warning=".$get_warning."&error=".$get_error."&ok=".$get_ok."&tri2=";
+	echo "<th width='120' rowspan='2'><a href='?parc=".$get_parc."&warning=".$get_warning."&error=".$get_error."&ok=".$get_ok."&tri2=";
 	if ($tri2==2)
 		echo "3";
 	else
 		echo "2";
 	echo "' style='color:".$regular_lnk."'>Statut</a></th>";
 	echo "<th width='180' colspan='3'>Applications</th>";
-	echo "<th width='200' rowspan='2'><a href='?parc=".$get_parc."&Appli=".$get_Appli."&warning=".$get_warning."&error=".$get_error."&ok=".$get_ok."&tri2=";
+	echo "<th width='200' rowspan='2'><a href='?parc=".$get_parc."&warning=".$get_warning."&error=".$get_error."&ok=".$get_ok."&tri2=";
 	if ($tri2==6)
 		echo "7";
 	else
 		echo "6";
 	echo "' style='color:".$regular_lnk."'>Date du dernier rapport</a></th>";
-	echo "<th width='120' rowspan='2'><a href='?parc=".$get_parc."&Appli=".$get_Appli."&warning=".$get_warning."&error=".$get_error."&ok=".$get_ok."&tri2=";
+	echo "<th width='120' rowspan='2'><a href='?parc=".$get_parc."&warning=".$get_warning."&error=".$get_error."&ok=".$get_ok."&tri2=";
 	if ($tri2==8)
 		echo "9";
 	else
 		echo "8";
 	echo "' style='color:".$regular_lnk."'>Adresse ip</a></th>";
-	echo "<th width='160' rowspan='2'><a href='?parc=".$get_parc."&Appli=".$get_Appli."&warning=".$get_warning."&error=".$get_error."&ok=".$get_ok."&tri2=";
+	echo "<th width='160' rowspan='2'><a href='?parc=".$get_parc."&warning=".$get_warning."&error=".$get_error."&ok=".$get_ok."&tri2=";
 	if ($tri2==10)
 		echo "11";
 	else
@@ -172,7 +173,7 @@
 	echo "</tr>\n";
 	
 	echo "<tr style='color:white'>";
-	echo "<th width='60'><a href='?parc=".$get_parc."&Appli=".$get_Appli."&warning=".$get_warning."&error=".$get_error."&ok=".$get_ok."&tri2=";
+	echo "<th width='60'><a href='?parc=".$get_parc."&warning=".$get_warning."&error=".$get_error."&ok=".$get_ok."&tri2=";
 	if ($tri2==4)
 		echo "5";
 	else
