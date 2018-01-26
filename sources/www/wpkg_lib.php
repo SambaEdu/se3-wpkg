@@ -400,7 +400,7 @@
 				}
 			}
 		}
-		
+			
 		$liste_statuts["parc"]=array("ok"=>0
 									,"maj"=>0
 									,"notok"=>0
@@ -433,6 +433,11 @@
 				elseif ($info_app_poste["deployed"]==0 and $info_app_poste["installed"]=="Installed")
 					$liste_statuts["postes"][$poste_nom]["status"]["notok+"]++;
 				elseif ($info_app_poste["deployed"]==1 and $info_app_poste["installed"]=="Not Installed")
+				{
+					$liste_statuts["postes"][$poste_nom]["status"]["notok-"]++;
+					//$liste_statuts["postes"][$poste_nom]["info"]["nb_app"]++;
+				}
+				elseif ($info_app_poste["deployed"]==1)
 				{
 					$liste_statuts["postes"][$poste_nom]["status"]["notok-"]++;
 					//$liste_statuts["postes"][$poste_nom]["info"]["nb_app"]++;
