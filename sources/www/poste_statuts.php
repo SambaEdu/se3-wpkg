@@ -77,21 +77,18 @@
 		$list_app=$liste_poste_infos["app"];
 	else
 		$list_app=array();
-	$tri_poste=array();
+	
+	$tri_appli=array();
 	$tri_status=array();
-	$tri_date=array();
-	$tri_ip=array();
-	$tri_mac=array();
-	$tri_nb_app=array();
+	$tri_revision=array();
+	$tri_category=array();
 	
 	foreach ($list_app as $key=>$row)
 	{
-		$tri_poste[]=$key;
-		$tri_status[]=$row["info"]["status"];
-		$tri_date[]=$row["info"]["datetime"];
-		$tri_ip[]=ip2long($row["info"]["ip"]);
-		$tri_mac[]=$row["info"]["mac"];
-		$tri_nb_app[]=$row["info"]["nb_app"];
+		$tri_appli[]=$row["name"];
+		$tri_status[]=$row["status"];
+		$tri_revision[]=$row["revision"];
+		$tri_category[]=$row["category"];
 	}
 	
 	if ($list_app)
@@ -99,43 +96,31 @@
 		switch ($tri2)
 		{
 			case 0:
-			array_multisort($tri_poste, SORT_ASC, $list_app);
+			array_multisort($tri_appli, SORT_ASC, $list_app);
 			break;
 			case 1:
-			array_multisort($tri_poste, SORT_DESC, $list_app);
+			array_multisort($tri_appli, SORT_DESC, $list_app);
 			break;
 			case 2:
-			array_multisort($tri_status, SORT_ASC, $tri_poste, SORT_ASC, $list_app);
+			array_multisort($tri_revision, SORT_ASC, $tri_appli, SORT_ASC, $list_app);
 			break;
 			case 3:
-			array_multisort($tri_status, SORT_DESC, $tri_poste, SORT_ASC, $list_app);
+			array_multisort($tri_revision, SORT_DESC, $tri_appli, SORT_ASC, $list_app);
 			break;
 			case 4:
-			array_multisort($tri_nb_app, SORT_DESC, $tri_poste, SORT_ASC, $list_app);
+			array_multisort($tri_category, SORT_ASC, $tri_appli, SORT_ASC, $list_app);
 			break;
 			case 5:
-			array_multisort($tri_nb_app, SORT_ASC, $tri_poste, SORT_ASC, $list_app);
+			array_multisort($tri_category, SORT_DESC, $tri_appli, SORT_ASC, $list_app);
 			break;
 			case 6:
-			array_multisort($tri_date, SORT_DESC, $tri_poste, SORT_ASC, $list_app);
+			array_multisort($tri_status, SORT_DESC, $tri_appli, SORT_ASC, $list_app);
 			break;
 			case 7:
-			array_multisort($tri_date, SORT_ASC, $tri_poste, SORT_ASC, $list_app);
-			break;
-			case 8:
-			array_multisort($tri_ip, SORT_ASC, $list_app);
-			break;
-			case 9:
-			array_multisort($tri_ip, SORT_DESC, $list_app);
-			break;
-			case 10:
-			array_multisort($tri_mac, SORT_ASC, $list_app);
-			break;
-			case 11:
-			array_multisort($tri_mac, SORT_DESC, $list_app);
+			array_multisort($tri_status, SORT_ASC, $tri_appli, SORT_ASC, $list_app);
 			break;
 			default:
-			array_multisort($tri_poste, SORT_ASC, $list_app);
+			array_multisort($tri_appli, SORT_ASC, $list_app);
 			break;
 		}
 	}	
@@ -154,30 +139,20 @@
 	else
 		echo "2";
 	echo "' style='color:".$regular_lnk."'>Version</a></th>";
+	echo "<th width='120'>Compatibilit&#233;</th>";
+	echo "<th width='150'><a href='?id_host=".$id_host."&warning=".$get_warning."&error=".$get_error."&ok=".$get_ok."&tri2=";
+	if ($tri2==4)
+		echo "5";
+	else
+		echo "4";
+	echo "' style='color:".$regular_lnk."'>Cat&#233;gorie</a></th>";
 	echo "<th width='120'><a href='?id_host=".$id_host."&warning=".$get_warning."&error=".$get_error."&ok=".$get_ok."&tri2=";
 	if ($tri2==6)
 		echo "7";
 	else
 		echo "6";
-	echo "' style='color:".$regular_lnk."'>Compatibilit&#233;</a></th>";
-	echo "<th width='150'><a href='?id_host=".$id_host."&warning=".$get_warning."&error=".$get_error."&ok=".$get_ok."&tri2=";
-	if ($tri2==8)
-		echo "9";
-	else
-		echo "8";
-	echo "' style='color:".$regular_lnk."'>Cat&#233;gorie</a></th>";
-	echo "<th width='120'><a href='?id_host=".$id_host."&warning=".$get_warning."&error=".$get_error."&ok=".$get_ok."&tri2=";
-	if ($tri2==10)
-		echo "11";
-	else
-		echo "10";
 	echo "' style='color:".$regular_lnk."'>Statut</a></th>";
-	echo "<th width='300'><a href='?id_host=".$id_host."&warning=".$get_warning."&error=".$get_error."&ok=".$get_ok."&tri2=";
-	if ($tri2==10)
-		echo "11";
-	else
-		echo "10";
-	echo "' style='color:".$regular_lnk."'>Demand&#233; par</a></th>";
+	echo "<th width='300'>Demand&#233; par</th>";
 	echo "</tr>\n";
 	
 	foreach ($list_app as $nom_poste=>$lp)
