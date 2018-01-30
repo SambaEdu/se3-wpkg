@@ -72,7 +72,7 @@
 	echo "<table align='center'>\n";
 	echo "<tr>\n";
 		echo "<td align='center'>";
-		echo "<a href='parc_maintenance_app.php?tri2=".$tri2."&parc=".$get_parc."&ok=".$get_ok."&warning=".$get_warning."&error=".$get_error."'>Choix des applications</a>";
+		echo "<a href='parc_maintenance_app.php?tri2=".$tri2."&parc=".$get_parc."&ok=".$get_ok."&warning=".$get_warning."&error=".$get_error."'>Choix des applications &#224; d&#233;ployer</a>";
 		echo "</td>\n";
 	echo "</tr>\n";
 	echo "<tr>\n";

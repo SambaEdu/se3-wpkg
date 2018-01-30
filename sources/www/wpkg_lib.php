@@ -74,6 +74,7 @@
 	get_list_wpkg_parc_app($xml_profiles) : liste des parcs par application
 	get_list_wpkg_poste_parc($xml_profiles) : liste des postes par parc
 	get_list_wpkg_poste_app($xml_profiles, $xml_hosts) : liste des postes demandes pour une appli
+	get_list_wpkg_app_poste($xml_profiles,$xml_packages) : Liste des appli d'un poste
 	get_list_wpkg_depend_app($xml_packages) : liste des dependances d une appli
 	get_list_wpkg_required_by_app($xml_packages) : liste des applis dependant d une appli
 	get_list_wpkg_poste_app_all($xml_profiles,$xml_packages) : liste complete des postes pour une appli
@@ -81,6 +82,7 @@
 	get_list_wpkg_rapports_statut_app($xml_rapports) : status d une app installee
 	get_list_wpkg_file_app($xml_packages, $appli) : liste des fichiers d'une application donnee
 	get_list_wpkg_postes_status($liste_hosts,$xml_packages,$xml_rapports,$xml_profiles,$xml_hosts) : Liste de l'état des postes
+	get_list_wpkg_poste_status($id_host,$xml_rapports,$xml_profiles,$xml_packages,$xml_time,$xml_hosts) : Statut d'un poste
 	
 	---
 	
@@ -202,6 +204,46 @@
 			{
 				if (array_key_exists((string) $profile1["id"],$list_hosts))
 					$list_profiles[(string) $profile2["package-id"]][(string) $profile1["id"]] = (string) $profile1["id"];
+			}
+		}
+		return $list_profiles;
+	}
+	
+	function get_list_wpkg_app_poste($xml_profiles,$xml_packages)
+	{
+		$list_parc=get_list_wpkg_parcs($xml_profiles);
+		$poste_parc=get_list_wpkg_poste_parc($xml_profiles);
+		$list_depend=get_list_wpkg_depend_app($xml_packages);
+		$list_profiles=array();
+		foreach ($xml_profiles->profile as $profile1)
+		{
+			foreach ($profile1->package as $profile2)
+			{
+				if (array_key_exists((string) $profile1["id"],$poste_parc))
+				{
+					foreach ($poste_parc[(string) $profile1["id"]] as $poste)
+					{
+						$list_profiles[$poste][(string) $profile2["package-id"]]["parc"][(string) $profile1["id"]] = (string) $profile1["id"];
+						if (isset($list_depend[(string) $profile2["package-id"]]))
+						{
+							foreach ($list_depend[(string) $profile2["package-id"]] as $depend)
+							{
+								$list_profiles[$poste][$depend]["depend"][(string) $profile2["package-id"]] = (string) $profile2["package-id"];
+							}
+						}
+					}
+				}
+				elseif (!in_array((string) $profile1["id"], $list_parc))
+				{
+					$list_profiles[(string) $profile1["id"]][(string) $profile2["package-id"]]["poste"] = (string) $profile1["id"];
+					if (isset($list_depend[(string) $profile2["package-id"]]))
+					{
+						foreach ($list_depend[(string) $profile2["package-id"]] as $depend)
+						{
+							$list_profiles[(string) $profile1["id"]][$depend]["depend"][(string) $profile2["package-id"]] = (string) $profile2["package-id"];
+						}
+					}
+				}
 			}
 		}
 		return $list_profiles;
@@ -329,7 +371,6 @@
 
 	function get_list_wpkg_postes_status($id_parc,$xml_packages,$xml_rapports,$xml_profiles)
 	{
-		
 		$list_parc=get_list_wpkg_parcs($xml_profiles); // liste des parcs
 		$poste_parc=get_list_wpkg_poste_parc($xml_profiles); // liste des postes par parc
 		$list_depend=get_list_wpkg_depend_app($xml_packages); // Liste des dépendances
@@ -460,6 +501,114 @@
 			}
 		}
 		return $liste_statuts;
+	}
+	
+	function get_list_wpkg_poste_status($id_host,$xml_rapports,$xml_profiles,$xml_packages,$xml_time,$xml_hosts)
+	{
+		$list_info_rapport_poste=get_list_wpkg_rapports_statut_poste_app($xml_rapports); // status des appli sur un poste
+		$list_app_poste=get_list_wpkg_app_poste($xml_profiles,$xml_packages); // liste des applis d'un poste
+		$list_info_app=get_list_wpkg_app($xml_packages, $xml_time);
+		$list_hosts=get_list_wpkg_hosts($xml_hosts);
+		
+		$poste_info=array(); // info du poste
+
+		if (!in_array($id_host,$list_hosts))
+			return "0";
+		
+		$poste_info["info"]=$list_info_rapport_poste[$id_host]["info"];
+		$poste_info["status"]=array("status"=>0,
+									"nb_app"=>0,
+									"ok"=>0,
+									"maj"=>0,
+									"notok+"=>0,
+									"notok-"=>0);
+		foreach ($list_info_app as $app)
+		{
+			$poste_info["app"][$app["id"]]=array("id"=>$app["id"]
+												,"name"=>$app["name"]
+												,"category"=>$app["category"]
+												,"compatibilite"=>$app["compatibilite"]
+												,"revision"=>"-"
+												,"status"=>""
+												,"status_app"=>0
+												,"reboot"=>$app["reboot"]
+												,"depend"=>array()
+												,"parc"=>array()
+												,"poste"=>"");
+			if (array_key_exists($app["id"],$list_app_poste[$id_host])) //deploiement demande
+			{
+				$poste_info["app"][$app["id"]]["parc"]=@$list_app_poste[$id_host][$app["id"]]["parc"];
+				$poste_info["app"][$app["id"]]["depend"]=@$list_app_poste[$id_host][$app["id"]]["depend"];
+				$poste_info["app"][$app["id"]]["poste"]=@$list_app_poste[$id_host][$app["id"]]["poste"];
+				$poste_info["status"]["nb_app"]++;
+				if (array_key_exists($app["id"],$list_info_rapport_poste[$id_host])) //appli dans les rapports
+				{
+					$poste_info["app"][$app["id"]]["revision"]=$list_info_rapport_poste[$id_host][$app["id"]]["revision"];
+					if ($list_info_rapport_poste[$id_host][$app["id"]]["status"]=="Not Installed")
+					{
+						$poste_info["app"][$app["id"]]["status"]="Non Install&#233;";
+						$poste_info["app"][$app["id"]]["status_app"]=2;
+						$poste_info["status"]["notok-"]++;
+					}
+					else
+					{
+						$poste_info["app"][$app["id"]]["status"]="Install&#233;";
+						if ($app["revision"]==$list_info_rapport_poste[$id_host][$app["id"]]["revision"])
+						{
+							$poste_info["app"][$app["id"]]["status_app"]=0;
+							$poste_info["status"]["ok"]++;
+						}
+						else
+						{
+							$poste_info["app"][$app["id"]]["status_app"]=1;
+							$poste_info["status"]["maj"]++;
+						}
+					}
+				}
+				else // appli absent du rapport
+				{
+					$poste_info["app"][$app["id"]]["status"]="Inconnu";
+					$poste_info["app"][$app["id"]]["status_app"]=2;
+					$poste_info["status"]["notok-"]++;
+				}
+			}
+			else //deploiement non demande
+			{
+				if (array_key_exists($app["id"],$list_info_rapport_poste[$id_host])) //appli dans les rapports
+				{
+					$poste_info["app"][$app["id"]]["revision"]=$list_info_rapport_poste[$id_host][$app["id"]]["revision"];
+					if ($list_info_rapport_poste[$id_host][$app["id"]]["status"]=="Installed")
+					{
+						$poste_info["app"][$app["id"]]["status"]="Install&#233;";
+						$poste_info["app"][$app["id"]]["status_app"]=2;
+						$poste_info["status"]["notok+"]++;
+					}
+					else
+					{
+						$poste_info["app"][$app["id"]]["status"]="Non Install&#233;";
+						$poste_info["app"][$app["id"]]["status_app"]=4;
+					}
+				}
+				else // appli absent du rapport
+				{
+					$poste_info["app"][$app["id"]]["status"]="Inconnu";
+					$poste_info["app"][$app["id"]]["status_app"]=4;
+				}
+			}
+		}
+		if ($poste_info["status"]["notok+"]+$poste_info["status"]["notok-"]>0)
+		{
+			$poste_info["status"]["status"]=2;
+		}
+		elseif ($poste_info["status"]["maj"]>0)
+		{
+			$poste_info["status"]["status"]=1;
+		}
+		else
+		{
+			$poste_info["status"]["status"]=0;
+		}
+		return $poste_info;
 	}
 	
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////

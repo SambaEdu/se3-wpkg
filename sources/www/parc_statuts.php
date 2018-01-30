@@ -219,7 +219,7 @@
 		if ($affichage==1)
 		{
 			echo "<tr bgcolor='".$bg."' style='color: ".$txt."'>";
-			echo "<td align='center'><a href='poste_info.php' style='color: ".$lnk."'>".$nom_poste."</a></td>";
+			echo "<td align='center'><a href='poste_statuts.php?id_host=".$nom_poste."' style='color: ".$lnk."'>".$nom_poste."</a></td>";
 			echo "<td align='center' bgcolor='".$wintype_txt."'>";
 			echo '<img src="../elements/images/';
 			switch ($lp["info"]["typewin"])

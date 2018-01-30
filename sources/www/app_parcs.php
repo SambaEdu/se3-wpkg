@@ -358,7 +358,7 @@
 		if ($lp["wpkg"]==1)
 		{
 			echo "<tr bgcolor='".$lp["bg"]."' style='color: ".$lp["txt"]."'>";
-			echo "<td align='center'><a href='poste_info.php' style='color: ".$lp["lnk"]."'>".$lp["poste"]."</a></td>";
+			echo "<td align='center'><a href='poste_statuts.php?id_host=".$lp["poste"]."' style='color: ".$lp["lnk"]."'>".$lp["poste"]."</a></td>";
 			echo "<td align='center' bgcolor='".$wintype_txt."'>";
 			echo '<img src="../elements/images/'.$lp["typewin"].'" width="20" height="20">';
 			echo "</td>";
