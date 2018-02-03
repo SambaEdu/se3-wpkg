@@ -1,4 +1,4 @@
-se3-wpkg (2.00~b4) unstable; urgency=low
+se3-wpkg (2.00~b5) unstable; urgency=low
 
   * creation d'une interface compatible avec safari sur iOS
   * creation d'une interface wpkg pour les applications
@@ -8,8 +8,9 @@ se3-wpkg (2.00~b4) unstable; urgency=low
   * ajout d'un cron pour la generation de forum.xml toutes les nuits
   * ajout d'une fonction de nettoyage de timeStamps.xml
   * suppression des liens vers l'ancienne interface des applications et des parcs
+  * suppression des pages listappli et listappli2 devenues inutiles
   
- -- Laurent Joly <laurentjoly@orange.fr>  Mon, 30 Jan 2018 22:23:20 +0200
+ -- Laurent Joly <laurentjoly@orange.fr>  Sat, 03 Feb 2018 22:23:20 +0200
 
 se3-wpkg (0.91~) unstable; urgency=low
 
