@@ -1,4 +1,4 @@
-se3-wpkg (2.00~b2) unstable; urgency=low
+se3-wpkg (2.00~b3) unstable; urgency=low
 
   * creation d'une interface compatible avec safari sur iOS
   * creation d'une interface wpkg pour les applications
