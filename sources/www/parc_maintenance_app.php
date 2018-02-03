@@ -1,6 +1,6 @@
 <?php
 /**
- * Affichage de la liste des status des postes pour un parc
+ * Maintenance des applications d'un parc
  * @Version $Id$
  * @Projet LCS / SambaEdu
  * @auteurs  Laurent Joly
@@ -111,7 +111,7 @@
 	echo "</script>\n";
 	
 	echo "<form method='get' action=''>\n";
-	$page_id=2;
+	$page_id=3;
 	include ("parc_top.php");
 	echo "</form>\n";
 	

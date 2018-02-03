@@ -26,6 +26,14 @@
 	}
 	if ($page_id==2)
 	{
+		echo "<th width='220' bgcolor='black' style='color:white'>Applications du parc</th>";
+	}
+	else
+	{
+		echo "<th width='220'><a href='parc_appli.php?parc=".$get_parc."&warning=".$get_warning."&error=".$get_error."&ok=".$get_ok."&tri2=".$tri2."' style='color:".$regular_lnk."'>Applications du parc</a></th>";
+	}
+	if ($page_id==3)
+	{
 		echo "<th width='220' bgcolor='black' style='color:white'>Gestion</th>";
 	}
 	else
