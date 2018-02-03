@@ -53,6 +53,7 @@
 	}
 	echo "</select>";
 	echo "</td>\n";
+	echo "<th></th>";
 	echo "<th><input type='submit' value='Valider' name='Valider'></th>";
 	echo "</tr>\n";
 	echo "</table>\n";
