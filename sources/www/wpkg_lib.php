@@ -74,6 +74,7 @@
 	get_list_wpkg_parc_app($xml_profiles) : liste des parcs par application
 	get_list_wpkg_poste_parc($xml_profiles) : liste des postes par parc
 	get_list_wpkg_poste_app($xml_profiles, $xml_hosts) : liste des postes demandes pour une appli
+	get_list_wpkg_app_parc($xml_profiles,$xml_packages) : Liste des appli d'un parc
 	get_list_wpkg_app_poste($xml_profiles,$xml_packages) : Liste des appli d'un poste
 	get_list_wpkg_depend_app($xml_packages) : liste des dependances d une appli
 	get_list_wpkg_required_by_app($xml_packages) : liste des applis dependant d une appli
@@ -81,7 +82,7 @@
 	get_list_wpkg_rapports_statut_poste_app($xml_rapports) : status des app installees sur un poste
 	get_list_wpkg_rapports_statut_app($xml_rapports) : status d une app installee
 	get_list_wpkg_file_app($xml_packages, $appli) : liste des fichiers d'une application donnee
-	get_list_wpkg_postes_status($liste_hosts,$xml_packages,$xml_rapports,$xml_profiles,$xml_hosts) : Liste de l'état des postes
+	get_list_wpkg_postes_status($id_parc,$xml_packages,$xml_rapports,$xml_profiles) : Liste de l'état des postes d'un parc
 	get_list_wpkg_poste_status($id_host,$xml_rapports,$xml_profiles,$xml_packages,$xml_time,$xml_hosts) : Statut d'un poste
 	
 	---
@@ -204,6 +205,32 @@
 			{
 				if (array_key_exists((string) $profile1["id"],$list_hosts))
 					$list_profiles[(string) $profile2["package-id"]][(string) $profile1["id"]] = (string) $profile1["id"];
+			}
+		}
+		return $list_profiles;
+	}
+	
+	function get_list_wpkg_app_parc($xml_profiles,$xml_packages)
+	{
+		$list_parc=get_list_wpkg_parcs($xml_profiles);
+		$poste_parc=get_list_wpkg_poste_parc($xml_profiles);
+		$list_depend=get_list_wpkg_depend_app($xml_packages);
+		$list_profiles=array();
+		foreach ($xml_profiles->profile as $profile1)
+		{
+			foreach ($profile1->package as $profile2)
+			{
+				if (array_key_exists((string) $profile1["id"],$poste_parc))
+				{
+					$list_profiles[(string) $profile1["id"]][(string) $profile2["package-id"]]["parc"] = (string) $profile1["id"];
+					if (isset($list_depend[(string) $profile2["package-id"]]))
+					{
+						foreach ($list_depend[(string) $profile2["package-id"]] as $depend)
+						{
+							$list_profiles[(string) $profile1["id"]][$depend]["depend"][(string) $profile2["package-id"]] = (string) $profile2["package-id"];
+						}
+					}
+				}
 			}
 		}
 		return $list_profiles;
