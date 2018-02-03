@@ -1,6 +1,6 @@
 <?php
 /**
- * Affichage de la liste des status des postes pour un parc
+ * Affichage de la liste des statuts des applications d'un poste
  * @Version $Id$
  * @Projet LCS / SambaEdu
  * @auteurs  Laurent Joly

@@ -1,6 +1,6 @@
 <?php
 /**
- * Affichage de la liste des postes d'une application
+ * Suppression d'une application
  * @Version $Id$
  * @Projet LCS / SambaEdu
  * @auteurs  Laurent Joly

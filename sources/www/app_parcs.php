@@ -1,6 +1,6 @@
 <?php
 /**
- * Affichage de la liste des postes d'une application
+ * Affichage du status de deploiement d'une application sur un parc
  * @Version $Id$
  * @Projet LCS / SambaEdu
  * @auteurs  Laurent Joly
