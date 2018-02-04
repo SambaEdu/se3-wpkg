@@ -1,4 +1,4 @@
-se3-wpkg (2.00~b7) unstable; urgency=low
+se3-wpkg (2.00~b8) unstable; urgency=low
 
   * creation d'une interface compatible avec safari sur iOS
   * creation d'une interface wpkg pour les applications
@@ -10,7 +10,7 @@ se3-wpkg (2.00~b7) unstable; urgency=low
   * suppression des liens vers l'ancienne interface des applications et des parcs
   * suppression des pages listappli et listappli2 devenues inutiles
   
- -- Laurent Joly <laurentjoly@orange.fr>  Sun, 04 Feb 2018 18:35:20 +0200
+ -- Laurent Joly <laurentjoly@orange.fr>  Sun, 04 Feb 2018 20:15:20 +0200
 
 se3-wpkg (0.91~) unstable; urgency=low
 
