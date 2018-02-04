@@ -40,7 +40,7 @@
 	// tableau 0
 		echo "<table cellspadding='2' cellspacing='1' border='0' align='center' bgcolor='black'>\n";
 		echo "<tr bgcolor='white' height='30' valing='center'>";
-		echo "<th width='220'><a href='app_liste.php' style='color:".$regular_lnk."'>Liste des Applications</a></th>";
+		echo "<th width='220'><a href='app_liste.php?parc=".$get_parc."&warning=".$get_warning."&error=".$get_error."&ok=".$get_ok."&tous=".$get_tous."&Appli=".$get_Appli."&tri2=".$tri2."' style='color:".$regular_lnk."'>Liste des Applications</a></th>";
 		if ($page_id==1)
 		{
 			echo "<th width='220' bgcolor='black' style='color:white'>Etat du déploiement</th>";
