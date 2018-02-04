@@ -21,5 +21,5 @@
 	else
 		$get_ok=1;
 	
-	header ('Location: poste_statuts.php?tri2=".$tri2."&id_host=".$get_id_host."&ok=".$get_ok."&warning=".$get_warning."&error=".$get_error);
+	header ("Location: poste_statuts.php?tri2=".$tri2."&id_host=".$get_id_host."&ok=".$get_ok."&warning=".$get_warning."&error=".$get_error);
 ?>
