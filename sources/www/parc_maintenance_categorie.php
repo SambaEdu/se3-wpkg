@@ -29,5 +29,5 @@
 	else
 		$get_ok=1;
 	
-	header ('Location: parc_maintenance.php?tri2=".$tri2."&parc=".$get_parc."&ok=".$get_ok."&warning=".$get_warning."&error=".$get_error);
+	header ("Location: parc_maintenance.php?tri2=".$tri2."&parc=".$get_parc."&ok=".$get_ok."&warning=".$get_warning."&error=".$get_error);
 ?>
