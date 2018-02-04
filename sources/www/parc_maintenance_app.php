@@ -134,6 +134,8 @@
 	echo "</tr>\n";
 	echo "</table><br>\n";
 	
+	echo $result_xml;
+	
 	echo "<form method='post' action='?tri2=".$tri2."&parc=".$get_parc."&ok=".$get_ok."&warning=".$get_warning."&error=".$get_error."'>";
 	echo "<table cellspadding='2' cellspacing='1' border='0' align='center' bgcolor='black'>\n";
 	echo "<tr bgcolor='black'>";

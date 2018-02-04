@@ -20,6 +20,7 @@
 	set_app_parcs($post_parc,$get_Appli,$liste_parcs,$url_profiles)
 	set_app_postes($post_host,$get_Appli,$liste_parcs,$url_profiles)
 	set_parc_apps($post_appli,$get_parc,$url_profiles)
+	clone_parc_apps($parc_source,$parc_cible,$url_profiles)
 	remove_app($get_Appli,$url_packages)
 	clean_timeStamps($url_time)
 	update_timeStamps($url_time,$get_Appli,$operation,$xml,$md5sum,$login)
@@ -136,6 +137,60 @@ function set_parc_apps($post_appli,$get_parc,$url_profiles)
 		}
 	}
 	
+	$xml->save($url_profiles);
+	
+	return $result;
+}
+
+function clone_parc_apps($parc_source,$parc_cible,$url_profiles)
+{
+	$xml = new DOMDocument;
+	$xml->formatOutput = true;
+	$xml->preserveWhiteSpace = false;
+	$xml->load($url_profiles);
+	$element = $xml->documentElement;
+	$profiles = $xml->documentElement->getElementsByTagName('profile');
+	$list_appli=array();
+
+	$result=array("out"=>0,"in"=>0);
+	
+	foreach ($profiles as $profile)
+	{
+		if ($profile->getAttribute('id')==$parc_cible)
+		{
+			$packages=$profile->getElementsByTagName('package');
+			$length = $packages->length; $i=$length;
+			for ($i=$length-1; $i>=0; $i--)
+			{
+				$profile->removeChild($packages->item($i));
+				$result["out"]++;
+			}
+		}
+		if ($profile->getAttribute('id')==$parc_source)
+		{
+			$packages=$profile->getElementsByTagName('package');
+			foreach ($packages as $package)
+			{
+				$list_appli[]=$package->getAttribute('package-id');
+			}
+		}
+	}
+	foreach ($profiles as $profile)
+	{
+		if ($profile->getAttribute('id')==$parc_cible)
+		{
+			if (is_array($list_appli))
+			{
+				foreach ($list_appli as $appli)
+				{
+					$new_package = new DOMElement('package');
+					$new_package2 = $profile->appendChild($new_package);
+					$new_package2->setAttribute("package-id", $appli);
+					$result["in"]++;
+				}
+			}
+		}
+	}
 	$xml->save($url_profiles);
 	
 	return $result;
