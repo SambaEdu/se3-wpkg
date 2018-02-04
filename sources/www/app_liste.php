@@ -167,44 +167,44 @@
 	
 	echo "<table cellspadding='2' cellspacing='1' border='0' align='center' bgcolor='black'>";
 	echo "<tr bgcolor='white' height='30' valing='center'>";
-	echo "<th width='300'><a href='?tri=";
+	echo "<th width='300'><a href='?parc=".$get_parc."&warning=".$get_warning."&error=".$get_error."&ok=".$get_ok."&tous=".$get_tous."&Appli=".$get_Appli."&tri2=".$tri2."&tri=";
 	if ($tri==0)
 		echo "3";
 	else
 		echo "0";
 	echo "' style='color:".$regular_lnk."'>Nom de l'application</a></th>";
 	echo "<th width='120'>Version</th>";
-	echo "<th width='120'><a href='?tri=";
+	echo "<th width='120'><a href='?parc=".$get_parc."&warning=".$get_warning."&error=".$get_error."&ok=".$get_ok."&tous=".$get_tous."&Appli=".$get_Appli."&tri2=".$tri2."&tri=";
 	if ($tri==2)
 		echo "5";
 	else
 		echo "2";
 	echo "' style='color:".$regular_lnk."'>Compatibilit&#233;</a></th>";
-	echo "<th width='150'><a href='?tri=";
+	echo "<th width='150'><a href='?parc=".$get_parc."&warning=".$get_warning."&error=".$get_error."&ok=".$get_ok."&tous=".$get_tous."&Appli=".$get_Appli."&tri2=".$tri2."&tri=";
 	if ($tri==1)
 		echo "4";
 	else
 		echo "1";
 	echo "' style='color:".$regular_lnk."'>Cat&#233;gorie</a></th>";
-	echo "<th width='70'><a href='?tri=";
+	echo "<th width='70'><a href='?parc=".$get_parc."&warning=".$get_warning."&error=".$get_error."&ok=".$get_ok."&tous=".$get_tous."&Appli=".$get_Appli."&tri2=".$tri2."&tri=";
 	if ($tri==8)
 		echo "9";
 	else
 		echo "8";
 	echo "' style='color:".$regular_lnk."'>Nombre de postes</a></th>";
-	echo "<th width='70'><a href='?tri=";
+	echo "<th width='70'><a href='?parc=".$get_parc."&warning=".$get_warning."&error=".$get_error."&ok=".$get_ok."&tous=".$get_tous."&Appli=".$get_Appli."&tri2=".$tri2."&tri=";
 	if ($tri==10)
 		echo "11";
 	else
 		echo "10";
 	echo "' style='color:".$regular_lnk."'>Postes en erreur</a></th>";
-	echo "<th width='70'><a href='?tri=";
+	echo "<th width='70'><a href='?parc=".$get_parc."&warning=".$get_warning."&error=".$get_error."&ok=".$get_ok."&tous=".$get_tous."&Appli=".$get_Appli."&tri2=".$tri2."&tri=";
 	if ($tri==12)
 		echo "13";
 	else
 		echo "12";
 	echo "' style='color:".$regular_lnk."'>Postes pas &#224; jour</a></th>";
-	echo "<th width='120'><a href='?tri=";
+	echo "<th width='120'><a href='?parc=".$get_parc."&warning=".$get_warning."&error=".$get_error."&ok=".$get_ok."&tous=".$get_tous."&Appli=".$get_Appli."&tri2=".$tri2."&tri=";
 	if ($tri==6)
 		echo "7";
 	else
