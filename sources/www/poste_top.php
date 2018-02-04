@@ -22,7 +22,7 @@
 	}
 	else
 	{
-		echo "<th width='220'><a href='poste_statuts.php?parc=".$get_parc."&warning=".$get_warning."&error=".$get_error."&ok=".$get_ok."&tri2=".$tri2."' style='color:".$regular_lnk."'>Etat du poste</a></th>";
+		echo "<th width='220'><a href='poste_statuts.php?id_host=".$id_host."&warning=".$get_warning."&error=".$get_error."&ok=".$get_ok."&tri2=".$tri2."' style='color:".$regular_lnk."'>Etat du poste</a></th>";
 	}
 	if ($page_id==2)
 	{
@@ -30,7 +30,7 @@
 	}
 	else
 	{
-		echo "<th width='220'><a href='poste_maintenance.php?parc=".$get_parc."&warning=".$get_warning."&error=".$get_error."&ok=".$get_ok."&tri2=".$tri2."' style='color:".$regular_lnk."'>Gestion</a></th>";
+		echo "<th width='220'><a href='poste_maintenance.php?parc=".$id_host."&warning=".$get_warning."&error=".$get_error."&ok=".$get_ok."&tri2=".$tri2."' style='color:".$regular_lnk."'>Gestion</a></th>";
 	}
 	echo "</tr>\n";
 	echo "<tr bgcolor='black' height='30' valing='center'>";
