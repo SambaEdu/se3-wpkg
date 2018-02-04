@@ -13,7 +13,7 @@
 	}
 	asort($liste_apps);
 
-	if ($id_page>0)
+	if ($page_id>0)
 	{
 		if (!array_key_exists($get_Appli,$liste_appli))
 			header("Location: app_liste.php");
@@ -231,9 +231,12 @@
 	else
 	{
 		echo "<h1>Liste des applications du serveur</h1>";
+		if ($get_Appli=="")
+			$get_Appli=key($liste_apps);
+		
 		echo "<table cellspadding='2' cellspacing='1' border='0' align='center' bgcolor='black'>\n";
 		echo "<tr bgcolor='white' height='30' valing='center'>";
-		echo "<th width='220'>Liste des Applications</th>";
+		echo "<th width='220' bgcolor='black' style='color:white'>Liste des Applications</th>";
 		echo "<th width='220'><a href='app_parcs.php?parc=".$get_parc."&warning=".$get_warning."&error=".$get_error."&ok=".$get_ok."&tous=".$get_tous."&Appli=".$get_Appli."&tri2=".$tri2."' style='color:".$regular_lnk."'>Etat du déploiement</a></th>";
 		echo "<th width='220'><a href='app_maintenance.php?parc=".$get_parc."&warning=".$get_warning."&error=".$get_error."&ok=".$get_ok."&tous=".$get_tous."&Appli=".$get_Appli."&tri2=".$tri2."' style='color:".$regular_lnk."'>Gestion</a></th>";
 		echo "</tr>\n";
