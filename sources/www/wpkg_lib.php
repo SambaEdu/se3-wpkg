@@ -142,6 +142,7 @@
 	{
 		$list_appli=array();
 		$liste_time = get_list_wpkg_time($xml_time);
+		$tri_appli=array();
 		foreach ($xml_packages->package as $app)
 		{
 			if ($app["category2"]!="")
@@ -163,6 +164,9 @@
 				$list_appli[(string) $app_dep["package-id"]]["required_by"][]=(string) $app["id"];
 			}
 		}
+		foreach ($list_appli as $lp)
+			$tri_appli[]= strtolower($lp["name"]);
+		array_multisort($tri_appli, SORT_ASC, $list_appli);
 		return $list_appli;
 	}
 	
