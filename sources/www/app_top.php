@@ -11,7 +11,7 @@
 	{
 		$liste_apps[$l_ap]=$liste_appli[$l_ap]["name"];
 	}
-	asort($liste_apps);
+	natcasesort($liste_apps);
 
 	if ($page_id>0)
 	{
