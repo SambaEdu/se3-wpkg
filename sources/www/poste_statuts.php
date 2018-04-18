@@ -85,7 +85,7 @@
 	
 	foreach ($list_app as $key=>$row)
 	{
-		$tri_appli[]=$row["name"];
+		$tri_appli[]=strtolower($row["name"]);
 		$tri_status[]=$row["status"];
 		$tri_revision[]=$row["revision"];
 		$tri_category[]=$row["category"];
