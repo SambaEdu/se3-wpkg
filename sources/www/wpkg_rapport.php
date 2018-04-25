@@ -1,5 +1,3 @@
-<html>
-<body>
 <?php
 
 
@@ -101,6 +99,12 @@ foreach ($liste_rapport as $rapport_fichier)
 
 $xml_md5->asXML($rapport_repertoire.$rapport_md5);
 
+$xml_md5_dom = new DOMDocument;
+$xml_md5_dom->formatOutput = true;
+$xml_md5_dom->preserveWhiteSpace = false;
+$xml_md5_dom->load($rapport_repertoire.$rapport_md5);
+$xml_md5_dom->save($rapport_repertoire.$rapport_md5);
+
 $xml = simplexml_load_file("/var/se3/unattended/install/wpkg/rapports/rapports.xml");
 if (isset($info) and @$info!="")
 {
@@ -127,6 +131,10 @@ if (isset($info) and @$info!="")
 	}
 }
 $xml->asXML("/var/se3/unattended/install/wpkg/rapports/rapports.xml");
+
+$xml_dom = new DOMDocument;
+$xml_dom->formatOutput = true;
+$xml_dom->preserveWhiteSpace = false;
+$xml_dom->load("/var/se3/unattended/install/wpkg/rapports/rapports.xml");
+$xml_dom->save("/var/se3/unattended/install/wpkg/rapports/rapports.xml");
 ?>
-</body>
-</html>

@@ -54,6 +54,9 @@ fi
 
 /usr/bin/php /var/www/se3/wpkg/wpkg_rapport.php
 
+chown www-se3:www-data $RAPPORTXML
+chown www-se3:www-data $RAPPORTMD5XML
+
 rm -f $fich_lock
 
 cd - > /dev/null 

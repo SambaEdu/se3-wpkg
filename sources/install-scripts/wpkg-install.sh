@@ -48,7 +48,7 @@ script_charset="UTF8"
 #. /usr/share/se3/includes/functions.inc.sh
 
 
-echo "Installation de wpkg : installation automatique d'applications sur clients Windows 2000 et XP."
+echo "Installation de wpkg : installation automatique d'applications sur clients Windows XP a Windows 10."
 echo ""
 if [ ! -d /var/se3/unattended/install ]; then
    echo "Le repertoire /var/se3/unattended/install n'existe pas"

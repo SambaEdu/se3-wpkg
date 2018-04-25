@@ -59,6 +59,7 @@ foreach ($list_branch as $branche)
 			$filedate = RecupDateModifDistant( "$svnurl/$branche/$xmlfile.xml" );
 			$md5sum=md5_file("$svnurl/$branche/$xmlfile.xml");
 			$xml = simplexml_load_file("$svnurl/$branche/$xmlfile.xml");
+			$xml_id=str_replace("'"," ",$xml->package[0]['id']);
 			$xml_name=str_replace("'"," ",$xml->package[0]['name']);
 			$xml_category=str_replace("'"," ",$xml->package[0]['category2']);
 			$xml_revision=str_replace("'"," ",$xml->package[0]['revision']);
@@ -74,7 +75,7 @@ foreach ($list_branch as $branche)
 */
 			
 			
-			$id="$xmlfile"; // pour les tests
+			$id="$xml_id"; // pour les tests
 			$tab .= "<package id='$id' xml='$xmlfile.xml' url='$svnurl/$branche/$xmlfile.xml' md5sum='$md5sum' date='$filedate' svn_link='$svnurl/logs/$xmlfile.log' category='$xml_category' name='$xml_name' compatibilite='$xml_compatibilite' revision='$xml_revision'/> ";
 			$tab .= "\n";
 		}

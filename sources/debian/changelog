@@ -1,3 +1,18 @@
+se3-wpkg (2.00~b9) unstable; urgency=low
+
+  * creation d'une interface compatible avec safari sur iOS
+  * creation d'une interface wpkg pour les applications
+  * creation d'une interface wpkg pour les parcs
+  * creation d'une interface wpkg pour les postes
+  * ajout d'un cron pour la generation du rapports.xml toutes les 5 minutes
+  * ajout d'un cron pour la generation de forum.xml toutes les nuits
+  * ajout d'une fonction de nettoyage de timeStamps.xml
+  * suppression des liens vers l'ancienne interface des applications et des parcs
+  * suppression des pages listappli et listappli2 devenues inutiles
+  
+ -- Laurent Joly <laurentjoly@orange.fr>  Sun, 04 Feb 2018 20:40:20 +0200
+
+
 se3-wpkg (0.91~) unstable; urgency=low
 
   * Modification du fonctionnement de wsusoffline-download.sh si l'application n'est pas active dans l'interface
