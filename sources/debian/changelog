@@ -12,6 +12,7 @@ se3-wpkg (2.00~b9) unstable; urgency=low
   
  -- Laurent Joly <laurentjoly@orange.fr>  Sun, 04 Feb 2018 20:40:20 +0200
 
+
 se3-wpkg (0.91~) unstable; urgency=low
 
   * Modification du fonctionnement de wsusoffline-download.sh si l'application n'est pas active dans l'interface
