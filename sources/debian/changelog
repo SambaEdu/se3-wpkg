@@ -1,3 +1,10 @@
+se3-wpkg (2.0.1~1) unstable; urgency=low
+
+  * Correction de tri - inc version
+  
+ -- Franck Molle <franck.molle@sambaedu.org>  Sun, 29 Apr 2018 16:13:20 +0200
+
+
 se3-wpkg (2.00~b9) unstable; urgency=low
 
   * creation d'une interface compatible avec safari sur iOS
