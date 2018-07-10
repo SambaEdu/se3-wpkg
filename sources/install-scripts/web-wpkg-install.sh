@@ -7,11 +7,11 @@
 
 #web_wpkg_srcDir="`dirname $0`"
 
-wpkgroot="/var/se3/unattended/install/wpkg"
-wpkgwww="/var/www/se3/wpkg"
+wpkgroot="/var/sambaedu/unattended/install/wpkg"
+wpkgwww="/var/www/sambaedu/wpkg"
 
 if [ ! -d "$wpkgroot" ]; then
-    echo "Erreur : Il faut au préalable avoir installé se3-wpkg !"
+    echo "Erreur : Il faut au préalable avoir installé sambaedu-wpkg !"
     echo "Installation de web-wpkg : ECHEC"
     exit 1
 fi
@@ -30,21 +30,21 @@ if [ ! -d "$wpkgwww" ]; then
 fi
 if [ ! -d "$wpkgroot/tmp" ]; then
     mkdir $wpkgroot/tmp
-    chown -R www-se3 $wpkgroot/tmp
+    chown -R www-admin $wpkgroot/tmp
 fi
 if [ ! -e "$wpkgroot/tmp/timeStamps.xml" ]; then
     echo "<installations/>" > $wpkgroot/tmp/timeStamps.xml
-    chown www-se3 $wpkgroot/tmp/timeStamps.xml
+    chown www-admin $wpkgroot/tmp/timeStamps.xml
 fi
-if [ ! -e "$wpkgwww/se3_wpkglist.php" ]; then
-    echo "<packages/>" > $wpkgwww/se3_wpkglist.php
-    chown www-se3 $wpkgwww/se3_wpkglist.php
+if [ ! -e "$wpkgwww/sambaedu_wpkglist.php" ]; then
+    echo "<packages/>" > $wpkgwww/sambaedu_wpkglist.php
+    chown www-admin $wpkgwww/sambaedu_wpkglist.php
     # Pour que le fichier soit mis à jour à la prochaine demande
-    touch --date='jun 1 00:00:00 CEST 2007' $wpkgwww/se3_wpkglist.php
+    touch --date='jun 1 00:00:00 CEST 2007' $wpkgwww/sambaedu_wpkglist.php
 fi
 #cp -R $web_wpkg_srcDir/web/* $wpkgwww/
 #cp -R $web_wpkg_srcDir/wpkg/* $wpkgroot/
 
-chown -R www-se3:www-data $wpkgwww
-chown -R www-se3:root $wpkgroot
+chown -R www-admin:www-data $wpkgwww
+chown -R www-admin:root $wpkgroot
 chmod 775 $wpkgwww/bin/*

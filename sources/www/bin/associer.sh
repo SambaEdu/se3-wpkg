@@ -1,18 +1,18 @@
 #!/bin/bash
 
 #########################################################################
-#   /var/www/se3/wpkg/bin/associer.sh                                   #
+#   /var/www/sambaedu/wpkg/bin/associer.sh                                   #
 #                                                                       #
 #########################################################################
 #
 ## $Id$ ##
 #
-#   Met à jour profiles.xml dans /var/se3/unattended/install/wpkg
+#   Met à jour profiles.xml dans /var/sambaedu/unattended/install/wpkg
 #   en Ajoutant ou Retirant un package d'un profile avec prise en compte des droits
 #
 
 if [ "$4" == "" ] ; then
-	echo " Syntaxe : /var/www/se3/wpkg/bin/associer.sh  'operation' 'idPackage' 'idProfile' 'login'"
+	echo " Syntaxe : /var/www/sambaedu/wpkg/bin/associer.sh  'operation' 'idPackage' 'idProfile' 'login'"
 	echo "      operation : Associer|Dissocier"
 	echo "      idPackage : idPackage"
 	echo "      idProfile : idProfile"
@@ -20,8 +20,8 @@ if [ "$4" == "" ] ; then
 	exit 1
 fi
 
-wpkgroot="/var/se3/unattended/install/wpkg"
-wpkgwebdir="/var/www/se3/wpkg"
+wpkgroot="/var/sambaedu/unattended/install/wpkg"
+wpkgwebdir="/var/www/sambaedu/wpkg"
 
 PROFILES_XML="$wpkgroot/profiles.xml";
 

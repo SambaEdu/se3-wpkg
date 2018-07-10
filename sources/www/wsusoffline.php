@@ -36,12 +36,12 @@ if (! $login )
 }
 
 
-if (is_admin("computers_is_admin",$login)!="Y")
+if (is_admin($config, "computers_is_admin",$login)!="Y")
 	die (gettext("Vous n'avez pas les droits suffisants pour acc&#233;der &#224; cette fonction")."</BODY></HTML>");
 
 
 // HTMLpurifier
-include("../se3/includes/library/HTMLPurifier.auto.php");
+include("../sambaedu/includes/library/HTMLPurifier.auto.php");
 $config = HTMLPurifier_Config::createDefault();
 $purifier = new HTMLPurifier($config);
 
@@ -50,12 +50,12 @@ if (isset($_POST['action']))
 else
 	$action="";
 
-$update_generator = "/var/se3/unattended/install/wsusoffline/UpdateGenerator.ini";
-$default = "/var/se3/unattended/install/packages/wsusoffline/default.txt";
+$update_generator = "/var/sambaedu/unattended/install/wsusoffline/UpdateGenerator.ini";
+$default = "/var/sambaedu/unattended/install/packages/wsusoffline/default.txt";
 
 function reset_ini($string)
 {
-	$name = "/var/se3/unattended/install/wsusoffline/UpdateGenerator.ini";
+	$name = "/var/sambaedu/unattended/install/wsusoffline/UpdateGenerator.ini";
 	//On supprime le fichier s'il existe
 	if (file_exists($name))
 	{
@@ -70,7 +70,7 @@ function reset_ini($string)
 
 function update_ini_file($section_modif, $key_modif, $value_modif)
 {
-	$filepath = "/var/se3/unattended/install/wsusoffline/UpdateGenerator.ini";
+	$filepath = "/var/sambaedu/unattended/install/wsusoffline/UpdateGenerator.ini";
 	$parsed = parse_ini_file($filepath, true);
 
 	foreach ($parsed as $section => $values)
@@ -315,7 +315,7 @@ if ($action!='')
 		
 		while (@ ob_end_flush());  // end all output buffers
 		
-		$proc = popen("/usr/share/se3/scripts/wsusoffline-download.sh", "r");
+		$proc = popen("/usr/share/sambaedu/scripts/wsusoffline-download.sh", "r");
 		echo '<pre>';
 		while (!feof($proc))
 		{

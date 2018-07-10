@@ -1,5 +1,5 @@
 <?php
 include "inc/wpkg.auth.php";
 
-get_xml("hosts.xml");
+get_xml($config, $login, "hosts.xml");
 ?>

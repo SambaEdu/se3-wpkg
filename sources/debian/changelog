@@ -1,3 +1,16 @@
+sambaedu-wpkg (3.9.4~XP.14) UNRELEASED; urgency=medium
+
+  * 
+
+ -- Denis Bonnenfant <denis.bonnenfant@sambaedu.org>  Tue, 10 Jul 2018 15:14:48 +0200
+
+se3-wpkg (3.9.4~XP.0) unstable; urgency=low
+
+  * compatibilité initiale se4
+  
+ -- Denis <denis.bonnenfant@sambaedu.org>  Sun, 04 Feb 2018 20:40:20 +0200
+
+
 se3-wpkg (2.00~b9) unstable; urgency=low
 
   * creation d'une interface compatible avec safari sur iOS

@@ -1,44 +1,30 @@
 #!/bin/bash
 
 #########################################################################
-#   /usr/share/se3/scripts/update_droits_xml.sh                             #
+#   /usr/share/sambaedu/scripts/update_droits_xml.sh                             #
 #                                                                       #
 #########################################################################
 #
 #
-#   Met à jour droits.xml dans /var/se3/unattended/install/wpkg
+#   Met à jour droits.xml dans /var/sambaedu/unattended/install/wpkg
 #   à partir des gon de l'annuaire : computers_is_admin, parc_can_manage et parc_can_view
 #   et des délégations lues dans la table mysql : base se3db, table delegation
 
 #   A executer chaque fois que les droits ou delegations sont modifiés
 #   Syntaxe :  update_droits_xml.sh [--help]
 
-## $Id$ ##
-# last update fev 2016 - utf8
+. /usr/share/sambaedu/includes/config.inc.sh
+. /usr/share/sambaedu/includes/utils.inc.sh
 
-CONFIG_INC="/var/www/se3/includes/config.inc.php"
-dbhost="`gawk -F'[\"]' '/^ *\\$dbhost *=/ {print $2}' $CONFIG_INC`";
-dbname="`gawk -F'[\"]' '/^ *\\$dbname *=/ {print $2}' $CONFIG_INC`";
-dbuser="`gawk -F'[\"]' '/^ *\\$dbuser *=/ {print $2}' $CONFIG_INC`";
-dbpass="`gawk -F'[\"]' '/^ *\\$dbpass *=/ {print $2}' $CONFIG_INC`";
+ComputersRDN=$config_computers_rdn
+RightsRDN=$config_rights_rdn
+BaseDN=$config_ldap_base_dn
 
-RightsRDN=`mysql --host=$dbhost --user=$dbuser --password=$dbpass --skip-column-names --execute="SELECT value FROM params WHERE name='rightsRdn';" --silent $dbname`
-BaseDN=`mysql --host=$dbhost --user=$dbuser --password=$dbpass --skip-column-names --execute="SELECT value FROM params WHERE name='ldap_base_dn';" --silent $dbname`
-#RightsRDN=`echo "SELECT value FROM params WHERE name='rightsRdn'" | mysql -h localhost se3db -N`
-#BaseDN=`echo "SELECT value FROM params WHERE name='ldap_base_dn'" | mysql -h localhost se3db -N`
-# echo "RightsRDN=$RightsRDN; BaseDN=$BaseDN"
-
-wpkgroot="/var/se3/unattended/install/wpkg"
-wpkgwebdir="/var/www/se3/wpkg"
-
+wpkgroot=$config_wpkgroot
+wpkgwebdir="/var/www/sambaedu/wpkg"
 PROFILES_XML="$wpkgroot/profiles.xml";
 DROITS_XML="$wpkgroot/droits.xml";
 
-if [ "$BaseDN" == "" ]; then
-	echo "Met à jour le fichier /var/se3/unattended/install/wpkg/droits.xml"
-	echo "  Syntaxe :  update_droits_xml.sh RightsRDN BaseDN"
-	exit 1
-fi
 
 # Nom du profile TousLesPostes
 TousLesPostes="_TousLesPostes"
@@ -47,11 +33,10 @@ echo '<?xml version="1.0" encoding="UTF-8"?>' > $DROITS_XML
 echo '<!-- Généré par SambaEdu. Ne pas modifier -->' >> $DROITS_XML
 echo '<droits>' >> $DROITS_XML
 
-# mysql --host=$dbhost --user=$dbuser --password=$dbpass --skip-column-names --execute='SELECT login, parc, niveau FROM delegation' --silent $dbname
 
-mysql --host=$dbhost --user=$dbuser --password=$dbpass --skip-column-names --execute='SELECT login, parc, niveau FROM delegation' --silent $dbname | 
+mysql  --user=sambaedu --password=$config_sql_passwd sambaedu --skip-column-names --execute='SELECT login, parc, niveau FROM delegation' --silent sambaedu | 
 	gawk '  BEGIN {
-				ListDroits = "ldapsearch -x -LLL -S \"cn\" -b \"'$RightsRDN','$BaseDN'\" \"(|(cn=computers_is_admin)(cn=parc_can_manage)(cn=parc_can_view))\" cn member";
+				ListDroits = "su www-admin -c \"ldapsearch -Y gssapi -LLL -H '$ldap_url' -S cn -b \\\"'$RightsRDN','$BaseDN'\\\" \\\"(|(cn=computers_is_admin)(cn=parc_can_manage)(cn=parc_can_view))\\\" cn member\"";
 				while ( ListDroits | getline ) {
 					if ( $1 == "cn:") {
 						if ( $2 == "computers_is_admin") {
@@ -108,4 +93,4 @@ mysql --host=$dbhost --user=$dbuser --password=$dbpass --skip-column-names --exe
 			}' >> $DROITS_XML
 # Fermeture du noeud profiles de $DROITS_XML 
 echo '</droits>' >> $DROITS_XML
-chown www-se3 $DROITS_XML
+chown www-admin $DROITS_XML

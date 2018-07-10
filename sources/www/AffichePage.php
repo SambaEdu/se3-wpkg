@@ -10,13 +10,11 @@ foreach($_GET AS $key => $value) {
 	${$key} = $value;
 }
 $login = "";
-$wpkgAdmin = false;
-$wpkgUser = false;
 
 include "inc/wpkg.auth.php";
 
 
-if ( $wpkgUser && ($login != "")) {
+if ( isWpkgUser($config, $login) && ($login != "")) {
 	$xml="$wpkgroot/tmp/wpkg.$login.xml";
 	$xsl="";
 	switch ( $page ) {
@@ -55,7 +53,7 @@ if ( $wpkgUser && ($login != "")) {
 	exec ( "$wpkgwebdir/bin/wpkgXml.sh '$login'", $output, $return_value);
 	//exec ( "$wpkgwebdir/bin/wpkgXml.sh '$login'", $output, $return_value);
 	if ( $return_value == 0 ) {
-		get_html($xsl, $xml, $parametres);
+	    get_html($config, $login, $xsl, $xml, $parametres);
 	} else {
 		header("HTTP/1.1 505 Exec error");
 		header("Status: 505 Erreur d'execution"); 

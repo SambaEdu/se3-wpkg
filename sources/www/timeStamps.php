@@ -6,5 +6,5 @@
 
 include "inc/wpkg.auth.php";
 
-get_xml("tmp/timeStamps.xml");
+get_xml($config, $login, "tmp/timeStamps.xml");
 ?>

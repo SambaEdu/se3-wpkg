@@ -20,33 +20,33 @@ if ( ! $wpkgUser ) {
 		$msg="wakeonlan  -i '".$_GET["Broadcast"]."' '" . $_GET["Mac"] . "'\n";
 		
 		// Pour le cas où le poste était déjà démarré
-		exec ( "net rpc shutdown -r -f -C 'Redemarrage pour wpkg' -S ".$_GET["Poste"]." -U '".$_GET["Poste"]."\adminse3%$xppass' 2>&1", $output, $status );
+		exec ( "net rpc shutdown -r -f -C 'Redemarrage pour wpkg' -S ".$_GET["Poste"]." -U '".$_GET["Poste"]."\$config_adminse_name%$xppass' 2>&1", $output, $status );
 		if ( $status == 0 ) {
 			print "Redemarrge du '$Poste' : OK\n\n";
-			print "net rpc shutdown -r -f -C 'Redemarrage pour wpkg' -S '".$_GET["Poste"]."' -U '".$_GET["Poste"]."\adminse3%XXXXXX'\n";
+			print "net rpc shutdown -r -f -C 'Redemarrage pour wpkg' -S '".$_GET["Poste"]."' -U '".$_GET["Poste"]."\$config_adminse_name%XXXXXX'\n";
 			return true;
 		} else {
 			$msg .= "Redemarrage du poste $Poste ... \n";
-			$msg .= "Erreur $status : net rpc shutdown -r  -f -C 'Redemarrage pour wpkg' -S '".$_GET["Poste"]."' -U '".$_GET["Poste"]."\adminse3%XXXXXX'\n";
+			$msg .= "Erreur $status : net rpc shutdown -r  -f -C 'Redemarrage pour wpkg' -S '".$_GET["Poste"]."' -U '".$_GET["Poste"]."\$config_adminse_name%XXXXXX'\n";
 			$msg .= "\n";
 			foreach($output as $key => $value) {
 				$msg .= "   $value\n";
 			}
 			$msg .= "\n";
-			// Essai avec ssh adminse3
+			// Essai avec ssh $config_adminse_name
 
 			//$rebootCmd = "(shutdown.exe -r -f)||(psshutdown.exe -r -f -n 10)";
 			$rebootCmd = "shutdown.exe -r -f";
 			$sshCmd = "ssh -o StrictHostKeyChecking=no -o ConnectTimeout=20 -o CheckHostIP=no -i /var/remote_adm/.ssh/id_rsa";
 			
-			//echo "$sshCmd adminse3@".$_GET["Ip"]." '$rebootCmd'";
-			exec ( "$sshCmd adminse3@".$_GET["Ip"]." '$rebootCmd' 2>&1", $output, $status );
+			//echo "$sshCmd $config_adminse_name@".$_GET["Ip"]." '$rebootCmd'";
+			exec ( "$sshCmd $config_adminse_name@".$_GET["Ip"]." '$rebootCmd' 2>&1", $output, $status );
 			if ( $status == 0 ) {
 				print "Redemarrge du '$Poste' : OK\n\n";
-				print "$sshCmd adminse3@".$_GET["Ip"]." '$rebootCmd'\n";
+				print "$sshCmd $config_adminse_name@".$_GET["Ip"]." '$rebootCmd'\n";
 				return true;
 			} else {
-				$msg .= "Erreur $status : $sshCmd adminse3@".$_GET["Ip"]." '$rebootCmd'\n";
+				$msg .= "Erreur $status : $sshCmd $config_adminse_name@".$_GET["Ip"]." '$rebootCmd'\n";
 				$msg .= "\n";
 				foreach($output as $key => $value) {
 					$msg .= "   $value\n";

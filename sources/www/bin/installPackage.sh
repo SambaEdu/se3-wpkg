@@ -10,9 +10,9 @@
 ## $Id$ ##
 
 Erreur="0"
-wpkgroot="/var/se3/unattended/install/wpkg"
-wpkgwww="/var/www/se3/wpkg"
-Z="/var/se3/unattended/install"
+wpkgroot="/var/sambaedu/unattended/install/wpkg"
+wpkgwww="/var/www/sambaedu/wpkg"
+Z="/var/sambaedu/unattended/install"
 
 function Download () {
 	local url="$1"
@@ -142,11 +142,11 @@ function installationsTimeStamp() {
 	# $appliXml
 	TimeStamp=`date --iso-8601='seconds'`
 	# $md5Xml
-	timeStampsXml="/var/se3/unattended/install/wpkg/tmp/timeStamps.xml"
+	timeStampsXml="/var/sambaedu/unattended/install/wpkg/tmp/timeStamps.xml"
 	if [ ! -e "$timeStampsXml" ] ; then
 		echo '<installations />' > "$timeStampsXml"
 	fi
-	xsltproc --output "$timeStampsXml" --stringparam op add --stringparam Appli "$Appli" --stringparam AppliXml "$appliXml" --stringparam TimeStamp "`date --iso-8601='seconds'`" --stringparam md5sum "$md5Xml" --stringparam user "$login" /var/www/se3/wpkg/bin/timeStampAddPackages.xsl "$timeStampsXml"
+	xsltproc --output "$timeStampsXml" --stringparam op add --stringparam Appli "$Appli" --stringparam AppliXml "$appliXml" --stringparam TimeStamp "`date --iso-8601='seconds'`" --stringparam md5sum "$md5Xml" --stringparam user "$login" /var/www/sambaedu/wpkg/bin/timeStampAddPackages.xsl "$timeStampsXml"
 }
 
 cd $wpkgroot/tmp

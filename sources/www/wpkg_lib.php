@@ -45,16 +45,16 @@
 
 // localisation wpkg
 
-	$url_wpkg = "/var/se3/unattended/install";
+	$url_wpkg = "/var/sambaedu/unattended/install";
 
 // localisation des xml de wpkg
 
-	$url_packages = "/var/se3/unattended/install/wpkg/packages.xml";
-	$url_profiles = "/var/se3/unattended/install/wpkg/profiles.xml";
-	$url_rapports = "/var/se3/unattended/install/wpkg/rapports/rapports.xml";
-	$url_time = "/var/se3/unattended/install/wpkg/tmp/timeStamps.xml";
-	$url_hosts = "/var/se3/unattended/install/wpkg/hosts.xml";
-	$url_forum = "/var/www/se3/wpkg/forum.xml";
+	$url_packages = "/var/sambaedu/unattended/install/wpkg/packages.xml";
+	$url_profiles = "/var/sambaedu/unattended/install/wpkg/profiles.xml";
+	$url_rapports = "/var/sambaedu/unattended/install/wpkg/rapports/rapports.xml";
+	$url_time = "/var/sambaedu/unattended/install/wpkg/tmp/timeStamps.xml";
+	$url_hosts = "/var/sambaedu/unattended/install/wpkg/hosts.xml";
+	$url_forum = "/var/www/sambaedu/wpkg/forum.xml";
 
 // Chargement des xml avec simpleXML
 
@@ -669,7 +669,7 @@
 
 	function get_wpkg_branche_XP()
 	{
-		$XP = fopen("/var/www/se3/wpkg/XP", "r");
+		$XP = fopen("/var/www/sambaedu/wpkg/XP", "r");
 		$XP_actif=fgets($XP);
 		fclose($XP);
 		return $XP_actif;

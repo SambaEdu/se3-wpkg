@@ -18,13 +18,13 @@
 #  Corrections apportees :
 #    Message d'information de l'installation automatique de WsusOffline a partir de 20h45.
 #    Ligne 1680 :
-#    Modification "chown -R www-se3 /var/se3/unattended/install" par "chown -R www-se3:admins /var/se3/unattended/install"
+#    Modification "chown -R www-admin /var/sambaedu/unattended/install" par "chown -R www-admin:admins /var/sambaedu/unattended/install"
 #
 # Trucs et astuces.
 #    Pour installer le client wpkg sur un poste equipe de sshd, sans attendre le prochain login d'un utilisateur :
 #        ssh administrateur@IpDuPoste (authentification par mot de passe, pas par cle, sinon le net use suivant ne marche pas sous XP avec cygwin+openssh; avec copssh c'est ok)
-#           net use \\\\se3 PassAdmin /user:se3\\admin
-#           cmd /c \\\\se3\\Progs\\install\\installdll\\CPAU.exe -dec -lwp -cwd c:\\ -file \\\\se3\\Progs\\ro\\wpkgInstall.job
+#           net use \\\\se4fs PassAdmin /user:se4\\admin
+#           cmd /c \\\\se4fs\\Progs\\install\\installdll\\CPAU.exe -dec -lwp -cwd c:\\ -file \\\\se4fs\\Progs\\ro\\wpkgInstall.job
 #
 #        pour relancer l'execution du client wpkg sans avoir a redemarrer le poste :
 #             schtasks.exe /Run /Tn wpkg
@@ -43,35 +43,23 @@ WWWPATH="/var/www"
 ### version debian  ####
 script_charset="UTF8"
 
+. /usr/share/sambaedu/includes/config.inc.sh
+. /usr/share/sambaedu/includes/utils.inc.sh
 
-. /usr/share/se3/includes/config.inc.sh -ml
-#. /usr/share/se3/includes/functions.inc.sh
 
 
 echo "Installation de wpkg : installation automatique d'applications sur clients Windows XP a Windows 10."
 echo ""
-if [ ! -d /var/se3/unattended/install ]; then
-   echo "Le repertoire /var/se3/unattended/install n'existe pas"
+if [ ! -d /var/sambaedu/unattended/install ]; then
+   echo "Le repertoire /var/sambaedu/unattended/install n'existe pas"
    echo "Il aurait dû etre cree lors de l'installation d'unattended."
    echo "Echec de l'installation."
    exit 1
 fi
 
-URLSE3="$urlse3"
-SE3="$netbios_name"
-if [ -z "$SE3" ] ; then
-   SE3=`gawk -F' *= *' '/netbios name/ {print $2}' /etc/samba/smb.conf`
-fi
-if [ -z "$SE3" ] ; then
-   echo "Nom netbios du serveur samba introuvable."
-   exit 1
-fi
-WPKGDIR="/var/se3/unattended/install/wpkg"
-WPKGROOT="\\\\$SE3\\install\\wpkg"
+WPKGDIR=$config_wpkgroot
+WPKGROOT="\\\\${config_se4fs_name}\\install\\wpkg"
 
-# Compte administrateur local des postes
-ADMINSE3="adminse3"
-PASSADMINSE3="$xppass"
 
 if [ ! -d $WPKGDIR ]; then
    echo "Erreur le repertoire $WPKGDIR n'existe pas."
@@ -83,7 +71,7 @@ fi
 
 if [ ! -d $WPKGDIR/tools ]; then
    echo "Bizarre : le repertoire $WPKGDIR/tools n'existe pas !!!"
-   mkdir /var/se3/unattended/install/wpkg/tools
+   mkdir /var/sambaedu/unattended/install/wpkg/tools
 fi
 if [ ! -d $WPKGDIR/tools ]; then
    echo "Erreur : le repertoire $WPKGDIR/tools n'a pas pu etre cree."
@@ -91,10 +79,10 @@ if [ ! -d $WPKGDIR/tools ]; then
 fi
 
 # Telechargements pour mettre a jour les postes Windows qui en ont besoin
-if [ ! -d /var/se3/unattended/install/packages/windows ] ; then
-   mkdir -p /var/se3/unattended/install/packages/windows 
+if [ ! -d /var/sambaedu/unattended/install/packages/windows ] ; then
+   mkdir -p /var/sambaedu/unattended/install/packages/windows 
 fi
-cd /var/se3/unattended/install/packages/windows
+cd /var/sambaedu/unattended/install/packages/windows
 
 # WindowsXP-Windows2000-Script57
 if [ ! -e scripten.exe ] ; then
@@ -104,7 +92,7 @@ if [ ! -e scripten.exe ] ; then
       echo "  Vous pourrez le telecharger plus tard a partir de l'adresse :"
       echo "  http://www.microsoft.com/downloads/details.aspx?FamilyID=47809025-D896-482E-A0D6-524E7E844D81&displaylang=en"
       echo "  et placer scripten.exe"
-      echo "  dans \\\\$SE3\\install\\packages\\windows\\ ."
+      echo "  dans \\\\${config_se4fs_name}\\install\\packages\\windows\\ ."
       if [ -e scripten.exe ] ; then
          rm scripten.exe
       fi
@@ -117,7 +105,7 @@ if [ ! -e WindowsInstaller-KB893803-v2-x86.exe ] ; then
    if ( ! wget 'http://download.microsoft.com/download/1/4/7/147ded26-931c-4daf-9095-ec7baf996f46/WindowsInstaller-KB893803-v2-x86.exe' ) ; then
       echo "Erreur de telechargement de Windows Installer 3.1 (v2)."
       echo "  Vous pourrez le telecharger plus tard et placer WindowsInstaller-KB893803-v2-x86.exe"
-      echo "  dans \\\\$SE3\\install\\packages\\windows\\ ."
+      echo "  dans \\\\${config_se4fs_name}\\install\\packages\\windows\\ ."
       if [ -e WindowsInstaller-KB893803-v2-x86.exe ] ; then
          rm WindowsInstaller-KB893803-v2-x86.exe
       fi
@@ -130,7 +118,7 @@ if [ ! -e msxml6.msi ] ; then
    if ( ! wget 'http://download.microsoft.com/download/8/a/4/8a4bae5b-95e9-4179-a838-1e75cf330a48/msxml6.msi' ) ; then
       echo "Erreur de telechargement de MSXML (Microsoft Core XML Services) 6.0."
       echo "  Vous pourrez le telecharger plus tard et placer msxml6.msi"
-      echo "  dans \\\\$SE3\\install\\packages\\windows\\ ."
+      echo "  dans \\\\${config_se4fs_name}\\install\\packages\\windows\\ ."
       if [ -e msxml6.msi ] ; then
          rm msxml6.msi
       fi
@@ -325,15 +313,13 @@ fi
 
 cd -
 
-CPAU="\\\\$SE3\\netlogon\\CPAU.exe"
-
 # priorite d'execution de wpkg sur les clients
 # PRIORITY=/LOW|/BELOWNORMAL|/NORMAL|/ABOVENORMAL|/HIGH|/REALTIME
 PRIORITY=/BELOWNORMAL
 
-CONFIGBAT="/var/se3/Progs/install/wpkg-config.bat"
+CONFIGBAT="/var/sambaedu/Progs/install/wpkg-config.bat"
 
-# Suppression de l'ancien script execute avant wpkg-se3.js
+# Suppression de l'ancien script execute avant wpkg-se4.js
 # Maintenant les options du client sont definies dans l'interface.
 if [ -e $WPKGDIR/wpkgAvant.bat ]; then
    rm $WPKGDIR/wpkgAvant.bat
@@ -341,9 +327,9 @@ if [ -e $WPKGDIR/wpkgAvant.bat ]; then
 fi
 
 # Script de demarrage des anciens clients wpkg 
-# C'est maintenant wpkg-client.vbs (client execute au boot du poste) qui lance directement wpkg-se3.js
-#--------Debut wpkg-se3.bat-----------#
-cat - > $WPKGDIR/wpkg-se3.bat <<WPKGSE3BAT
+# C'est maintenant wpkg-client.vbs (client execute au boot du poste) qui lance directement wpkg-se4.js
+#--------Debut wpkg-se4.bat-----------#
+cat - > $WPKGDIR/wpkg-se4.bat <<WPKGSE4BAT
 :: Ce fichier assure la mise a jour des anciens clients
 :: Ensuite il n'est plus utilise
 :: ## $Id$ ##
@@ -351,58 +337,58 @@ cat - > $WPKGDIR/wpkg-se3.bat <<WPKGSE3BAT
 Set Silent=1
 Echo %date% %time% Mise a jour du client wpkg.
 :: Lancement de wpkg-repair.bat a l'aide du job wpkg-repair.job
-If Not Exist \\\\$SE3\\Progs\\ro\\wpkg-repair.job Goto NoWpkgRepairJob
+If Not Exist \\\\${config_se4fs_name}\\Progs\\ro\\wpkg-repair.job Goto NoWpkgRepairJob
 Echo Lancement du job CPAU wpkg-repair 
-\\\\$SE3\\netlogon\\CPAU.exe -dec -lwp -cwd %SystemDrive%\\ -file \\\\$SE3\\Progs\\ro\\wpkg-repair.job 2>NUL >NUL
-If "%ErrorLevel%"=="1907" Goto ErrAdminse3Expire
-If "%ErrorLevel%"=="1326" Goto ErrAdminse3BadPassword
-If Not "%ErrorLevel%"=="0" Echo Erreur %ErrorLevel% lors de l'execution de 'CPAU.exe -dec -lwp -cwd %SystemDrive%\\ -file \\\\$SE3\\Progs\\ro\\wpkg-repair.job'
+\\\\${config_se4fs_name}\\netlogon\\CPAU.exe -dec -lwp -cwd %SystemDrive%\\ -file \\\\${config_se4fs_name}\\Progs\\ro\\wpkg-repair.job 2>NUL >NUL
+If "%ErrorLevel%"=="1907" Goto ErrAdminse4Expire
+If "%ErrorLevel%"=="1326" Goto ErrAdminse4BadPassword
+If Not "%ErrorLevel%"=="0" Echo Erreur %ErrorLevel% lors de l'execution de 'CPAU.exe -dec -lwp -cwd %SystemDrive%\\ -file \\\\${config_se4fs_name}\\Progs\\ro\\wpkg-repair.job'
 
 echo.
 echo Le rapport de la mise a jour du client est disponible ici :
 echo ^</pre^>
-echo  ^<a href="$URLSE3/wpkg/index.php?logfile=%COMPUTERNAME%.maj"^>$URLSE3/wpkg/index.php?logfile=%COMPUTERNAME%.maj^</a^>
+echo  ^<a href="${config_urlse}/wpkg/index.php?logfile=%COMPUTERNAME%.maj"^>${config_urlse}/wpkg/index.php?logfile=%COMPUTERNAME%.maj^</a^>
 echo ^<pre^>
 
 Goto Done
 
 :NoWpkgRepairJob
-echo Erreur : Fichier \\\\$SE3\\Progs\\install\\wpkg-repair.job absent !
+echo Erreur : Fichier \\\\${config_se4fs_name}\\Progs\\install\\wpkg-repair.job absent !
 echo   En tant qu'admin, relancer :
-echo   \\\\$SE3\\Progs\\install\\wpkg-config.bat
+echo   \\\\${config_se4fs_name}\\Progs\\install\\wpkg-config.bat
 Goto Done
 
-:ErrAdminse3BadPassword
-echo Erreur : Le mot de passe d'adminse3 sur %COMPUTERNAME% n'est pas correct !
-echo   Revoir la configuration du compte 'adminse3' sur %COMPUTERNAME%.
+:ErrAdminse4BadPassword
+echo Erreur : Le mot de passe d'$config_adminse_name sur %COMPUTERNAME% n'est pas correct !
+echo   Revoir la configuration du compte '$config_adminse_name' sur %COMPUTERNAME%.
 Goto Done
 
-:ErrAdminse3Expire
-echo Erreur : Le compte adminse3 a un mot de passe qui expire.
-echo   Revoir la configuration du compte 'adminse3' sur %COMPUTERNAME%.
+:ErrAdminse4Expire
+echo Erreur : Le compte $config_adminse_name a un mot de passe qui expire.
+echo   Revoir la configuration du compte '$config_adminse_name' sur %COMPUTERNAME%.
 Goto Done
 
 :Done
-echo Fin de wpkg-se3.bat
-WPKGSE3BAT
-#--------Fin wpkg-se3.bat-----------#
-recode $script_charset..CP850 $WPKGDIR/wpkg-se3.bat
-todos $WPKGDIR/wpkg-se3.bat
-chmod 755 $WPKGDIR/wpkg-se3.bat
-echo "Script $WPKGDIR/wpkg-se3.bat cree."
+echo Fin de wpkg-se4.bat
+WPKGSE4BAT
+#--------Fin wpkg-se4.bat-----------#
+recode $script_charset..CP850 $WPKGDIR/wpkg-se4.bat
+todos $WPKGDIR/wpkg-se4.bat
+chmod 755 $WPKGDIR/wpkg-se4.bat
+echo "Script $WPKGDIR/wpkg-se4.bat cree."
 
-# Suppression de l'ancien script execute apres wpkg-se3.js
+# Suppression de l'ancien script execute apres wpkg-se4.js
 if [ -e $WPKGDIR/wpkgApres.bat ]; then
    rm $WPKGDIR/wpkgApres.bat
    echo "Ancien script $WPKGDIR/wpkgApres.bat supprime (il n'est plus utilise dans cette version)."
 fi
 
 # Script d'installation de la tache planifiee sur le poste
-# Est execute sous local\adminse3 avec CPAU l'authentification au serveur etant deja faite
+# Est execute sous local\$config_adminse_name avec CPAU l'authentification au serveur etant deja faite
 #--------Debut wpkg-install.bat-----------#
 cat - > $WPKGDIR/wpkg-install.bat <<PREINSTBAT
 :: Script d'installation de wpkg sur le client.
-:: S'execute avec le compte local $ADMINSE3 grace a CPAU, 
+:: S'execute avec le compte local $${config_adminse_name} grace a CPAU, 
 ::    l'authentification sur le serveur est deja faite.
 ::
 :: ## $Id$ ##
@@ -415,7 +401,7 @@ If "%NoRunWpkgJS%"=="" Set NoRunWpkgJS=0
 If Exist "%SystemRoot%\\netinst\\nowpkg.txt" Set NoRunWpkgJS=1
 If "%NoRunWpkgJS%"=="1" Echo L'installation des applications ne sera effectuee qu'au prochain boot.
 
-:: Pour supprimer la temporisation avant execution de wpkg-se3.js
+:: Pour supprimer la temporisation avant execution de wpkg-se4.js
 Rem Echo NoTempo >"%SystemDrive%\\netinst\\wpkg-notempo.txt"
 
 SETLOCAL ENABLEEXTENSIONS
@@ -436,10 +422,10 @@ set NbErreur=0
 :: Copie sur le poste local des fichiers necessaires
 Set REGEXE=%WinDir%\\system32\\reg.exe
 If Exist "%REGEXE%" Goto REGEXEFOUND
-If Exist \\\\$SE3\\install\\wpkg\\tools\\reg.exe copy /Y /B /V \\\\$SE3\\install\\wpkg\\tools\\reg.exe "%REGEXE%"
+If Exist \\\\${config_se4fs_name}\\install\\wpkg\\tools\\reg.exe copy /Y /B /V \\\\${config_se4fs_name}\\install\\wpkg\\tools\\reg.exe "%REGEXE%"
 If Exist "%REGEXE%" Goto REGEXEFOUND
 echo L'utilitaire reg.exe est introuvable.
-echo A partir d'un WinXP, recopiez %WinDir%\\system32\\reg.exe dans \\\\$SE3\\install\\wpkg\\tools\\ 
+echo A partir d'un WinXP, recopiez %WinDir%\\system32\\reg.exe dans \\\\${config_se4fs_name}\\install\\wpkg\\tools\\ 
 Goto WindowsScriptHost56
 :REGEXEFOUND
 
@@ -461,7 +447,7 @@ If Exist %WPKGROOT%\\..\\packages\\windows\\WindowsXP-Windows2000-Script56-KB917
 echo Les fichiers "scripten.exe " et "WindowsXP-Windows2000-Script56-KB917344-x86-fra.exe" sont absents. 
 echo   Telechargez scripten.exe depuis l'adresse 
 echo   http://www.microsoft.com/downloads/details.aspx?FamilyID=47809025-D896-482E-A0D6-524E7E844D81&displaylang=en
-echo   et placez ce fichier dans \\\\$SE3\\install\\packages\\windows\\ 
+echo   et placez ce fichier dans \\\\${config_se4fs_name}\\install\\packages\\windows\\ 
 Set /A NbErreur=1+%NbErreur%
 Goto WININSTALLER
 
@@ -497,7 +483,7 @@ If Exist %WPKGROOT%\\..\\packages\\windows\\WindowsInstaller-KB893803-v2-x86.exe
 echo Le fichier "%WPKGROOT%\\..\\packages\\windows\\WindowsInstaller-KB893803-v2-x86.exe" est absent. 
 echo   Telechargez-le depuis l'adresse 
 echo   http://www.microsoft.com/downloads/details.aspx?FamilyID=889482fc-5f56-4a38-b838-de776fd4138c&DisplayLang=fr 
-echo   et placez ce fichier dans \\\\$SE3\\install\\packages\\windows\\ 
+echo   et placez ce fichier dans \\\\${config_se4fs_name}\\install\\packages\\windows\\ 
 Set /A NbErreur=1+%NbErreur%
 Goto Done
 :SETUPMSI
@@ -519,7 +505,7 @@ If Exist %WPKGROOT%\\..\\packages\\windows\\msxml6.msi Goto SETUPMSXML
 echo Le fichier "%WPKGROOT%\\..\\packages\\windows\\msxml6.msi" est absent. 
 echo   Telechargez-le depuis l'adresse 
 echo   http://www.microsoft.com/downloads/details.aspx?FamilyID=993c0bcf-3bcf-4009-be21-27e85e1857b1&DisplayLang=fr 
-echo   et placez ce fichier dans \\\\$SE3\\install\\packages\\windows\\ 
+echo   et placez ce fichier dans \\\\${config_se4fs_name}\\install\\packages\\windows\\ 
 Set /A NbErreur=1+%NbErreur%
 Goto Done
 :SETUPMSXML
@@ -652,25 +638,25 @@ todos $WPKGDIR/wpkg-install.bat
 echo "Script $WPKGDIR/wpkg-install.bat cree."
 
 # Chemin du job d'installation de wpkg sur un poste pour un utilisateur lambda
-INSTTASKJOB="\\\\$SE3\\Progs\\ro\\wpkgInstall.job"
+INSTTASKJOB="\\\\${config_se4fs_name}\\Progs\\ro\\wpkgInstall.job"
 # Chemin du job d'execution de wpkg sur un poste pour un utilisateur lambda
-RUNWPKGJOB="\\\\$SE3\\Progs\\ro\\wpkgRun.job"
+RUNWPKGJOB="\\\\${config_se4fs_name}\\Progs\\ro\\wpkgRun.job"
 # Commande a placer dans le script de login des utilisateurs
 CMDINSTALL="@if \"%%OS%%\"==\"Windows_NT\" if not exist \"%%WinDir%%\\wpkg-client.vbs\" $CPAU -dec -lwp -hide -cwd %%SystemDrive%%\\ -file $INSTTASKJOB 2^>NUL ^>NUL"
 FINDCMD="@if \"\"%%OS%%\"\"==\"\"Windows_NT\"\" if not exist \"\"%%WinDir%%\\wpkg-client.vbs\"\" $CPAU -dec -lwp -hide -cwd %%SystemDrive%%\\ -file $INSTTASKJOB 2>NUL >NUL"
 # Chemin du script de login
-LogonBat="\\\\$SE3\\admhomes\\templates\\base\\logon.bat"
-# Commande executee par adminse3 pour installer wpkg sur le poste
-TASK="(net use \\\\$SE3||(exit 8))&&(Set APPENDLOG=1&&Set TaskUser=$ADMINSE3&&Set TaskPass=$PASSADMINSE3&&call $WPKGROOT\\wpkg-install.bat&net use * /delete /y)"
-# Commande executee par adminse3 pour executer wpkg sur le poste
+LogonBat="\\\\${config_se4fs_name}\\admhomes\\templates\\base\\logon.bat"
+# Commande executee par $config_adminse_name pour installer wpkg sur le poste
+TASK="(net use \\\\${config_se4fs_name}||(exit 8))&&(Set APPENDLOG=1&&Set TaskUser=$${config_adminse_name}&&Set TaskPass=$${config_adminse_passwd}&&call $WPKGROOT\\wpkg-install.bat&net use * /delete /y)"
+# Commande executee par $config_adminse_name pour executer wpkg sur le poste
 TASKRUNWPKG='{%%{ComSpec}%%} /C cscript {%%{Windir}%%}\\wpkg-client.vbs /debug /notempo /cpuLoad 80&pause'
 
 # Script de diagnostic et reparation d'un client wpkg recalcitrant
-# par exemple a cause d' un compt adminse3 defaillant
+# par exemple a cause d' un compt $config_adminse_name defaillant
 #--------Debut wpkg-diag.bat-----------#
-cat - > /var/se3/Progs/install/wpkg-diag.bat <<WPKGDIAG
+cat - > /var/sambaedu/Progs/install/wpkg-diag.bat <<WPKGDIAG
 :: Script de diagnostic/reparation d'un client wpkg qui ne demarre plus.
-:: Verifie le compte adminse3 puis lance wpkg-repair.bat sous adminse3.
+:: Verifie le compte $config_adminse_name puis lance wpkg-repair.bat sous $config_adminse_name.
 :: ## $Id$ ##
 @echo OFF
 
@@ -680,73 +666,73 @@ cat - > /var/se3/Progs/install/wpkg-diag.bat <<WPKGDIAG
 Set NoRunWpkgJS=1
 
 :: Initialisation des variables
-::   Nom du serveur SE3 utilise lors de l'install de wpkg
-Set Se3=$SE3
+::   Nom du serveur se4 utilise lors de l'install de wpkg
+Set se4=${config_se4fs_name}
 ::   Fichier de log du dignostic
-If Not Exist \\\\%Se3%\\Progs\\rw\\wpkg mkdir \\\\%Se3%\\Progs\\rw\\wpkg
-Set LOG=\\\\%Se3%\\Progs\\rw\\wpkg\\%COMPUTERNAME%.log
+If Not Exist \\\\%se4%\\Progs\\rw\\wpkg mkdir \\\\%se4%\\Progs\\rw\\wpkg
+Set LOG=\\\\%se4%\\Progs\\rw\\wpkg\\%COMPUTERNAME%.log
 echo Diagnostic de l'installation du client Wpkg sur '%COMPUTERNAME%' >%LOG%
 echo. 
 echo %date% %time% Debut du diagnostic. >>%LOG%
 echo. >>%LOG%
 
-:: Test du compte adminse3
-::   Le compte adminse3 existe-t-il ?
-net user adminse3 >NUL
-If ErrorLevel 1 Goto ErrNoAdminse3
-echo Le compte adminse3 existe. >>%LOG%
-net user adminse3 | find /I "Compte" | find /I "actif" | find /I "oui" >>%LOG%
-If ErrorLevel 1 Goto ErrAdminse3NotActive
-net user adminse3 | find /I "Le mot de passe expire" | find /I "jamais" >>%LOG%
-If ErrorLevel 1 Goto ErrAdminse3Expire
-net user adminse3 | find /I "groupes locaux" | find /I "Administrateurs" >>%LOG%
-If ErrorLevel 1 Goto ErrAdminse3NotAdministrateur
-net user adminse3 | find /I "Mot de passe exig" | find /I "Oui" >>%LOG%
-If ErrorLevel 1 Goto ErrAdminse3NoPassword
+:: Test du compte $config_adminse_name
+::   Le compte $config_adminse_name existe-t-il ?
+net user $config_adminse_name >NUL
+If ErrorLevel 1 Goto ErrNoAdminse4
+echo Le compte $config_adminse_name existe. >>%LOG%
+net user $config_adminse_name | find /I "Compte" | find /I "actif" | find /I "oui" >>%LOG%
+If ErrorLevel 1 Goto ErrAdminse4NotActive
+net user $config_adminse_name | find /I "Le mot de passe expire" | find /I "jamais" >>%LOG%
+If ErrorLevel 1 Goto ErrAdminse4Expire
+net user $config_adminse_name | find /I "groupes locaux" | find /I "Administrateurs" >>%LOG%
+If ErrorLevel 1 Goto ErrAdminse4NotAdministrateur
+net user $config_adminse_name | find /I "Mot de passe exig" | find /I "Oui" >>%LOG%
+If ErrorLevel 1 Goto ErrAdminse4NoPassword
 echo. >>%LOG%
 
 :: Lancement de wpkg-repair.bat a l'aide du job wpkg-repair.job
-If Not Exist \\\\%se3%\\Progs\\ro\\wpkg-repair.job Goto NoWpkgRepairJob
+If Not Exist \\\\%se4%\\Progs\\ro\\wpkg-repair.job Goto NoWpkgRepairJob
 Echo Lancement du job CPAU wpkg-repair >>%LOG%
-\\\\%se3%\\netlogon\\CPAU.exe -dec -wait -lwp -cwd %SystemDrive%\\ -file \\\\%se3%\\Progs\\ro\\wpkg-repair.job 2>NUL >NUL
-If "%ErrorLevel%"=="1907" Goto ErrAdminse3Expire
-If "%ErrorLevel%"=="1326" Goto ErrAdminse3BadPassword
+\\\\%se4%\\netlogon\\CPAU.exe -dec -wait -lwp -cwd %SystemDrive%\\ -file \\\\%se4%\\Progs\\ro\\wpkg-repair.job 2>NUL >NUL
+If "%ErrorLevel%"=="1907" Goto ErrAdminse4Expire
+If "%ErrorLevel%"=="1326" Goto ErrAdminse4BadPassword
 
 Goto Done
 
 :NoWpkgRepairJob
-echo Erreur : Fichier \\\\%se3%\\Progs\\install\\wpkg-repair.job absent ! >>%LOG%
+echo Erreur : Fichier \\\\%se4%\\Progs\\install\\wpkg-repair.job absent ! >>%LOG%
 echo   En tant que root sur la console du serveur, relancer : >>%LOG%
-echo   /var/cache/se3_install/wpkg-install.sh >>%LOG%
+echo   /var/cache/sambaedu_install/wpkg-install.sh >>%LOG%
 Goto Done
 
-:ErrAdminse3BadPassword
-echo Erreur : Le mot de passe d'adminse3 sur %COMPUTERNAME% n'est pas correct ! >>%LOG%
-echo   Revoir la configuration du compte 'adminse3' sur %COMPUTERNAME%.  >>%LOG%
+:ErrAdminse4BadPassword
+echo Erreur : Le mot de passe d'$config_adminse_name sur %COMPUTERNAME% n'est pas correct ! >>%LOG%
+echo   Revoir la configuration du compte '$config_adminse_name' sur %COMPUTERNAME%.  >>%LOG%
 Goto Done
 
-:ErrAdminse3NoPassword
-echo Erreur : Aucun mot de passe n'est exige pour adminse3.  >>%LOG%
-echo   Revoir la configuration du compte 'adminse3' sur %COMPUTERNAME%.  >>%LOG%
+:ErrAdminse4NoPassword
+echo Erreur : Aucun mot de passe n'est exige pour $config_adminse_name.  >>%LOG%
+echo   Revoir la configuration du compte '$config_adminse_name' sur %COMPUTERNAME%.  >>%LOG%
 Goto Done
 
-:ErrAdminse3NotAdministrateur
-echo Erreur : adminse3 n'est pas membre du groupe local des Administrateurs.  >>%LOG%
-echo   Revoir la configuration du compte 'adminse3' sur %COMPUTERNAME%. >>%LOG%
+:ErrAdminse4NotAdministrateur
+echo Erreur : $config_adminse_name n'est pas membre du groupe local des Administrateurs.  >>%LOG%
+echo   Revoir la configuration du compte '$config_adminse_name' sur %COMPUTERNAME%. >>%LOG%
 Goto Done
 
-:ErrAdminse3Expire
-echo Erreur : Le compte adminse3 a un mot de passe qui expire.  >>%LOG%
-echo   Revoir la configuration du compte 'adminse3' sur %COMPUTERNAME%.  >>%LOG%
+:ErrAdminse4Expire
+echo Erreur : Le compte $config_adminse_name a un mot de passe qui expire.  >>%LOG%
+echo   Revoir la configuration du compte '$config_adminse_name' sur %COMPUTERNAME%.  >>%LOG%
 Goto Done
 
-:ErrAdminse3NotActive
-echo Erreur : Le compte adminse3 n'est pas actif.  >>%LOG%
-echo   Revoir la configuration du compte 'adminse3' sur %COMPUTERNAME%.  >>%LOG%
+:ErrAdminse4NotActive
+echo Erreur : Le compte $config_adminse_name n'est pas actif.  >>%LOG%
+echo   Revoir la configuration du compte '$config_adminse_name' sur %COMPUTERNAME%.  >>%LOG%
 Goto Done
 
-:ErrNoAdminse3
-echo Erreur : Pas de compte adminse3 defini sur ce poste.  >>%LOG%
+:ErrNoAdminse4
+echo Erreur : Pas de compte $config_adminse_name defini sur ce poste.  >>%LOG%
 echo   Revoir l'integration du poste au domaine SAMBAEDU.  >>%LOG%
 Goto Done
 
@@ -754,28 +740,28 @@ Goto Done
 
 WPKGDIAG
 #--------Fin wpkg-diag.bat-----------#
-recode $script_charset..CP850 /var/se3/Progs/install/wpkg-diag.bat
-todos /var/se3/Progs/install/wpkg-diag.bat
-# setfacl -m u::rwx -m g::rx -m o::rx /var/se3/Progs/install/wpkg-diag.bat
-chmod 755 /var/se3/Progs/install/wpkg-diag.bat
-echo "Script /var/se3/Progs/install/wpkg-diag.bat cree."
+recode $script_charset..CP850 /var/sambaedu/Progs/install/wpkg-diag.bat
+todos /var/sambaedu/Progs/install/wpkg-diag.bat
+# setfacl -m u::rwx -m g::rx -m o::rx /var/sambaedu/Progs/install/wpkg-diag.bat
+chmod 755 /var/sambaedu/Progs/install/wpkg-diag.bat
+echo "Script /var/sambaedu/Progs/install/wpkg-diag.bat cree."
 
 # Script de reparation d'un client wpkg recalcitrant
 # par exemple a cause de running=true qui bloque l'execution
 #--------Debut wpkg-repair.bat-----------#
 cat - > $WPKGDIR/wpkg-repair.bat <<WPKGREPAIR
 :: Script de diagnostic/reparation d'un client wpkg qui ne s'execute pas.
-:: Il s'execute sous adminse3 (encore faut-il que ce compte soit valide !)
+:: Il s'execute sous $config_adminse_name (encore faut-il que ce compte soit valide !)
 :: Le lancement se fait avec le job CPAU (wpkg-repair.job)
 @echo OFF
-Set SE3=$SE3
+Set se4=${config_se4fs_name}
 
 Set NoRunWpkgJS=1
 Set CscriptRunning=1
-If Not Exist \\\\%SE3%\\install\\wpkg\\tools\\pslist.exe Goto ApresTestCscript
+If Not Exist \\\\%se4%\\install\\wpkg\\tools\\pslist.exe Goto ApresTestCscript
 :: Le parametre /accepteula est-il necessaire pour les pstools ?
 Set ACCEPTEULA=/accepteula
-\\\\%SE3%\\install\\wpkg\\tools\\pslist.exe /accepteula 2>NUL >NUL
+\\\\%se4%\\install\\wpkg\\tools\\pslist.exe /accepteula 2>NUL >NUL
 If ErrorLevel 1 Set ACCEPTEULA=
 
 :: Laisse une chance a l'ancien wpkg-client.vbs de se terminer
@@ -783,7 +769,7 @@ echo Attend au plus 60s que l'ancien client se termine
 set BoucleAttend="x"
 :AttendFinCscript
 ping -n 4 127.0.0.1 >NUL
-\\\\%SE3%\\install\\wpkg\\tools\\pslist.exe %ACCEPTEULA% cscript 2>NUL >NUL
+\\\\%se4%\\install\\wpkg\\tools\\pslist.exe %ACCEPTEULA% cscript 2>NUL >NUL
 If ErrorLevel 1 Set CscriptRunning=0
 If "%CscriptRunning%"=="0" Goto ApresTestCscript
 Set BoucleAttend=%BoucleAttend%x
@@ -800,10 +786,10 @@ echo %date% %time% Demarrage wpkg-repair.bat en tant que %USERNAME%. 1>%LOG%
 :: TaskUser et TaskPass sont disponibles
 Set REGEXE=%WinDir%\\system32\\reg.exe
 If Exist "%REGEXE%" Goto REGEXEFOUND
-Set REGEXE=\\\\%SE3%\\install\\wpkg\\tools\\reg.exe 1>>%LOG%
+Set REGEXE=\\\\%se4%\\install\\wpkg\\tools\\reg.exe 1>>%LOG%
 If Exist "%REGEXE%" Goto REGEXEFOUND
 echo L'utilitaire reg.exe est introuvable. 1>>%LOG%
-echo A partir d'un WinXP, recopiez %WinDir%\\system32\\reg.exe dans \\\\%SE3%\\install\\wpkg\\tools\\ 1>>%LOG%
+echo A partir d'un WinXP, recopiez %WinDir%\\system32\\reg.exe dans \\\\%se4%\\install\\wpkg\\tools\\ 1>>%LOG%
 Goto InstallWpkg
 
 :REGEXEFOUND
@@ -839,10 +825,10 @@ Goto InstallWpkg
 :: Mise a jour du client
 Echo Lancement du client wpkg ... 1>>%LOG%
 
-Set LOGSRV=\\\\%SE3%\\install\\wpkg\\rapports\\%COMPUTERNAME%.maj
+Set LOGSRV=\\\\%se4%\\install\\wpkg\\rapports\\%COMPUTERNAME%.maj
 If Exist "%LOGSRV%" del /F /Q "%LOGSRV%"
-If Exist \\\\%SE3%\\Progs\\rw\\wpkg\\%COMPUTERNAME%.log Type \\\\%SE3%\\Progs\\rw\\wpkg\\%COMPUTERNAME%.log >> %LOGSRV%
-If Exist \\\\%SE3%\\Progs\\rw\\wpkg\\%COMPUTERNAME%.log del /F /Q \\\\%SE3%\\Progs\\rw\\wpkg\\%COMPUTERNAME%.log
+If Exist \\\\%se4%\\Progs\\rw\\wpkg\\%COMPUTERNAME%.log Type \\\\%se4%\\Progs\\rw\\wpkg\\%COMPUTERNAME%.log >> %LOGSRV%
+If Exist \\\\%se4%\\Progs\\rw\\wpkg\\%COMPUTERNAME%.log del /F /Q \\\\%se4%\\Progs\\rw\\wpkg\\%COMPUTERNAME%.log
 If Exist %LOG% echo -- %date% %time% Contenu de wpkg-repair.log --- >> %LOGSRV%
 If Exist %LOG% Type %LOG% >> %LOGSRV%
 If Exist %LOG% echo -- Fin wpkg-repair.log --- >> %LOGSRV%
@@ -850,7 +836,7 @@ echo La suite du rapport d'installation sera disponible dans quelques instants .
 
 Rem Set SILENT=1
 Set APPENDLOG=1
-call \\\\%SE3%\\install\\wpkg\\wpkg-install.bat 2>%LOG%.err 1>%LOG%
+call \\\\%se4%\\install\\wpkg\\wpkg-install.bat 2>%LOG%.err 1>%LOG%
 
 echo -- %date% %time% Contenu de wpkg-install.log.err --- >> %LOGSRV%
 Type %LOG%.err >> %LOGSRV%
@@ -868,9 +854,8 @@ echo "Script $WPKGDIR/wpkg-repair.bat cree."
 
 #--------Debut wpkg-config.bat-----------#
 # script devenu obsolete : suppression.
-[ -e /var/se3/Progs/install/wpkg-config.bat ] && echo "Suppression de /var/se3/Progs/install/wpkg-config.bat"&& rm /var/se3/Progs/install/wpkg-config.bat
+[ -e /var/sambaedu/Progs/install/wpkg-config.bat ] && echo "Suppression de /var/sambaedu/Progs/install/wpkg-config.bat"&& rm /var/sambaedu/Progs/install/wpkg-config.bat
 
-adminse3="adminse3"
 
 # Chemin du job d'installation de wpkg sur un poste pour un utilisateur lambda
 INSTTASKJOB="wpkgInstall.job"
@@ -878,222 +863,161 @@ INSTTASKJOB="wpkgInstall.job"
 RUNWPKGJOB="wpkgRun.job"
 # Chemin du script de login
 LogonBat="/home/templates/base/logon.bat"
-# Commande executee par adminse3 pour installer wpkg sur le poste
-TASK="(net use \\\\$SE3||(exit 8))&&(Set APPENDLOG=1&&Set TaskUser=$ADMINSE3&&Set TaskPass=$PASSADMINSE3&&call $WPKGROOT\\wpkg-install.bat&net use * /delete /y)"
-# Commande executee par adminse3 pour executer wpkg sur le poste
+# Commande executee par $config_adminse_name pour installer wpkg sur le poste
+TASK="(net use \\\\${config_se4fs_name}||(exit 8))&&(Set APPENDLOG=1&&Set TaskUser=$${config_adminse_name}&&Set TaskPass=$${config_adminse_passwd}&&call $WPKGROOT\\wpkg-install.bat&net use * /delete /y)"
+# Commande executee par $config_adminse_name pour executer wpkg sur le poste
 TASKRUNWPKG='{%{ComSpec}%} /C cscript {%{Windir}%}\\wpkg-client.vbs /debug /notempo /cpuLoad 80&pause'
 #variable WPKGDIR deja definie
 
 
-if [ -e $WPKGDIR/tools/reg.exe ] ; then
-	echo "Utilitaire reg.exe present sur le serveur."
-else
-	echo "$(/usr/bin/smbstatus -b | grep -v root | grep -v nobody | awk 'NF>4 {print $4,$5}')" | while read line
-	 do
-        NAMEWINXP="$(echo $line | cut -d" " -f1)"
-		IPWINXP="$(echo $line | cut -d"(" -f2 | cut -d")" -f1)"
-        #echo "NAME : $NAMEWINXP et IP : $IPWINXP"
-
-		### tester si c'est un windows xp pour eviter des requetes inutiles
-
-        # Preparation des parametres de connexion au poste
-		(
-		echo username=$adminse3
-		echo password=$xppass
-		echo domain=$NAMEWINXP
-		)>/root/AUTHENTIFICATIONWINXP
-        #cat /root/AUTHENTIFICATIONWINXP
-		echo "Tentative de recuperation de reg.exe depuis le poste $NAMEWINXP"
-
-        smbclient  //$IPWINXP/C$ -A /root/AUTHENTIFICATIONWINXP -c"get Windows\System32\reg.exe $WPKGDIR/tools/reg.exe" > /dev/null
-		[ -e $WPKGDIR/tools/reg.exe ] && echo "reg.exe recupere avec succes depuis $NAMEWINXP"&& break
-	 done
-    [ -e /root/AUTHENTIFICATIONWINXP ] && rm /root/AUTHENTIFICATIONWINXP
-	if [ ! -e $WPKGDIR/tools/reg.exe ]; then
-        echo "L'utilitaire reg.exe n'est toujours pas present dans $WPKGDIR/tools. Si vous avez des Windows 2000 sur votre domaine, cela pose probleme." > /tmp/mail-wpkginstall
-        echo "PROCEDURE :" >> /tmp/mail-wpkginstall
-        echo "1. Vous loguer sur un windows XP du domaine (peu importe le compte)." >> /tmp/mail-wpkginstall
-        echo "2. en tant que root sur le SE3, lancer la commande :" >> /tmp/mail-wpkginstall
-        echo "wpkg-install.sh" >> /tmp/mail-wpkginstall
-        echo "ATTENTION : reg.exe non recupere. Envoi d'un mail a l'admin"
-        mail root -s"[Module se3-wpkg : installation d'applications] AVERTISSEMENT : reg.exe absent du serveur" < /tmp/mail-wpkginstall
-        rm -f /tmp/mail-wpkginstall
-    fi
-fi
 
 echo "Generation des job"
-[ -e /var/se3/Progs/ro/$INSTTASKJOB ] && rm /var/se3/Progs/ro/$INSTTASKJOB
-[ -e /var/se3/Progs/ro/$RUNWPKGJOB ] && rm /var/se3/Progs/ro/$RUNWPKGJOB
+[ -e /var/sambaedu/Progs/ro/$INSTTASKJOB ] && rm /var/sambaedu/Progs/ro/$INSTTASKJOB
+[ -e /var/sambaedu/Progs/ro/$RUNWPKGJOB ] && rm /var/sambaedu/Progs/ro/$RUNWPKGJOB
 
 
-############################
-# Fix for wine when running from sudo
-export HOME=/root
-############################
-cd /tmp
-echo "Creation du job CPAU d install sous le compte $ADMINSE3"
-env WINEDEBUG=-all wine /home/netlogon/CPAU.exe -u "$adminse3" -wait  -p "$xppass" -file $INSTTASKJOB -lwp -c -hide -ex "$TASK" -enc > /dev/null 
-echo "Creation du lien de lancement manuel de wpkg"
-env WINEDEBUG=-all wine /home/netlogon/CPAU.exe -u "$adminse3" -wait  -p "$xppass" -file $RUNWPKGJOB -lwp -c -hide -ex "$TASKRUNWPKG" -enc > /dev/null
-[ ! -d /home/netlogon/machine ] && mkdir /home/netlogon/machine
-mv -f $INSTTASKJOB /var/se3/Progs/ro/
-chown admin:admins /var/se3/Progs/ro/$INSTTASKJOB
-mv -f $RUNWPKGJOB /var/se3/Progs/ro/
-chown admin:admins /var/se3/Progs/ro/$RUNWPKGJOB
-
-# creation du raccourci sur le bureau d'admin (ou admins)
-#[ -e "/home/templates/admins/Bureau/Applications\ Wpkg.lnk" ] && echo "Suppression du raccourci du template admins" && rm "/home/templates/admins/Bureau/Applications\ Wpkg.lnk"
-#[ -e "/home/templates/admin/Bureau/Applications\ Wpkg.lnk" ] && echo "Suppression du raccourci du template admin" && rm "/home/templates/admin/Bureau/Applications\ Wpkg.lnk"
-
-#env WINEDEBUG=-all wine $WPKGDIR/tools/nircmdc.exe shortcut $CPAU ".\\" "Applications Wpkg" "-dec -lwp -cwd c:\\ -file $RUNWPKGJOB" %%windir%%\\system32\\setup.exe
-
-if [ -d /home/templates/admins ]; then
-    mkdir -p /home/templates/admins/Bureau
-	TEMPLATE="admins"
-    echo "Creation du raccourci Applications WPKG sur le bureau des admins"
-else
-	TEMPLATE="admin"
-    mkdir -p /home/templates/admin/Bureau
-	echo "Creation du raccourci Applications WPKG sur le bureau d'admin"
-fi
-
-FINDCMD="@if not exist \"%LOGONSERVER%\\\\admhomes\\\\templates\\\\$TEMPLATE\\\\Bureau\\\\Applications Wpkg.lnk\" (\\\\\\\\$SE3\\\\install\\\\wpkg\\\\tools\\\\nircmdc.exe shortcut \\\\\\\\$SE3\\\\netlogon\\\\CPAU.exe \"\\\\\\\\$SE3\\\\admhomes\\\\templates\\\\$TEMPLATE\\\\Bureau\" \"Applications Wpkg\" \"-dec -lwp -cwd c:\\\\ -file \\\\\\\\$SE3\\\\Progs\\\\ro\\\\$RUNWPKGJOB\" %windir%\\\\system32\\\\setup.exe"
-CMDINSTALL="@if not exist \"%LOGONSERVER%\\admhomes\\templates\\$TEMPLATE\\Bureau\\Applications Wpkg.lnk\" (\\\\$SE3\\install\\wpkg\\tools\\nircmdc.exe shortcut $CPAU \"\\\\$SE3\\admhomes\\templates\\$TEMPLATE\\Bureau\" \"Applications Wpkg\" \"-dec -lwp -cwd c:\\ -file \\\\$SE3\\Progs\\ro\\$RUNWPKGJOB\" %windir%\\system32\\setup.exe & copy /Y \"\\\\$SE3\\admhomes\\templates\\$TEMPLATE\\Bureau\\Applications Wpkg.lnk\" \"\\\\$SE3\\admin\\profil\\Bureau\\Applications  Wpkg.lnk\") ELSE (if exist \"\\\\$SE3\\admin\\profil\\Bureau\\Applications  Wpkg.lnk\" del /F /Q \"\\\\$SE3\\admin\\profil\\Bureau\\Applications  Wpkg.lnk\")"
-
-
-LOGONSCRIPT="/home/templates/$TEMPLATE/logon.bat"
-TEST=""
-[ -e $LOGONSCRIPT ] && TEST=$(cat $LOGONSCRIPT | grep "$FINDCMD" | grep -v "::" | grep -v "rem")
-
-#echo "TEST :$TEST-FINDCMD=$FINDCMD"
-if [ ! "$TEST" = "" ]; then
-    echo "La commande de creation du racourci Applications WPKG est deja presente."
-else
-    echo "Commande de creation du raccourci Applications WPKG ajoutee a $LOGONSCRIPT."
-	[ -e "/home/admin/profil/Bureau/Applications Wpkg.lnk" ] && echo "Suppression du raccourci invalide (ancienne generation wpkg) du Bureau d'admin" && rm "/home/admin/profil/Bureau/Applications Wpkg.lnk"
-	echo "$CMDINSTALL" >> $LOGONSCRIPT
-    #recode $script_charset..CP850 $LOGONSCRIPT
-    todos $LOGONSCRIPT
-    chown admin:admins $LOGONSCRIPT
-    chmod 770 $LOGONSCRIPT
-fi
-
-
-echo "Creation du job pour lancer wpkg-repair.bat"
-wpkgRepairJOB=wpkg-repair.job
-wpkgRepairBAT=\\\\$SE3\\install\\wpkg\\wpkg-repair.bat
-env WINEDEBUG=-all wine /home/netlogon/CPAU.exe -u "$adminse3" -wait  -p "$xppass" -file $wpkgRepairJOB -lwp -c -hide -ex "(net use \\\\$SE3||exit 8)&&(set TaskUser=$adminse3&&set TaskPass=$xppass&&call $wpkgRepairBAT&net use * /delete /y)" -enc > /dev/null 
-mv -f $wpkgRepairJOB /var/se3/Progs/ro/
-chown admin:admins /var/se3/Progs/ro/$wpkgRepairJOB
+#############################
+## Fix for wine when running from sudo
+#export HOME=/root
+#############################
+#cd /tmp
+#echo "Creation du job CPAU d install sous le compte $${config_adminse_name}"
+#env WINEDEBUG=-all wine /home/netlogon/CPAU.exe -u "$$config_adminse_name" -wait  -p "$xppass" -file $INSTTASKJOB -lwp -c -hide -ex "$TASK" -enc > /dev/null 
+#echo "Creation du lien de lancement manuel de wpkg"
+#env WINEDEBUG=-all wine /home/netlogon/CPAU.exe -u "$$config_adminse_name" -wait  -p "$xppass" -file $RUNWPKGJOB -lwp -c -hide -ex "$TASKRUNWPKG" -enc > /dev/null
+#[ ! -d /home/netlogon/machine ] && mkdir /home/netlogon/machine
+#mv -f $INSTTASKJOB /var/sambaedu/Progs/ro/
+#chown admin:admins /var/sambaedu/Progs/ro/$INSTTASKJOB
+#mv -f $RUNWPKGJOB /var/sambaedu/Progs/ro/
+#chown admin:admins /var/sambaedu/Progs/ro/$RUNWPKGJOB
+#
+## creation du raccourci sur le bureau d'admin (ou admins)
+##[ -e "/home/templates/admins/Bureau/Applications\ Wpkg.lnk" ] && echo "Suppression du raccourci du template admins" && rm "/home/templates/admins/Bureau/Applications\ Wpkg.lnk"
+##[ -e "/home/templates/admin/Bureau/Applications\ Wpkg.lnk" ] && echo "Suppression du raccourci du template admin" && rm "/home/templates/admin/Bureau/Applications\ Wpkg.lnk"
+#
+##env WINEDEBUG=-all wine $WPKGDIR/tools/nircmdc.exe shortcut $CPAU ".\\" "Applications Wpkg" "-dec -lwp -cwd c:\\ -file $RUNWPKGJOB" %%windir%%\\system32\\setup.exe
+#
+#if [ -d /home/templates/admins ]; then
+#    mkdir -p /home/templates/admins/Bureau
+#	TEMPLATE="admins"
+#    echo "Creation du raccourci Applications WPKG sur le bureau des admins"
+#else
+#	TEMPLATE="admin"
+#    mkdir -p /home/templates/admin/Bureau
+#	echo "Creation du raccourci Applications WPKG sur le bureau d'admin"
+#fi
+#
+#FINDCMD="@if not exist \"%LOGONSERVER%\\\\admhomes\\\\templates\\\\$TEMPLATE\\\\Bureau\\\\Applications Wpkg.lnk\" (\\\\\\\\${config_se4fs_name}\\\\install\\\\wpkg\\\\tools\\\\nircmdc.exe shortcut \\\\\\\\${config_se4fs_name}\\\\netlogon\\\\CPAU.exe \"\\\\\\\\${config_se4fs_name}\\\\admhomes\\\\templates\\\\$TEMPLATE\\\\Bureau\" \"Applications Wpkg\" \"-dec -lwp -cwd c:\\\\ -file \\\\\\\\${config_se4fs_name}\\\\Progs\\\\ro\\\\$RUNWPKGJOB\" %windir%\\\\system32\\\\setup.exe"
+#CMDINSTALL="@if not exist \"%LOGONSERVER%\\admhomes\\templates\\$TEMPLATE\\Bureau\\Applications Wpkg.lnk\" (\\\\${config_se4fs_name}\\install\\wpkg\\tools\\nircmdc.exe shortcut $CPAU \"\\\\${config_se4fs_name}\\admhomes\\templates\\$TEMPLATE\\Bureau\" \"Applications Wpkg\" \"-dec -lwp -cwd c:\\ -file \\\\${config_se4fs_name}\\Progs\\ro\\$RUNWPKGJOB\" %windir%\\system32\\setup.exe & copy /Y \"\\\\${config_se4fs_name}\\admhomes\\templates\\$TEMPLATE\\Bureau\\Applications Wpkg.lnk\" \"\\\\${config_se4fs_name}\\admin\\profil\\Bureau\\Applications  Wpkg.lnk\") ELSE (if exist \"\\\\${config_se4fs_name}\\admin\\profil\\Bureau\\Applications  Wpkg.lnk\" del /F /Q \"\\\\${config_se4fs_name}\\admin\\profil\\Bureau\\Applications  Wpkg.lnk\")"
+#
+#
+#LOGONSCRIPT="/home/templates/$TEMPLATE/logon.bat"
+#TEST=""
+#[ -e $LOGONSCRIPT ] && TEST=$(cat $LOGONSCRIPT | grep "$FINDCMD" | grep -v "::" | grep -v "rem")
+#
+##echo "TEST :$TEST-FINDCMD=$FINDCMD"
+#if [ ! "$TEST" = "" ]; then
+#    echo "La commande de creation du racourci Applications WPKG est deja presente."
+#else
+#    echo "Commande de creation du raccourci Applications WPKG ajoutee a $LOGONSCRIPT."
+#	[ -e "/home/admin/profil/Bureau/Applications Wpkg.lnk" ] && echo "Suppression du raccourci invalide (ancienne generation wpkg) du Bureau d'admin" && rm "/home/admin/profil/Bureau/Applications Wpkg.lnk"
+#	echo "$CMDINSTALL" >> $LOGONSCRIPT
+#    #recode $script_charset..CP850 $LOGONSCRIPT
+#    todos $LOGONSCRIPT
+#    chown admin:admins $LOGONSCRIPT
+#    chmod 770 $LOGONSCRIPT
+#fi
+#
+#
+#echo "Creation du job pour lancer wpkg-repair.bat"
+#wpkgRepairJOB=wpkg-repair.job
+#wpkgRepairBAT=\\\\${config_se4fs_name}\\install\\wpkg\\wpkg-repair.bat
+# env WINEDEBUG=-all wine /home/netlogon/CPAU.exe -u "$$config_adminse_name" -wait  -p "$xppass" -file $wpkgRepairJOB -lwp -c -hide -ex "(net use \\\\${config_se4fs_name}||exit 8)&&(set TaskUser=$$config_adminse_name&&set TaskPass=$xppass&&call $wpkgRepairBAT&net use * /delete /y)" -enc > /dev/null 
+# mv -f $wpkgRepairJOB /var/sambaedu/Progs/ro/
+#chown admin:admins /var/sambaedu/Progs/ro/$wpkgRepairJOB
 
 # On supprime toute reference a CPAU.exe dans installdll.
 # En cas de presence, on vire aussi toute reference a wpkg-client.vbs : cette methode permet de supprimer une ligne creee en double dans la version testing de 2.0
 TEST=""
-FINDCMD="\\\\\\\\$SE3\\\\Progs\\\\install\\\\installdll\\\\CPAU.exe"
-[ -e /home/templates/base/logon.bat ] && TEST=$(cat /home/templates/base/logon.bat | grep "$FINDCMD" )
-if [ ! "$TEST" = "" ]; then
-	# Suppression de la ligne en double introduite dans la version testing lors des tests de la 2.0
-	sed -i /home/templates/base/logon.bat -e 's/%WinDir%\\wpkg-client.vbs/##### delete me #####/g'
-	sed -i /home/templates/base/logon.bat -e "/##### delete me #####/d"
-	# pour modifier le chemin de job CPAU personnels :
-	echo "Correction du lien vers CPAU.exe dans base/logon.bat"
-	sed -i /home/templates/base/logon.bat -e 's/\\\\'$SE3'\\Progs\\install\\installdll\\CPAU.exe/\\\\'$SE3'\\netlogon\\CPAU.exe/g'
-fi
+#FINDCMD="\\\\\\\\${config_se4fs_name}\\\\Progs\\\\install\\\\installdll\\\\CPAU.exe"
+#[ -e /home/templates/base/logon.bat ] && TEST=$(cat /home/templates/base/logon.bat | grep "$FINDCMD" )
+#if [ ! "$TEST" = "" ]; then
+#	# Suppression de la ligne en double introduite dans la version testing lors des tests de la 2.0
+#	sed -i /home/templates/base/logon.bat -e 's/%WinDir%\\wpkg-client.vbs/##### delete me #####/g'
+#	sed -i /home/templates/base/logon.bat -e "/##### delete me #####/d"
+#	# pour modifier le chemin de job CPAU personnels :
+#	echo "Correction du lien vers CPAU.exe dans base/logon.bat"
+#	sed -i /home/templates/base/logon.bat -e 's/\\\\'${config_se4fs_name}'\\Progs\\install\\installdll\\CPAU.exe/\\\\'${config_se4fs_name}'\\netlogon\\CPAU.exe/g'
+#fi
 
 
-echo "Modification (si besoin) du script de login de base"
 
-# Nettoyage ancienne commande
-sed -i "/^@if \"%OS%\"==\"Windows_NT\"/d" /home/templates/base/logon.bat
-
+## Nettoyage ancienne commande
+#sed -i "/^@if \"%OS%\"==\"Windows_NT\"/d" /home/templates/base/logon.bat
+#
+##echo "Modification (si besoin) du script de login de base"
 # Commande a placer dans le script de login des utilisateurs
-CMDINSTALL="@if not exist \"%WinDir%\\wpkg-client.vbs\" $CPAU -dec -lwp -hide -cwd %SystemDrive%\\ -file \\\\$SE3\\Progs\\ro\\$INSTTASKJOB 2>NUL >NUL"
-FINDCMD="@if not exist \"%WinDir%\\\\wpkg-client.vbs\" \\\\\\\\$SE3\\\\netlogon\\\\CPAU.exe -dec -lwp -hide -cwd %SystemDrive%\\\\ -file \\\\\\\\$SE3\\\\Progs\\\\ro\\\\$INSTTASKJOB 2>NUL >NUL"
-
-TEST=""
-[ -e /home/templates/base/logon.bat ] && TEST=$(cat /home/templates/base/logon.bat | grep "$FINDCMD" | grep -v "::" | grep -v "rem")
-if [ ! "$TEST" = "" ]; then
-	echo "La commande d'installation de wpkg existe dans logon.bat et n'est pas commentee."
-else
-	echo "Commande d'installation de wpkg ajoutee a /home/templates/base/logon.bat"
-	#echo "$CMDINSTALL"
-    echo "$CMDINSTALL" >> /home/templates/base/logon.bat
-    #recode $script_charset..CP850 /home/templates/base/logon.bat
-    todos /home/templates/base/logon.bat
-    chown admin:admins /home/templates/base/logon.bat
-    chmod 770 /home/templates/base/logon.bat
-fi
-
-# Commande a placer dans le script de login des utilisateurs
-CMDINSTALL="Rem @if \"%COMPUTERNAME%\"==\"PosteProblemeWpkg\" call \\\\$SE3\\Progs\\install\\wpkg-diag.bat 2>NUL >NUL"
-FINDCMD="Rem @if \"%COMPUTERNAME%\"==\"PosteProblemeWpkg\" call \\\\\\\\$SE3\\\\Progs\\\\install\\\\wpkg-diag.bat 2>NUL >NUL"
-
-TEST=""
-[ -e /home/templates/base/logon.bat ] && TEST=$(cat /home/templates/base/logon.bat | grep "$FINDCMD" | grep -v "::" | grep -v "rem")
-#echo "TEST :$TEST-FINDCMD=$CMDINSTALL"
-if [ ! "$TEST" = "" ]; then
-    echo "La commande de diagnostique wpkg existe dans logon.bat sous sa forme d'origine."
-else
-    echo "Commande de diagnostique wpkg ajoutee commentee a /home/templates/base/logon.bat"
-    echo "$CMDINSTALL" >> /home/templates/base/logon.bat
-    #recode $script_charset..CP850 /home/templates/base/logon.bat
-    todos /home/templates/base/logon.bat
-    chown admin:admins /home/templates/base/logon.bat
-    chmod 770 /home/templates/base/logon.bat
-fi
+#CMDINSTALL="@if not exist \"%WinDir%\\wpkg-client.vbs\" $CPAU -dec -lwp -hide -cwd %SystemDrive%\\ -file \\\\${config_se4fs_name}\\Progs\\ro\\$INSTTASKJOB 2>NUL >NUL"
+#FINDCMD="@if not exist \"%WinDir%\\\\wpkg-client.vbs\" \\\\\\\\${config_se4fs_name}\\\\netlogon\\\\CPAU.exe -dec -lwp -hide -cwd %SystemDrive%\\\\ -file \\\\\\\\${config_se4fs_name}\\\\Progs\\\\ro\\\\$INSTTASKJOB 2>NUL >NUL"
+#
+#TEST=""
+#[ -e /home/templates/base/logon.bat ] && TEST=$(cat /home/templates/base/logon.bat | grep "$FINDCMD" | grep -v "::" | grep -v "rem")
+#if [ ! "$TEST" = "" ]; then
+#	echo "La commande d'installation de wpkg existe dans logon.bat et n'est pas commentee."
+#else
+#	echo "Commande d'installation de wpkg ajoutee a /home/templates/base/logon.bat"
+#	#echo "$CMDINSTALL"
+#    echo "$CMDINSTALL" >> /home/templates/base/logon.bat
+#    #recode $script_charset..CP850 /home/templates/base/logon.bat
+#    todos /home/templates/base/logon.bat
+#    chown admin:admins /home/templates/base/logon.bat
+#    chmod 770 /home/templates/base/logon.bat
+#fi
+#
+## Commande a placer dans le script de login des utilisateurs
+#CMDINSTALL="Rem @if \"%COMPUTERNAME%\"==\"PosteProblemeWpkg\" call \\\\${config_se4fs_name}\\Progs\\install\\wpkg-diag.bat 2>NUL >NUL"
+#FINDCMD="Rem @if \"%COMPUTERNAME%\"==\"PosteProblemeWpkg\" call \\\\\\\\${config_se4fs_name}\\\\Progs\\\\install\\\\wpkg-diag.bat 2>NUL >NUL"
+#
+#TEST=""
+#[ -e /home/templates/base/logon.bat ] && TEST=$(cat /home/templates/base/logon.bat | grep "$FINDCMD" | grep -v "::" | grep -v "rem")
+##echo "TEST :$TEST-FINDCMD=$CMDINSTALL"
+#if [ ! "$TEST" = "" ]; then
+#    echo "La commande de diagnostique wpkg existe dans logon.bat sous sa forme d'origine."
+#else
+#    echo "Commande de diagnostique wpkg ajoutee commentee a /home/templates/base/logon.bat"
+#    echo "$CMDINSTALL" >> /home/templates/base/logon.bat
+#    #recode $script_charset..CP850 /home/templates/base/logon.bat
+#    todos /home/templates/base/logon.bat
+#    chown admin:admins /home/templates/base/logon.bat
+#    chmod 770 /home/templates/base/logon.bat
+#fi
 
 
 #--------Fin de la partie remplacant le lancement manuel de wpkg-config.bat-----------#
 
 
 # Client wpkg execute par la tâche planifiee.
-# Mise a jour du parametre $SE3 dans wpkg-client.vbs
-sed "s/\$SE3/$SE3/g" $WPKGDIR/wpkg-client.vbs-original > $WPKGDIR/wpkg-client.vbs
+# Mise a jour du parametre ${config_se4fs_name} dans wpkg-client.vbs
+sed "s/\${config_se4fs_name}/${config_se4fs_name}/g" $WPKGDIR/wpkg-client.vbs-original > $WPKGDIR/wpkg-client.vbs
 todos $WPKGDIR/wpkg-client.vbs
 echo "Script $WPKGDIR/wpkg-client.vbs cree."
 
-# Cles publiques ssh de www-se3 et de root disponibles pour etre recopiees sur les postes lors de l'install de copssh
-# Contrôle (et creation si besoin) d'une cle ssh pour l'utilisateur www-se3
-if [ ! -e "/var/remote_adm/.ssh/id_rsa.pub" ]; then
-   if [ ! -d "/var/remote_adm/.ssh" ] ; then
-      mkdir -p "/var/remote_adm/.ssh"
-   fi
-   chown www-se3:www-data
-   chmod 700 "/var/remote_adm/.ssh"
-   cd "/var/remote_adm/.ssh"
-   # Creation de la cle
-   sudo -u www-se3 ssh-keygen -q -b 1024 -t rsa -f id_rsa -N ''
-   cd -
-fi
-# Contrôle (et creation si besoin) d'une cle ssh pour l'utilisateur root
-if [ ! -e "/root/.ssh/id_rsa" ]; then
-   if [ ! -d "/root/.ssh" ] ; then
-      mkdir -p "/var/remote_adm/.ssh"
-   fi
-   chmod 700 "/root/.ssh"
-   cd "/root/.ssh"
-   # Creation de la cle
-   ssh-keygen -q -b 1024 -t rsa -f id_rsa -N ''
-   cd -
-fi
-# Mise a disposition des cles publiques de www-se3 et root pour adminse3
-cat /var/remote_adm/.ssh/id_rsa.pub /root/.ssh/id_rsa.pub > $WPKGDIR/authorized_keys
 
-# Initialisation de profiles.xml, hosts.xml et initvars_se3.bat
-chown www-se3:root /usr/share/se3/scripts/update_hosts_profiles_xml.sh
-chmod +x /usr/share/se3/scripts/update_hosts_profiles_xml.sh
-chown www-se3:root /usr/share/se3/scripts/update_droits_xml.sh
-chmod +x /usr/share/se3/scripts/update_droits_xml.sh
-bash /usr/share/se3/scripts/update_hosts_profiles_xml.sh "$computersRdn" "$parcsRdn" "$ldap_base_dn"
+# Initialisation de profiles.xml, hosts.xml et initvars_se4.bat
+chown www-admin:root /usr/share/sambaedu/scripts/update_hosts_profiles_xml.sh
+chmod +x /usr/share/sambaedu/scripts/update_hosts_profiles_xml.sh
+chown www-admin:root /usr/share/sambaedu/scripts/update_droits_xml.sh
+chmod +x /usr/share/sambaedu/scripts/update_droits_xml.sh
+bash /usr/share/sambaedu/scripts/update_hosts_profiles_xml.sh "$computersRdn" "$parcsRdn" "$ldap_base_dn"
 echo "Fichiers hosts.xml et profiles.xml crees."
-bash /usr/share/se3/scripts/update_droits_xml.sh
+bash /usr/share/sambaedu/scripts/update_droits_xml.sh
 echo "Fichier droits.xml cree."
-chown www-se3:root /usr/share/se3/scripts/wpkg_initvars.sh
-chmod +x /usr/share/se3/scripts/wpkg_initvars.sh
-bash /usr/share/se3/scripts/wpkg_initvars.sh
-echo "Fichier initvars_se3.bat cree."
-chown www-se3:root /usr/share/se3/scripts/wakeonlan
-chmod +x /usr/share/se3/scripts/wakeonlan
+chown www-admin:root /usr/share/sambaedu/scripts/wpkg_initvars.sh
+chmod +x /usr/share/sambaedu/scripts/wpkg_initvars.sh
+bash /usr/share/sambaedu/scripts/wpkg_initvars.sh
+echo "Fichier initvars_se4.bat cree."
+chown www-admin:root /usr/share/sambaedu/scripts/wakeonlan
+chmod +x /usr/share/sambaedu/scripts/wakeonlan
 
 # Initialisation de Touslespostes.xml
 if [ -d "$WPKGDIR/hosts" ]; then
@@ -1129,7 +1053,7 @@ echo -e "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r
 
 # Initialisation de packages.xml
 if [ ! -e "$WPKGDIR/packages.xml" ]; then
-    SE3=`gawk -F' *= *' '/netbios name/ {print $2}' /etc/samba/smb.conf`
+se4=$config_se4fs_name
     cat - > $WPKGDIR/packages.xml <<PACKAGESXML
 <?xml version="1.0" encoding="UTF-8"?>
 <packages>
@@ -1154,13 +1078,13 @@ fi
 
 # Paquet deploiementimprimantes.xml obsolete : on le rend inactif en supprimant le script qu'il execute.
 # Une maj du xml rendra egalement ce package inoperant.
-if [ -e /var/se3/unattended/install/packages/windows/printers/ajoutpilotesimprimantes.bat ]; then
+if [ -e /var/sambaedu/unattended/install/packages/windows/printers/ajoutpilotesimprimantes.bat ]; then
 	echo "Suppression du script ajoutpilotesimprimantes.bat devenu obsolete en 2.0."
-	rm -f /var/se3/unattended/install/packages/windows/printers/ajoutpilotesimprimantes.bat
+	rm -f /var/sambaedu/unattended/install/packages/windows/printers/ajoutpilotesimprimantes.bat
 fi
 
 # Dossier destine a recevoir les rapports remontes par les postes
-# On donne droits rwx a adminse3
+# On donne droits rwx a $config_adminse_name
 if [ ! -d $WPKGDIR/rapports ] ; then
    mkdir $WPKGDIR/rapports
 fi
@@ -1190,16 +1114,16 @@ echo "vous souhaitez deployer les mises a jour Microsoft."
 echo ""
 echo "Mise en place des droits sur $WPKGDIR."
 setfacl -b -R $WPKGDIR
-# www-se3 a tous les droits sur /var/se3/unattended/install
+# www-admin a tous les droits sur /var/sambaedu/unattended/install
 # C'est peut-etre trop. A voir...
-chown -R www-se3:admins /var/se3/unattended/install
-setfacl -R -m u:www-se3:rwx -m d:u:www-se3:rwx /var/se3/unattended/install
-setfacl -R -m u:$ADMINSE3:rwx -m d:u:$ADMINSE3:rwx /var/se3/unattended/install/wpkg/rapports
-setfacl -R -m u::rwx -m g::rx -m o::rx -m d:m:rwx -m d:u::rwx -m d:g::rx -m d:o::rx /var/se3/unattended/install
+chown -R www-admin:admins /var/sambaedu/unattended/install
+setfacl -R -m u:www-admin:rwx -m d:u:www-admin:rwx /var/sambaedu/unattended/install
+setfacl -R -m u:$${config_adminse_name}:rwx -m d:u:$${config_adminse_name}:rwx /var/sambaedu/unattended/install/wpkg/rapports
+setfacl -R -m u::rwx -m g::rx -m o::rx -m d:m:rwx -m d:u::rwx -m d:g::rx -m d:o::rx /var/sambaedu/unattended/install
 
 
 ##### Suppression des rapports vieux de plus de 1 an
-RAPPORTSWPKG="/var/se3/unattended/install/wpkg/rapports"
+RAPPORTSWPKG="/var/sambaedu/unattended/install/wpkg/rapports"
 if [ -e "$RAPPORTSWPKG" ];then
 	echo "Recherche et suppression des anciens rapports"
 	find $RAPPORTSWPKG/ -type f -maxdepth 1 -mtime +90 -delete 2>/dev/null

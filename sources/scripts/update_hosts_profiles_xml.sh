@@ -1,12 +1,12 @@
 #!/bin/bash
 
 #########################################################################
-#   /usr/share/se3/scripts/update_hosts_profiles_xml.sh                 #
+#   /usr/share/sambaedu/scripts/update_hosts_profiles_xml.sh                 #
 #                                                                       #
 #########################################################################
 #
 #
-#   Met à jour hosts.xml et profiles.xml dans /var/se3/unattended/install/wpkg
+#   Met à jour hosts.xml et profiles.xml dans /var/sambaedu/unattended/install/wpkg
 #   à partir des données de l'annuaire
 #
 #   A executer chaque fois que les parcs sont modifiés
@@ -15,23 +15,20 @@
 ## $Id$ ##
 # last update fev 2016 - utf8
 
+. /usr/share/sambaedu/includes/config.inc.sh
+. /usr/share/sambaedu/includes/utils.inc.sh
 
-ComputersRDN="$1"
-ParcsRDN="$2"
-BaseDN="$3"
+ComputersRDN=$config_computers_rdn
+ParcsRDN=$config_parcs_rdn
+BaseDN=$config_ldap_base_dn
 
-wpkgroot="/var/se3/unattended/install/wpkg"
-wpkgwebdir="/var/www/se3/wpkg"
+wpkgroot=$config_wpkgroot
+wpkgwebdir="/var/www/sambaedu/wpkg"
 
 HOSTS_XML="$wpkgroot/hosts.xml";
 PROFILES_XMLTMP="$wpkgroot/profiles.xml.tmp";
 PROFILES_XML="$wpkgroot/profiles.xml";
 
-if [ "$2" == "" ]; then
-    echo "hosts.xml et profiles.xml dans /var/se3/unattended/install/wpkg/"
-    echo "  Syntaxe :  update_hosts_profiles_xml.sh ComputersRDN ParcsRDN BaseDN"
-    exit 1
-fi
 
 # Nom du profile TousLesPostes
 TousLesPostes="_TousLesPostes"
@@ -55,9 +52,10 @@ echo '<wpkg>' >> $HOSTS_XML
 # Chaque profile poste depend du profile des parcs auxquels il appartient ainsi que du profile $TousLesPostes
 # Seuls les postes ayant un compte (WinXP et2K) sont répertoriés.
 
-# echo "ldapsearch -x -LLL -S 'cn' -b \"$ParcsRDN,$BaseDN\" '(cn=*)' cn member"
-ldapsearch -x -LLL -S 'cn' -b "$ParcsRDN,$BaseDN" '(cn=*)' cn member | 
-    gawk '  BEGIN {
+ldap_url="ldap://".$config_se4ad_name.".".$config_domain
+
+su www-admin -c "ldapsearch  -H $ldap_url -Y gssapi -LLL -S 'cn' -b '$ParcsRDN,$BaseDN' '(cn=*)' cn member" |\
+    gawk  '  BEGIN {
                 print "<profile id=\"'$TousLesPostes'\" />";
             }
             /^cn: /{
@@ -83,12 +81,12 @@ ldapsearch -x -LLL -S 'cn' -b "$ParcsRDN,$BaseDN" '(cn=*)' cn member |
                     if ( not (HOST in parcsConnus) ) {
                         parcs[HOST] = "'$TousLesPostes'" parcs[HOST] ;
                         hosts[HOST] = HOST;
-                        ListHosts = ListHosts "(uid=" HOST "$)"
+                        ListHosts = ListHosts "(cn=" HOST ")";
                     }
                 }
-                ListHosts = "ldapsearch -x -LLL -S \"uid\" -b \"'$ComputersRDN','$BaseDN'\" \"(|" ListHosts ")\" uid";
-                while ( ListHosts | getline ) {
-                    if ( $1 == "uid:" ) {
+		ListHosts = "su www-admin -c \"ldapsearch -Y gssapi -LLL -H '$ldap_url' -S cn -b \\\"'$BaseDN'\\\"  \\\"(&(objectclass=computer)(|" ListHosts "))\\\" cn\"";
+                while ( ListHosts | getline) {
+                    if ( $1 == "cn:" ) {
                         sub("\\$", "", $2);
                         HOST = tolower($2);
                         print "<profile id=\""HOST"\" >";

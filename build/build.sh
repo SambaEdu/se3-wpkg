@@ -1,28 +1,17 @@
-#!/bin/sh
+#!/bin/bash
 
-arg1="$1"
-
-script_dir=$(cd $(dirname "$0"); pwd)
-pkg_name="se3-wpkg"
-
-cd "$script_dir" || {
-    echo "Error, impossible to change directory to $script_dir."
-    echo "End of the script."
-    exit 1
-}
-
-# Remove old *.deb files.
-rm -rf "$script_dir/"*.deb
-
-cp -ra "$script_dir/../sources" "$script_dir/$pkg_name"
-
-
-cd  "$script_dir/$pkg_name"
-find ./ \( -name *.sh -o -name *.pl -o -name *.py \) -exec chmod +x {} \;
-
-dh_clean
-debuild -uc -us -b
-# Cleaning.
-rm -r "$script_dir/$pkg_name"
-
-
+version="3.9.4"
+if [ -z "$1" ]; then
+	paquet="sambaedu-wpkg"
+fi
+debs="../${paquet}_${version}*.deb"
+deb=$paquet
+	
+cd ../sources
+rm -f $debs
+dch -U -i ""
+debuild -us -uc -b
+scp -P 2222 $debs root@wawadeb.crdp.ac-caen.fr:/root/se4
+ssh -p 2222 root@wawadeb.crdp.ac-caen.fr "se4/se4.sh $version"
+#ssh root@admin.sambaedu3.maison "apt-get update && apt-get -y upgrade $deb"
+cd

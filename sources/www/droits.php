@@ -6,5 +6,5 @@
 
 include "inc/wpkg.auth.php";
 
-get_xml("droits.xml");
+get_xml($config, $login, "droits.xml");
 ?>

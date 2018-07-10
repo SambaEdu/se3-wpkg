@@ -4,6 +4,8 @@
 // ## $Id$ ##
 
 // Compatibilité register_globals = Off
+require_once ("config.inc.php");
+require_once ("functions.inc.php");
 foreach($_POST AS $key => $value) {
 	${$key} = $value;
 }
@@ -11,12 +13,9 @@ foreach($_GET AS $key => $value) {
 	${$key} = $value;
 }
 $login = "";
-$wpkgAdmin = false;
-$wpkgUser = false;
 
 include "inc/wpkg.auth.php";
 
-$DEBUG=1;
 
 $urlMD5 = "";
 $status = "";
@@ -27,7 +26,7 @@ if (! $login ) {
 	echo "top.location.href = '/auth.php?request=" . rawurlencode($request) . "';\n";
 	echo "//-->\n</script>\n";
 } else {
-	if ( ! $wpkgUser ) { 
+	if ( ! isWpkgUser($config, $login) ) { 
 		include entete.inc.php; ?>
 			<h2>D&#233;ploiement d'applications</h2>
 			<div class=error_msg>Vous n'avez pas les droits n&#233;cessaires &#224; l'utilisation de ce module !</div>
@@ -39,11 +38,11 @@ if (! $login ) {
 
 		if ( isset($getXml) ) {
 			# Download d'un fichier xml
-			get_xml($_GET['getXml']);
+			get_xml($config, $login, $_GET['getXml']);
 
 		} elseif ( isset($logfile) ) {
 			# Download d'un fichier log
-			get_fichierCP850("rapports/".$_GET['logfile']);
+			get_fichierCP850($config, $login, "rapports/".$_GET['logfile']);
 
 		} elseif ( isset($iCmd) && isset($associer) && isset($idPackage) && isset($idProfile)) {
 			# Association ou dissociation d'une appli � un profile
@@ -52,25 +51,25 @@ if (! $login ) {
 
 		} elseif ( isset($updateProfiles) ) {
 			echo "<pre>";
-			echo "bash /usr/share/se3/scripts/update_hosts_profiles_xml.sh '$computersRdn' '$parcsRdn' '$ldap_base_dn'\n";
-			passthru ( "bash /usr/share/se3/scripts/update_hosts_profiles_xml.sh '$computersRdn' '$parcsRdn' '$ldap_base_dn'", $status);
+			echo "bash /usr/share/sambaedu/scripts/update_hosts_profiles_xml.sh\n";
+			passthru ( "bash /usr/share/sambaedu/scripts/update_hosts_profiles_xml.sh", $status);
 			echo "</pre>\n";
 			if ( $status == 0 ) {
 				echo "Les fichiers hosts.xml et profiles.xml ont &#233;t&#233; mis &#224; jour.<br>\n";
 			} else {
-				echo "Erreur $status : bash /usr/share/se3/scripts/update_hosts_profiles_xml.sh '$parcsRdn' '$ldap_base_dn'<br>\n";
+				echo "Erreur $status : bash /usr/share/sambaedu/scripts/update_hosts_profiles_xml.sh<br>\n";
 			}
 			echo "<br>Retourner &#224; la page <a href='index.php'>D&#233;ploiement d'applications</a>.<br>\n";
 
 		} elseif ( isset($updateDroits) ) {
 			echo "<pre>";
-			echo "bash /usr/share/se3/scripts/update_droits_xml.sh\n";
-			passthru ( "bash /usr/share/se3/scripts/update_droits_xml.sh", $status);
+			echo "bash /usr/share/sambaedu/scripts/update_droits_xml.sh\n";
+			passthru ( "bash /usr/share/sambaedu/scripts/update_droits_xml.sh", $status);
 			echo "</pre>\n";
 			if ( $status == 0 ) {
 				echo "Le fichier droits.xml a &#233;t&#233; mis &#224; jour.<br>\n";
 			} else {
-				echo "Erreur $status : bash /usr/share/se3/scripts/update_droits_xml.sh<br>\n";
+				echo "Erreur $status : bash /usr/share/sambaedu/scripts/update_droits_xml.sh<br>\n";
 			}
 			echo "<br>Retourner &#224; la page <a href='index.php'>D&#233;ploiement d'applications</a>.<br>\n";
 
@@ -78,7 +77,7 @@ if (! $login ) {
 			extractAppli($extractAppli);
 
 		} elseif ( isset($SupprimerAppli) ) {
-			if ( adminWpkg() ) {
+		    if ( isAdminWpkg($config, $login) ) {
 				# Suppression d'une Appli
 				$SupprimerAppli = $_POST['SupprimerAppli'];
 				printHead();
@@ -98,11 +97,11 @@ if (! $login ) {
 				echo "</body></html>\n";
 			}
 		} elseif ( isset($displayDelPackage) ) {
-			if ( adminWpkg() ) {
+		    if ( isAdminWpkg($config, $login) ) {
 				passthru ( "xsltproc --stringparam idPackage '$displayDelPackage' $wpkgwebdir/displayDelPackage.xsl $wpkgroot/packages.xml", $status);
 			}
 		} elseif ( $_GET['upload'] == "1" ) {
-			if ( adminWpkg() ) {
+		    if ( isAdminWpkg($config, $login) ) {
 				# Upload d'un fichier appli.xml
 				$ignoreMD5 = $_POST['ignoreWawadebMD5'];
 				$pasDeDownload = $_POST['noDownload'];
@@ -154,7 +153,7 @@ if (! $login ) {
 				echo "</body></html>";
 			}
 		} elseif ( $_GET['UpdateApplis'] == "1" ) {
-			if ( adminWpkg() ) {
+			if ( isAdminWpkg($config, $login) ) {
 				# Installation d'applis à partir du dépot officiel
 				if (isset($urlWawadebMD5)) {
 					$urlMD5 = isset($urlWawadebMD5) ? $_POST['urlWawadebMD5'] : '';
@@ -199,21 +198,6 @@ if (! $login ) {
 	}
 }
 
-function adminWpkg() {
-	global $wpkgAdmin;
-	if ( ! $wpkgAdmin ) { 
-		?>
-			<link  href='../style.css' rel='StyleSheet' type='text/css'>
-			<html><body>
-			<h2>D&#233;ploiement d'applications</h2>
-			<div class=error_msg>Vous devez avoir des droits d'administration pour utiliser cette fonction !</div>
-<?php
-		include "pdp.inc.php";
-		return false;
-	} else { 
-		return true;
-	}
-}
 function configAppli($Appli) {
 	global $urlMD5, $wpkgroot, $wpkgwebdir, $ignoreMD5, $pasDeDownload, $status, $login;
 	$md5Checked = $ignoreMD5;
@@ -296,7 +280,7 @@ function Erreur($iErr) {
 }
 
 function extractAppli ($idAppli) {
-	global $DEBUG, $wpkgwebdir, $wpkgroot;
+	global $wpkgwebdir, $wpkgroot;
 	// Retourne au client le xml de l'appli extraite du fichier $wpkgroot/packages.xml
 	$DateFichier = gmdate("D, d M Y H:i:s T", filemtime("$wpkgroot/packages.xml"));
 	header("Content-type: application/xml");
@@ -317,7 +301,7 @@ function extractAppli ($idAppli) {
 }
 
 function associer ($iCmd, $operation, $package, $profile) {
-	global $DEBUG, $wpkgwebdir, $wpkgroot, $wpkgAdmin, $wpkgUser, $login;
+	global  $wpkgwebdir, $wpkgroot, $wpkgAdmin, $wpkgUser, $login;
 	# Associe un appli � un profil si l'utilisateur en a le droit
 	
 	exec ( "$wpkgwebdir/bin/associer.sh '$operation' '$package' '$profile' '$login' 2>&1", $output, $status );

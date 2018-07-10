@@ -7,8 +7,8 @@
 #  ## $Id$ ##
 
 Erreur=0
-wpkgroot="/var/se3/unattended/install/wpkg"
-wpkgwww="/var/www/se3/wpkg"
+wpkgroot="/var/sambaedu/unattended/install/wpkg"
+wpkgwww="/var/www/sambaedu/wpkg"
 
 if [ "$1" == "" ] ;then
     echo "Syntaxe : wpkgXml.sh login"

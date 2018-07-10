@@ -1,7 +1,7 @@
 <?php
 
 
-$rapport_repertoire="/var/se3/unattended/install/wpkg/rapports/";
+$rapport_repertoire="/var/sambaedu/unattended/install/wpkg/rapports/";
 $rapport_md5="rapports_md5.xml";
 
 $liste_rapport=array();
@@ -105,7 +105,7 @@ $xml_md5_dom->preserveWhiteSpace = false;
 $xml_md5_dom->load($rapport_repertoire.$rapport_md5);
 $xml_md5_dom->save($rapport_repertoire.$rapport_md5);
 
-$xml = simplexml_load_file("/var/se3/unattended/install/wpkg/rapports/rapports.xml");
+$xml = simplexml_load_file("/var/sambaedu/unattended/install/wpkg/rapports/rapports.xml");
 if (isset($info) and @$info!="")
 {
 	foreach ($info as $info2)
@@ -130,11 +130,11 @@ if (isset($info) and @$info!="")
 		}
 	}
 }
-$xml->asXML("/var/se3/unattended/install/wpkg/rapports/rapports.xml");
+$xml->asXML("/var/sambaedu/unattended/install/wpkg/rapports/rapports.xml");
 
 $xml_dom = new DOMDocument;
 $xml_dom->formatOutput = true;
 $xml_dom->preserveWhiteSpace = false;
-$xml_dom->load("/var/se3/unattended/install/wpkg/rapports/rapports.xml");
-$xml_dom->save("/var/se3/unattended/install/wpkg/rapports/rapports.xml");
+$xml_dom->load("/var/sambaedu/unattended/install/wpkg/rapports/rapports.xml");
+$xml_dom->save("/var/sambaedu/unattended/install/wpkg/rapports/rapports.xml");
 ?>

@@ -1,0 +1,9 @@
+Template: sambaedu/wpkgroot
+Type: string
+Description: emplacement des fichiers wpkg
+ ne pas changer sauf si vous savez ce que vous faites !
+
+Template: sambaedu/se3_name
+Type: string
+Description: nom de l'ancien serveur se3
+ en cas de migration, permettra à au client wpkg déjà installé sur ls postes de déclencher la mise en conformité des postes pour AD

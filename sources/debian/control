@@ -1,11 +1,12 @@
-Source: se3-wpkg
+Source: sambaedu-wpkg
 Section: net
 Priority: extra
-Maintainer: jean <jean.lebail@etab.ac-caen.fr>
+Maintainer: denis.bonnenfant@sambaedu.org
 Build-Depends: debhelper (>= 5)
 Standards-Version: 3.7.2
 
-Package: se3-wpkg
+Package: sambaedu-wpkg
 Architecture: all
-Depends: se3 (>= 2.2), unzip, xsltproc, cabextract, recode, wakeonlan, tofrodos, md5deep, xmlstarlet
-Description: Paquet optionnel d'installation d'applications sur les clients windows avec wpkg. This package is used to install applications on the windows XP clients.
+Replaces: se3-wpkg
+Depends: sambaedu, unzip, xsltproc, cabextract, recode, wakeonlan, tofrodos, md5deep, xmlstarlet
+Description: Paquet optionnel d'installation d'applications sur les clients windows avec wpkg.

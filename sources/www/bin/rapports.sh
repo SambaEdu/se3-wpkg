@@ -4,7 +4,7 @@
 #
 #  ## $Id$ ##
 
-RAPPORTDIR="/var/se3/unattended/install/wpkg/rapports"
+RAPPORTDIR="/var/sambaedu/unattended/install/wpkg/rapports"
 RAPPORTXML="rapports.xml"
 RAPPORTMD5XML="rapports_md5.xml"
 
@@ -52,10 +52,10 @@ if [ ! -e $RAPPORTMD5XML ] ; then
     echo '<rapports />' >> $RAPPORTMD5XML
 fi
 
-/usr/bin/php /var/www/se3/wpkg/wpkg_rapport.php
+/usr/bin/php /var/www/sambaedu/wpkg/wpkg_rapport.php
 
-chown www-se3:www-data $RAPPORTXML
-chown www-se3:www-data $RAPPORTMD5XML
+chown www-admin:www-data $RAPPORTXML
+chown www-admin:www-data $RAPPORTMD5XML
 
 rm -f $fich_lock
 

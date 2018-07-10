@@ -4,7 +4,7 @@
 # Sous licence GPL
 # Si vous reprenez ou vous inspirez de ce programme, vous devez citer le Projet Samba Edu
 #
-#### Telechargement automatique des mises a jour wsusoffline en fonction du contenu de /var/se3/unattended/install/wsusoffline/UpdateGenerator.ini #####
+#### Telechargement automatique des mises a jour wsusoffline en fonction du contenu de /var/sambaedu/unattended/install/wsusoffline/UpdateGenerator.ini #####
 # 
 #  Auteur : Olivier Lacroix
 #
@@ -18,11 +18,11 @@
 #    jean-remi.couturier@ac-clermont.fr
 #    Corrections apportees :
 #       Modification du test TESTFREESPACE - 10 Go minimum
-#          Test effectue sur /var/se3/unattended/install/wsusoffline/client,
-#          On peut ainsi copier le dossier /var/se3/unattended/install/wsusoffline/client sur un autre disque si on manque de place,
-#          Puis le monter en lieu et place de l'actuel /var/se3/unattended/install/wsusoffline/client.
+#          Test effectue sur /var/sambaedu/unattended/install/wsusoffline/client,
+#          On peut ainsi copier le dossier /var/sambaedu/unattended/install/wsusoffline/client sur un autre disque si on manque de place,
+#          Puis le monter en lieu et place de l'actuel /var/sambaedu/unattended/install/wsusoffline/client.
 #       Si le xml a ete accidentellement ou volontairement supprime de WPKG :
-#          on supprime le fichier "/var/se3/unattended/install/wsusoffline/WsusOffline-Versions.txt", pour forcer la reinstallation complete
+#          on supprime le fichier "/var/sambaedu/unattended/install/wsusoffline/WsusOffline-Versions.txt", pour forcer la reinstallation complete
 #       Forcer wget a telecharger le fichier temoin "WsusOffline-Versions.txt" sans passer par le proxy (pour ne pas recuperer la copie mise en cache)
 #       Si le fichier tag "WsusOffline-Versions.txt" a change sur le svn, telechargement et/ou installation de la derniere version des fichiers :
 #          - wsusoffline.zip
@@ -56,12 +56,12 @@ export PATH=$PATH:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
 
 
 # Recuperation des variables necessaires au script
-. /usr/share/se3/includes/config.inc.sh -ml
-RNE=`/usr/share/se3/includes/config.inc.sh -mlv | grep ldap_base_dn | cut -d\= -f2 | cut -d\, -f1`
+. /usr/share/sambaedu/includes/config.inc.sh -ml
+RNE=`/usr/share/sambaedu/includes/config.inc.sh -mlv | grep ldap_base_dn | cut -d\= -f2 | cut -d\, -f1`
 
 # parametre proxy a trouver dans se3db : pas trouve a part avec le .pac
 ipproxy=$(grep "http_proxy=" /etc/profile | head -n 1 | sed -e "s#.*//##;s/\"//")
-# ipproxy=$(/usr/share/se3/includes/config.inc.sh -cv | grep "proxy_url" | cut -d"/" -f3 | grep -v "proxy_url")
+# ipproxy=$(/usr/share/sambaedu/includes/config.inc.sh -cv | grep "proxy_url" | cut -d"/" -f3 | grep -v "proxy_url")
 
 CORRESPONDANCE()
 {
@@ -106,31 +106,31 @@ fi
 
 TESTFREESPACE()
 #{
-#	# PART=`df | grep "/var/se3\$" | sed -e "s/ .*//"`
-#	# PART_SIZE=$(df -m $PARTROOT | awk  '/se3/ {print $4}')
+#	# PART=`df | grep "/var/sambaedu\$" | sed -e "s/ .*//"`
+#	# PART_SIZE=$(df -m $PARTROOT | awk  '/sambaedu/ {print $4}')
 #	if [ "$PART_SIZE" -le 1000 ]; then
-#		echo "La partition /var/se3 a moins de 1 Go disponible, c'est insuffisant pour telecharger de nouvelles mises a jour.">$MAIL
+#		echo "La partition /var/sambaedu a moins de 1 Go disponible, c'est insuffisant pour telecharger de nouvelles mises a jour.">$MAIL
 #		echo "Merci de liberer de l'espace sur cette partition. Des que cela sera effectue, les mises a jour reprendront automatiquement, tous les soirs.">>$MAIL
-#		SENDMAIL "ERREUR WSUSOFFLINE : Place insuffisante sur la partition /var/se3."
+#		SENDMAIL "ERREUR WSUSOFFLINE : Place insuffisante sur la partition /var/sambaedu."
 #		exit 1
 #	fi
 #}
 {
-	FREE_VARSE3=`df -m /var/se3/unattended/install/wsusoffline/client | awk '/[0-9]%/{print $(NF-2)}'`
+	FREE_VARSE3=`df -m /var/sambaedu/unattended/install/wsusoffline/client | awk '/[0-9]%/{print $(NF-2)}'`
 	if [ "$FREE_VARSE3" -le 10000 ]; then
-		echo "Le dossier /var/se3/unattended/install/wsusoffline/client a moins de 10 Go disponible sur sa partition" >$MAIL
+		echo "Le dossier /var/sambaedu/unattended/install/wsusoffline/client a moins de 10 Go disponible sur sa partition" >$MAIL
 		echo "C'est insuffisant pour telecharger de nouvelles mises a jour." >>$MAIL
 		echo "Veuillez liberer de l'espace sur cette partition." >>$MAIL
 		echo "Des que cela sera effectue, les mises a jour reprendront automatiquement, tous les soirs a partir de 20h45." >>$MAIL
-		SENDMAIL "WsusOffline ERREUR : Espace disque insuffisant dans le dossier /var/se3/unattended/install/wsusoffline/client."
+		SENDMAIL "WsusOffline ERREUR : Espace disque insuffisant dans le dossier /var/sambaedu/unattended/install/wsusoffline/client."
 		exit 1
 	fi
 }
 
 function PRESENCEXML()
 {
-WSUSACTIF="$(grep wsusoffline /var/se3/unattended/install/wpkg/profiles.xml)"
-WSUSPRESENNT="$(grep wsusoffline /var/se3/unattended/install/wpkg/packages.xml)"
+WSUSACTIF="$(grep wsusoffline /var/sambaedu/unattended/install/wpkg/profiles.xml)"
+WSUSPRESENNT="$(grep wsusoffline /var/sambaedu/unattended/install/wpkg/packages.xml)"
 
 if [ -z "$WSUSACTIF" ] && [ -n "$WSUSPRESENNT" ]; then
 	echo "Wsus présent mais pas actif, sortie du script"
@@ -144,26 +144,26 @@ TESTFREESPACE
 PRESENCEXML
 
 ########### Suppression de l'ancien fichier temoin "version.txt" ###########
-[ -e /var/se3/unattended/install/wsusoffline/version.txt ] && rm -f /var/se3/unattended/install/wsusoffline/version.txt
-[ -e /var/se3/unattended/install/wsusoffline/Version.txt ] && rm -f /var/se3/unattended/install/wsusoffline/Version.txt
+[ -e /var/sambaedu/unattended/install/wsusoffline/version.txt ] && rm -f /var/sambaedu/unattended/install/wsusoffline/version.txt
+[ -e /var/sambaedu/unattended/install/wsusoffline/Version.txt ] && rm -f /var/sambaedu/unattended/install/wsusoffline/Version.txt
  
 ########### telechargement de la derniere version des fichiers si le fichier tag "WsusOffline-Versions.txt" a change sur le svn. ##########
-[ -e /var/se3/unattended/install/wsusoffline.zip ] && rm -f /var/se3/unattended/install/wsusoffline.zip
+[ -e /var/sambaedu/unattended/install/wsusoffline.zip ] && rm -f /var/sambaedu/unattended/install/wsusoffline.zip
 
 ########### Si le xml a ete accidentellement ou volontairement supprime de WPKG ##########
-########### On supprime le fichier "/var/se3/unattended/install/wsusoffline/WsusOffline-Versions.txt", pour forcer la reinstallation complete ##########
-cat /var/se3/unattended/install/wpkg/packages.xml | grep wsusoffline >/dev/null
+########### On supprime le fichier "/var/sambaedu/unattended/install/wsusoffline/WsusOffline-Versions.txt", pour forcer la reinstallation complete ##########
+cat /var/sambaedu/unattended/install/wpkg/packages.xml | grep wsusoffline >/dev/null
 if [ $? != 0 ]; then
 	echo "" >$MAIL
 	echo "ERREUR : Le xml de wsusoffline est absent de WPKG" >>$MAIL
 	echo "" >>$MAIL
-	echo "  On supprime le fichier temoin /var/se3/unattended/install/wsusoffline/WsusOffline-Versions.txt pour forcer la reinstallation complete" >>$MAIL
-	rm -f /var/se3/unattended/install/wsusoffline/WsusOffline-Versions.txt >/dev/null 2>&1
+	echo "  On supprime le fichier temoin /var/sambaedu/unattended/install/wsusoffline/WsusOffline-Versions.txt pour forcer la reinstallation complete" >>$MAIL
+	rm -f /var/sambaedu/unattended/install/wsusoffline/WsusOffline-Versions.txt >/dev/null 2>&1
 	SENDMAIL "WsusOffline : Reinstallation du xml qui est absent de WPKG."
 fi
 
 WSUSOFFLINEROOT=http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages-ng/files/wsusoffline
-TEMOIN=/var/se3/unattended/install/wsusoffline/WsusOffline-Versions.txt
+TEMOIN=/var/sambaedu/unattended/install/wsusoffline/WsusOffline-Versions.txt
 NEWTEMOIN=/tmp/wsusofflineversions.txt
 wget -O $NEWTEMOIN $WSUSOFFLINEROOT/WsusOffline-Versions.txt? >/dev/null 2>&1
 SIZEFILE=`ls -la $NEWTEMOIN | awk '{print $5}'` >/dev/null 2>&1
@@ -190,9 +190,9 @@ else
 	echo "" >>$MAIL
 	echo "Debut de la mise a jour :" >>$MAIL
 	echo "" >>$MAIL
-	wget $WSUSOFFLINEROOT/wsusoffline.zip? -O /var/se3/unattended/install/wsusoffline.zip >>$MAIL 2>&1
-	if [ -e /var/se3/unattended/install/wsusoffline.zip ]; then
-		SIZEFILE=`ls -la /var/se3/unattended/install/wsusoffline.zip | awk '{print $5}'`
+	wget $WSUSOFFLINEROOT/wsusoffline.zip? -O /var/sambaedu/unattended/install/wsusoffline.zip >>$MAIL 2>&1
+	if [ -e /var/sambaedu/unattended/install/wsusoffline.zip ]; then
+		SIZEFILE=`ls -la /var/sambaedu/unattended/install/wsusoffline.zip | awk '{print $5}'`
 	else
 		SIZEFILE="0"
 	fi
@@ -201,10 +201,10 @@ else
 		echo "" >>$MAIL
 		echo "OK : Telechargement de wsusoffline.zip" >>$MAIL
 		echo "" >>$MAIL
-		echo "Tentative de decompression vers /var/se3/unattended/install/wsusoffline" >>$MAIL
-		if ( ! unzip -o /var/se3/unattended/install/wsusoffline.zip -d /var/se3/unattended/install/ 2>>$MAIL 1>/dev/null ) ; then
+		echo "Tentative de decompression vers /var/sambaedu/unattended/install/wsusoffline" >>$MAIL
+		if ( ! unzip -o /var/sambaedu/unattended/install/wsusoffline.zip -d /var/sambaedu/unattended/install/ 2>>$MAIL 1>/dev/null ) ; then
 			echo "" >>$MAIL
-			echo "ERREUR : /usr/bin/unzip -o /var/se3/unattended/install/wsusoffline.zip" >>$MAIL
+			echo "ERREUR : /usr/bin/unzip -o /var/sambaedu/unattended/install/wsusoffline.zip" >>$MAIL
 			echo "" >>$MAIL
 			echo "Sans intervention de votre part, une nouvelle tentative sera executee des demain a partir de 20h45" >>$MAIL
 			SENDMAIL "WsusOffline ERREUR : une nouvelle version de wsusoffline est disponible mais la decompression du fichier wsusoffline.zip a echoue."
@@ -212,10 +212,10 @@ else
 		else
 			echo "" >>$MAIL
 			echo "OK : Decompression de wsusoffline.zip." >>$MAIL
-			rm -f /var/se3/unattended/install/wsusoffline.zip
-			echo "Reglage des droits sur les fichiers /var/se3/unattended/install/wsusoffline" >>$MAIL
-			chown -R www-se3:admins /var/se3/unattended/install/wsusoffline >>$MAIL
-			chmod -R ug+rwx /var/se3/unattended/install/wsusoffline >>$MAIL
+			rm -f /var/sambaedu/unattended/install/wsusoffline.zip
+			echo "Reglage des droits sur les fichiers /var/sambaedu/unattended/install/wsusoffline" >>$MAIL
+			chown -R www-admin:admins /var/sambaedu/unattended/install/wsusoffline >>$MAIL
+			chmod -R ug+rwx /var/sambaedu/unattended/install/wsusoffline >>$MAIL
 			# SENDMAIL "WsusOffline : une nouvelle version a ete telechargee automatiquement afin de proteger au mieux vos pc sous windows."
 		fi
 	else
@@ -228,9 +228,9 @@ else
 	fi
 	echo "" >>$MAIL
 	echo "Telechargement du fichier de configuration UpdateGenerator.ini :" >>$MAIL
-	wget $WSUSOFFLINEROOT/UpdateGenerator.ini? -O /var/se3/unattended/install/wsusoffline/UpdateGenerator.ini >>$MAIL 2>&1
-	if [ -e /var/se3/unattended/install/wsusoffline/UpdateGenerator.ini ]; then
-		SIZEFILE=`ls -la /var/se3/unattended/install/wsusoffline/UpdateGenerator.ini | awk '{print $5}'`
+	wget $WSUSOFFLINEROOT/UpdateGenerator.ini? -O /var/sambaedu/unattended/install/wsusoffline/UpdateGenerator.ini >>$MAIL 2>&1
+	if [ -e /var/sambaedu/unattended/install/wsusoffline/UpdateGenerator.ini ]; then
+		SIZEFILE=`ls -la /var/sambaedu/unattended/install/wsusoffline/UpdateGenerator.ini | awk '{print $5}'`
 	else
 		SIZEFILE="0"
 	fi
@@ -238,7 +238,7 @@ else
 	if [ ! "$SIZEFILE" == "0" ]; then
 		echo "" >>$MAIL
 		echo "OK : Telechargement de UpdateGenerator.ini" >>$MAIL
-		rm -f /var/se3/unattended/install/UpdateGenerator.ini
+		rm -f /var/sambaedu/unattended/install/UpdateGenerator.ini
 		# SENDMAIL "WsusOffline : Une nouvelle version du fichier de configuration UpdateGenerator.ini a ete telechargee." 
 	else
 		echo "" >>$MAIL
@@ -249,16 +249,16 @@ else
 		exit 1
 	fi
 	echo ""
-	if [ ! -d /var/se3/unattended/install/packages/wsusoffline ] ; then
+	if [ ! -d /var/sambaedu/unattended/install/packages/wsusoffline ] ; then
 		echo "" >>$MAIL
-		echo "Creation du dossier /var/se3/unattended/install/packages/wsusoffline :" >>$MAIL
-		mkdir -p /var/se3/unattended/install/packages/wsusoffline >>$MAIL 2>&1
-		if [ ! -d /var/se3/unattended/install/packages/wsusoffline ] ; then
+		echo "Creation du dossier /var/sambaedu/unattended/install/packages/wsusoffline :" >>$MAIL
+		mkdir -p /var/sambaedu/unattended/install/packages/wsusoffline >>$MAIL 2>&1
+		if [ ! -d /var/sambaedu/unattended/install/packages/wsusoffline ] ; then
 			echo "" >>$MAIL
 			echo "ERREUR : Le dossier n'a pas pu etre cree." >>$MAIL
 			echo "" >>$MAIL
 			echo "Sans intervention de votre part, une nouvelle tentative sera executee des demain a partir de 20h45" >>$MAIL
-			SENDMAIL "WsusOffline ERREUR : Le dossier /var/se3/unattended/install/packages/wsusoffline n'a pas pu etre cree." 
+			SENDMAIL "WsusOffline ERREUR : Le dossier /var/sambaedu/unattended/install/packages/wsusoffline n'a pas pu etre cree." 
 			exit 1
 		else
 			echo "" >>$MAIL
@@ -267,9 +267,9 @@ else
 	fi
 	echo "" >>$MAIL
 	echo "Telechargement du fichier de configuration default.txt :">>$MAIL
-	wget $WSUSOFFLINEROOT/default.txt? -O /var/se3/unattended/install/packages/wsusoffline/default.txt >>$MAIL 2>&1
-	if [ -e /var/se3/unattended/install/packages/wsusoffline/default.txt ]; then
-		SIZEFILE=`ls -la /var/se3/unattended/install/packages/wsusoffline/default.txt | awk '{print $5}'`
+	wget $WSUSOFFLINEROOT/default.txt? -O /var/sambaedu/unattended/install/packages/wsusoffline/default.txt >>$MAIL 2>&1
+	if [ -e /var/sambaedu/unattended/install/packages/wsusoffline/default.txt ]; then
+		SIZEFILE=`ls -la /var/sambaedu/unattended/install/packages/wsusoffline/default.txt | awk '{print $5}'`
 	else
 		SIZEFILE="0"
 	fi
@@ -277,7 +277,7 @@ else
 	if [ ! "$SIZEFILE" == "0" ]; then
 		echo "" >>$MAIL
 		echo "OK : Telechargement de default.txt" >>$MAIL
-		rm -f /var/se3/unattended/install/default.txt
+		rm -f /var/sambaedu/unattended/install/default.txt
 		# SENDMAIL "WsusOffline : Une nouvelle version du fichier de configuration default.txt a ete telechargee."
 	else
 		echo "" >>$MAIL
@@ -289,9 +289,9 @@ else
 	fi
 	echo "" >>$MAIL
 	echo "Telechargement du programme de configuration des ordinateurs install.cmd :" >>$MAIL
-	wget $WSUSOFFLINEROOT/install.cmd? -O /var/se3/unattended/install/packages/wsusoffline/install.cmd >>$MAIL 2>&1
-	if [ -e /var/se3/unattended/install/packages/wsusoffline/install.cmd ]; then
-		SIZEFILE=`ls -la /var/se3/unattended/install/packages/wsusoffline/install.cmd | awk '{print $5}'`
+	wget $WSUSOFFLINEROOT/install.cmd? -O /var/sambaedu/unattended/install/packages/wsusoffline/install.cmd >>$MAIL 2>&1
+	if [ -e /var/sambaedu/unattended/install/packages/wsusoffline/install.cmd ]; then
+		SIZEFILE=`ls -la /var/sambaedu/unattended/install/packages/wsusoffline/install.cmd | awk '{print $5}'`
 	else
 		SIZEFILE="0"
 	fi
@@ -299,7 +299,7 @@ else
 	if [ ! "$SIZEFILE" == "0" ]; then
 		echo "" >>$MAIL
 		echo "OK : Telechargement de install.cmd" >>$MAIL
-		rm -f /var/se3/unattended/install/install.cmd
+		rm -f /var/sambaedu/unattended/install/install.cmd
 		# SENDMAIL "WsusOffline : Une nouvelle version du fichier de configuration des ordinateurs install.cmd a ete telechargee."
 	else
 		echo "" >>$MAIL
@@ -311,9 +311,9 @@ else
 	fi
 	echo "" >>$MAIL
 	echo "Telechargement du programme de configuration des mises a jour offlineupdate.cmd :" >>$MAIL
-	wget $WSUSOFFLINEROOT/offlineupdate.cmd? -O /var/se3/unattended/install/packages/wsusoffline/offlineupdate.cmd >>$MAIL 2>&1
-	if [ -e /var/se3/unattended/install/packages/wsusoffline/offlineupdate.cmd ]; then
-		SIZEFILE=`ls -la /var/se3/unattended/install/packages/wsusoffline/offlineupdate.cmd | awk '{print $5}'`
+	wget $WSUSOFFLINEROOT/offlineupdate.cmd? -O /var/sambaedu/unattended/install/packages/wsusoffline/offlineupdate.cmd >>$MAIL 2>&1
+	if [ -e /var/sambaedu/unattended/install/packages/wsusoffline/offlineupdate.cmd ]; then
+		SIZEFILE=`ls -la /var/sambaedu/unattended/install/packages/wsusoffline/offlineupdate.cmd | awk '{print $5}'`
 	else
 		SIZEFILE="0"
 	fi
@@ -321,7 +321,7 @@ else
 	if [ ! "$SIZEFILE" == "0" ]; then
 		echo "" >>$MAIL
 		echo "OK : Telechargement de offlineupdate.cmd" >>$MAIL
-		rm -f /var/se3/unattended/install/offlineupdate.cmd
+		rm -f /var/sambaedu/unattended/install/offlineupdate.cmd
 		# SENDMAIL "WsusOffline : Une nouvelle version du fichier de configuration des mises a jour offlineupdate.cmd a ete telechargee."
 	else
 		echo "" >>$MAIL
@@ -333,9 +333,9 @@ else
 	fi
 	echo "" >>$MAIL
 	echo "Telechargement de la console de commande cmd64.exe pour les ordinateurs en 64 bits :" >>$MAIL
-	wget $WSUSOFFLINEROOT/cmd64.exe? -O /var/se3/unattended/install/packages/wsusoffline/cmd64.exe >>$MAIL 2>&1
-	if [ -e /var/se3/unattended/install/packages/wsusoffline/cmd64.exe ]; then
-		SIZEFILE=`ls -la /var/se3/unattended/install/packages/wsusoffline/cmd64.exe | awk '{print $5}'`
+	wget $WSUSOFFLINEROOT/cmd64.exe? -O /var/sambaedu/unattended/install/packages/wsusoffline/cmd64.exe >>$MAIL 2>&1
+	if [ -e /var/sambaedu/unattended/install/packages/wsusoffline/cmd64.exe ]; then
+		SIZEFILE=`ls -la /var/sambaedu/unattended/install/packages/wsusoffline/cmd64.exe | awk '{print $5}'`
 	else
 		SIZEFILE="0"
 	fi
@@ -354,9 +354,9 @@ else
 	fi
 	echo "" >>$MAIL
 	echo "Telechargement de la barre de progression wpkgMessage.exe :" >>$MAIL
-	wget $WSUSOFFLINEROOT/wpkgMessage.exe? -O /var/se3/unattended/install/packages/wsusoffline/wpkgMessage.exe >>$MAIL 2>&1
-	if [ -e /var/se3/unattended/install/packages/wsusoffline/wpkgMessage.exe ]; then
-		SIZEFILE=`ls -la /var/se3/unattended/install/packages/wsusoffline/wpkgMessage.exe | awk '{print $5}'`
+	wget $WSUSOFFLINEROOT/wpkgMessage.exe? -O /var/sambaedu/unattended/install/packages/wsusoffline/wpkgMessage.exe >>$MAIL 2>&1
+	if [ -e /var/sambaedu/unattended/install/packages/wsusoffline/wpkgMessage.exe ]; then
+		SIZEFILE=`ls -la /var/sambaedu/unattended/install/packages/wsusoffline/wpkgMessage.exe | awk '{print $5}'`
 	else
 		SIZEFILE="0"
 	fi
@@ -375,9 +375,9 @@ else
 	fi
 	echo "" >>$MAIL
 	echo "Telechargement du fichier de configuration de la barre de progression wpkgMessage.ini :" >>$MAIL
-	wget $WSUSOFFLINEROOT/wpkgMessage.ini? -O /var/se3/unattended/install/packages/wsusoffline/wpkgMessage.ini >>$MAIL 2>&1
-	if [ -e /var/se3/unattended/install/packages/wsusoffline/wpkgMessage.ini ]; then
-		SIZEFILE=`ls -la /var/se3/unattended/install/packages/wsusoffline/wpkgMessage.ini | awk '{print $5}'`
+	wget $WSUSOFFLINEROOT/wpkgMessage.ini? -O /var/sambaedu/unattended/install/packages/wsusoffline/wpkgMessage.ini >>$MAIL 2>&1
+	if [ -e /var/sambaedu/unattended/install/packages/wsusoffline/wpkgMessage.ini ]; then
+		SIZEFILE=`ls -la /var/sambaedu/unattended/install/packages/wsusoffline/wpkgMessage.ini | awk '{print $5}'`
 	else
 		SIZEFILE="0"
 	fi
@@ -397,9 +397,9 @@ else
 	echo "" >>$MAIL
 	echo "Telechargement des sources du programme wpkgMessage :" >>$MAIL
 	# http://www.gig-mbh.de/edv/index.htm?/edv/software/wpkgtools/wpkg-message-english.htm
-	wget $WSUSOFFLINEROOT/wpkg-message.zip? -O /var/se3/unattended/install/packages/wsusoffline/wpkg-message.zip >>$MAIL 2>&1
-	if [ -e /var/se3/unattended/install/packages/wsusoffline/wpkg-message.zip ]; then
-		SIZEFILE=`ls -la /var/se3/unattended/install/packages/wsusoffline/wpkg-message.zip | awk '{print $5}'`
+	wget $WSUSOFFLINEROOT/wpkg-message.zip? -O /var/sambaedu/unattended/install/packages/wsusoffline/wpkg-message.zip >>$MAIL 2>&1
+	if [ -e /var/sambaedu/unattended/install/packages/wsusoffline/wpkg-message.zip ]; then
+		SIZEFILE=`ls -la /var/sambaedu/unattended/install/packages/wsusoffline/wpkg-message.zip | awk '{print $5}'`
 	else
 		SIZEFILE="0"
 	fi
@@ -469,7 +469,7 @@ else
 	fi
 	echo "" >>$MAIL
 	echo "Telechargement du xml de wsusoffline :" >>$MAIL
-	wget $WSUSOFFLINEROOT/wsusoffline.xml? -O /var/se3/unattended/install/wpkg/tmp/wsusoffline.xml >>$MAIL 2>&1
+	wget $WSUSOFFLINEROOT/wsusoffline.xml? -O /var/sambaedu/unattended/install/wpkg/tmp/wsusoffline.xml >>$MAIL 2>&1
 	if [ $? != 0 ]; then
 		echo "" >>$MAIL
 		echo "ERREUR : Telechargement du xml de wsusoffline" >>$MAIL
@@ -481,12 +481,12 @@ else
 		echo "OK : Telechargement du xml de wsusoffline." >>$MAIL
 	fi
 	echo "" >>$MAIL
-	echo "Correction des droits sur /var/se3/unattended/install/wpkg/tmp/wsusoffline.xml" >>$MAIL
-	chown www-se3:admins /var/se3/unattended/install/wpkg/tmp/wsusoffline.xml >>$MAIL 2>&1
-	chmod 775 /var/se3/unattended/install/wpkg/tmp/wsusoffline.xml >>$MAIL 2>&1
+	echo "Correction des droits sur /var/sambaedu/unattended/install/wpkg/tmp/wsusoffline.xml" >>$MAIL
+	chown www-admin:admins /var/sambaedu/unattended/install/wpkg/tmp/wsusoffline.xml >>$MAIL 2>&1
+	chmod 775 /var/sambaedu/unattended/install/wpkg/tmp/wsusoffline.xml >>$MAIL 2>&1
 	echo "" >>$MAIL
 	echo "Installation du xml de wsusoffline dans WPKG sans modification des associations avec les parcs :" >>$MAIL
-	/var/www/se3/wpkg/bin/installPackage.sh /var/se3/unattended/install/wpkg/tmp/wsusoffline.xml 0 admin 0 1 >>$MAIL 2>&1
+	/var/www/sambaedu/wpkg/bin/installPackage.sh /var/sambaedu/unattended/install/wpkg/tmp/wsusoffline.xml 0 admin 0 1 >>$MAIL 2>&1
 	if [ $? != 0 ]; then
 		echo "" >>$MAIL
 		echo "ERREUR : Installation du xml de wsusoffline" >>$MAIL
@@ -499,16 +499,16 @@ else
 		echo "" >>$MAIL
 		echo "Si cela n'est pas deja fait, depuis l'interface de WPKG, veuillez selectionner les parcs sur lesquels vous souhaitez deployer les mises a jour Microsoft." >>$MAIL
 	fi
-	if [ ! -d /var/se3/unattended/install/wpkg/rapports/wsusoffline ] ; then
+	if [ ! -d /var/sambaedu/unattended/install/wpkg/rapports/wsusoffline ] ; then
 		echo "" >>$MAIL
-		echo "Creation du dossier des rapports de wsusoffline dans /var/se3/unattended/install/wpkg/rapports/wsusoffline :" >>$MAIL
-		mkdir -p /var/se3/unattended/install/wpkg/rapports/wsusoffline >>$MAIL 2>&1
-		if [ ! -d /var/se3/unattended/install/wpkg/rapports/wsusoffline ] ; then
+		echo "Creation du dossier des rapports de wsusoffline dans /var/sambaedu/unattended/install/wpkg/rapports/wsusoffline :" >>$MAIL
+		mkdir -p /var/sambaedu/unattended/install/wpkg/rapports/wsusoffline >>$MAIL 2>&1
+		if [ ! -d /var/sambaedu/unattended/install/wpkg/rapports/wsusoffline ] ; then
 			echo "" >>$MAIL
 			echo "ERREUR : Le dossier n'a pas pu etre cree." >>$MAIL
 			echo "" >>$MAIL
 			echo "Sans intervention de votre part, une nouvelle tentative sera executee des demain a partir de 20h45" >>$MAIL
-			SENDMAIL "WsusOffline ERREUR : Le dossier /var/se3/unattended/install/wpkg/rapports/wsusoffline n'a pas pu etre cree."
+			SENDMAIL "WsusOffline ERREUR : Le dossier /var/sambaedu/unattended/install/wpkg/rapports/wsusoffline n'a pas pu etre cree."
 			exit 1
 		else
 			echo "" >>$MAIL
@@ -518,25 +518,25 @@ else
 	# tout a reussi, on remplace le fichier temoin
 	[ -e $TEMOIN ] && rm -f $TEMOIN
 	mv $NEWTEMOIN $TEMOIN
-	VersionWsusOffline=`cat /var/se3/unattended/install/wsusoffline/client/cmd/DoUpdate.cmd | grep WSUSOFFLINE_VERSION= | cut -d \= -f2`
+	VersionWsusOffline=`cat /var/sambaedu/unattended/install/wsusoffline/client/cmd/DoUpdate.cmd | grep WSUSOFFLINE_VERSION= | cut -d \= -f2`
 	SENDMAIL "WsusOffline : Mise a jour version $VersionWsusOffline telechargee automatiquement."
 fi
 
 ####### Mise a jour des droits sur les dossiers WPKG pour contourner un probleme d'acl non correctes apres le telechargement du xml de wsusoffline
-####### (repris depuis /var/cache/se3_install/wpkg-install.sh)
-# www-se3 a tous les droits sur /var/se3/unattended/install
+####### (repris depuis /var/cache/sambaedu_install/wpkg-install.sh)
+# www-admin a tous les droits sur /var/sambaedu/unattended/install
 # C'est peut-etre trop. A voir...
 echo ""
 echo "Mise a jour des droits sur les dossiers WPKG :"
-ADMINSE3="adminse3"
-chown -R www-se3:admins /var/se3/unattended/install
-setfacl -R -m u:www-se3:rwx -m d:u:www-se3:rwx /var/se3/unattended/install
-setfacl -R -m u:$ADMINSE3:rwx -m d:u:$ADMINSE3:rwx /var/se3/unattended/install/wpkg/rapports
-setfacl -R -m u::rwx -m g::rx -m o::rx -m d:m:rwx -m d:u::rwx -m d:g::rx -m d:o::rx /var/se3/unattended/install
+${config_adminse_name}="$config_adminse_name"
+chown -R www-admin:admins /var/sambaedu/unattended/install
+setfacl -R -m u:www-admin:rwx -m d:u:www-admin:rwx /var/sambaedu/unattended/install
+setfacl -R -m u:$${config_adminse_name}:rwx -m d:u:$${config_adminse_name}:rwx /var/sambaedu/unattended/install/wpkg/rapports
+setfacl -R -m u::rwx -m g::rx -m o::rx -m d:m:rwx -m d:u::rwx -m d:g::rx -m d:o::rx /var/sambaedu/unattended/install
 echo "OK"
 
 ####### Suppression des rapports vieux de plus de 1 an #########
-RAPPORTSWSUS=/var/se3/unattended/install/wpkg/rapports/wsusoffline
+RAPPORTSWSUS=/var/sambaedu/unattended/install/wpkg/rapports/wsusoffline
 if [ -e "$RAPPORTSWSUS" ];then
 	echo ""
 	echo "Suppression des rapports vieux de plus de 1 an :"
@@ -545,29 +545,29 @@ if [ -e "$RAPPORTSWSUS" ];then
 fi
 
 ####### Utilisation du fichier UpdateGenerator.ini et de DownloadUpdates.sh pour recuperer les mises a jour #########
-if [ ! -e /var/se3/unattended/install/wsusoffline/sh/DownloadUpdates.sh ]; then
+if [ ! -e /var/sambaedu/unattended/install/wsusoffline/sh/DownloadUpdates.sh ]; then
 	echo "" >$MAIL
-	echo "ERREUR : /var/se3/unattended/install/wsusoffline/sh/DownloadUpdates.sh est absent" >>$MAIL
+	echo "ERREUR : /var/sambaedu/unattended/install/wsusoffline/sh/DownloadUpdates.sh est absent" >>$MAIL
 	echo "" >>$MAIL
 	echo "WsusOffline sera entierement re-telecharge des demain a partir de 20h45" >>$MAIL
 	echo "" >>$MAIL
 	echo "Pour forcer cette action, on supprime le fichier temoin : WsusOffline-Versions.txt" >>$MAIL
 	echo "" >>$MAIL
-	rm -fv /var/se3/unattended/install/wsusoffline/WsusOffline-Versions.txt >>$MAIL 
+	rm -fv /var/sambaedu/unattended/install/wsusoffline/WsusOffline-Versions.txt >>$MAIL 
 	SENDMAIL "WsusOffline ERREUR : Le script DownloadUpdates.sh est absent." 
 	exit 1
 fi
 	
-PARAMS=/var/se3/unattended/install/wsusoffline/UpdateGenerator.ini
+PARAMS=/var/sambaedu/unattended/install/wsusoffline/UpdateGenerator.ini
 if [ ! -e $PARAMS ]; then
 	echo "" >$MAIL
-	echo "ERREUR : /var/se3/unattended/install/wsusoffline/UpdateGenerator.ini est absent" >>$MAIL
+	echo "ERREUR : /var/sambaedu/unattended/install/wsusoffline/UpdateGenerator.ini est absent" >>$MAIL
 	echo "" >>$MAIL
 	echo "Il va etre re-telecharge :" >>$MAIL
 	echo "" >>$MAIL
-	wget $WSUSOFFLINEROOT/UpdateGenerator.ini? -O /var/se3/unattended/install/wsusoffline/UpdateGenerator.ini >>$MAIL 2>&1
-	if [ -e /var/se3/unattended/install/wsusoffline/UpdateGenerator.ini ]; then
-		SIZEFILE=`ls -la /var/se3/unattended/install/wsusoffline/UpdateGenerator.ini | awk '{print $5}'`
+	wget $WSUSOFFLINEROOT/UpdateGenerator.ini? -O /var/sambaedu/unattended/install/wsusoffline/UpdateGenerator.ini >>$MAIL 2>&1
+	if [ -e /var/sambaedu/unattended/install/wsusoffline/UpdateGenerator.ini ]; then
+		SIZEFILE=`ls -la /var/sambaedu/unattended/install/wsusoffline/UpdateGenerator.ini | awk '{print $5}'`
 	else
 		SIZEFILE="0"
 	fi
@@ -575,7 +575,7 @@ if [ ! -e $PARAMS ]; then
 	if [ ! "$SIZEFILE" == "0" ]; then
 		echo "" >>$MAIL
 		echo "OK : Le telechargement du fichier a reussi." >>$MAIL
-		rm -f /var/se3/unattended/install/UpdateGenerator.ini
+		rm -f /var/sambaedu/unattended/install/UpdateGenerator.ini
 		SENDMAIL "WsusOffline : Une nouvelle version du fichier de configuration UpdateGenerator.ini a ete telechargee." 
 	else
 		echo "" >>$MAIL
@@ -629,9 +629,9 @@ do
 			#else
 				echo "Dans la section $SECTION, un parametre est active : $PARAMETRE = $VALEUR"
 				echo "Telechargement des mises a jour pour l'OS $OS et la langue $LANG..."
-				echo "/var/se3/unattended/install/wsusoffline/sh/DownloadUpdates.sh $OS $LANG /msse $PROXY" >>$MAIL
+				echo "/var/sambaedu/unattended/install/wsusoffline/sh/DownloadUpdates.sh $OS $LANG /msse $PROXY" >>$MAIL
 				TESTFREESPACE
-				/var/se3/unattended/install/wsusoffline/sh/DownloadUpdates.sh $OS $LANG `if [ "$DOTNET" == "1" ]; then echo "/dotnet "; fi``if [ "$WDDEFS" == "1" ]; then echo "/wddefs "; fi``if [ "$MSSE" == "1" ]; then echo "/msse "; fi` $PROXY >>$MAIL 2>&1
+				/var/sambaedu/unattended/install/wsusoffline/sh/DownloadUpdates.sh $OS $LANG `if [ "$DOTNET" == "1" ]; then echo "/dotnet "; fi``if [ "$WDDEFS" == "1" ]; then echo "/wddefs "; fi``if [ "$MSSE" == "1" ]; then echo "/msse "; fi` $PROXY >>$MAIL 2>&1
 			fi
 		fi
 	else
@@ -643,14 +643,14 @@ done
 
 # Envoi d'un mail a l'admin en cas de nouvelles mises a jour trouvees.
 # TEST=`cat $MAIL | grep "successfully downloaded"`
-VersionWsusOffline=`cat /var/se3/unattended/install/wsusoffline/client/cmd/DoUpdate.cmd | grep WSUSOFFLINE_VERSION= | cut -d \= -f2`
-MailTailleDossierMaj=`du -sh /var/se3/unattended/install/wsusoffline | cut -d/ -f1`
-NouvelleTailleDossierMaj=`du -s /var/se3/unattended/install/wsusoffline/client | awk '{ print $1 }'`
-AncienneTailleDossierMaj=$(cat /var/se3/unattended/install/wsusoffline/wsusoffline_client_size.txt)
+VersionWsusOffline=`cat /var/sambaedu/unattended/install/wsusoffline/client/cmd/DoUpdate.cmd | grep WSUSOFFLINE_VERSION= | cut -d \= -f2`
+MailTailleDossierMaj=`du -sh /var/sambaedu/unattended/install/wsusoffline | cut -d/ -f1`
+NouvelleTailleDossierMaj=`du -s /var/sambaedu/unattended/install/wsusoffline/client | awk '{ print $1 }'`
+AncienneTailleDossierMaj=$(cat /var/sambaedu/unattended/install/wsusoffline/wsusoffline_client_size.txt)
 
 if [  "$AncienneTailleDossierMaj" != "$NouvelleTailleDossierMaj" ]; then
 	SENDMAIL "WsusOffline $VersionWsusOffline : Nouvelles Maj Microsoft telechargees. Taille du dossier des Maj : $MailTailleDossierMaj"
-	echo $NouvelleTailleDossierMaj > /var/se3/unattended/install/wsusoffline/wsusoffline_client_size.txt
+	echo $NouvelleTailleDossierMaj > /var/sambaedu/unattended/install/wsusoffline/wsusoffline_client_size.txt
 else
 	SENDMAIL "WsusOffline $VersionWsusOffline : Pas de nouvelles Maj Microsoft telechargees."
 	[ -e $MAIL ] && rm -f $MAIL

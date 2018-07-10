@@ -14,8 +14,6 @@ require_once ("functions.inc.php");
 require_once "ldap.inc.php";
 require_once "ihm.inc.php";
 
-$wpkgroot="/var/se3/unattended/install/wpkg";
-$wpkgwebdir="/var/www/se3/wpkg";
 
 $login = isauth();
 if (! $login ) {
@@ -25,33 +23,19 @@ if (! $login ) {
     echo "//-->\n</script>\n";
     exit;
 }
-$wpkgAdmin = isWpkgAdmin($login);
-$wpkgUser = isWpkgUser($login);
-//echo "<script language=\"JavaScript\" type=\"text/javascript\">\n<!--\n";
-//echo "alert('login=$login, wpkgAdmin=$wpkgAdmin, wpkgUser=$wpkgUser');";
-//echo "//-->\n</script>\n";
-if ( ! $wpkgUser ) {
-    //include "entete.inc.php";
-    ?>
-            <h2>Déploiement d'applications</h2>
-            <div class=error_msg>Vous n'avez pas les droits nécessaires à l'utilisation de ce module !</div>
-    <?php
-    include "pdp.inc.php";
-    exit;
-}
 
-function isWpkgAdmin($login) {
+function isWpkgAdmin($config, $login) {
     // Droit nécessaire pour ajouter ou supprimer une application
-    if (is_admin("computers_is_admin",$login)=="Y") {
+    if (is_admin($config, "computers_is_admin",$login)=="Y") {
         return true;
     } else {
         return false;
     }
 }
 
-function isWpkgUser($login) {
-    global $DEBUG, $wpkgAdmin;
-    if ($wpkgAdmin || is_admin("parc_can_manage",$login)=="Y" || is_admin("parc_can_view",$login)=="Y") {
+function isWpkgUser($config, $login) {
+
+    if (isWpkgAdmin($config, $login) || is_admin($config, "parc_can_manage",$login)=="Y" || is_admin($config, "parc_can_view",$login)=="Y") {
         return true;
     } else {
         $query="select login from delegation  where login='$login' and ( niveau='view' or niveau='manage');";
@@ -61,17 +45,16 @@ function isWpkgUser($login) {
     }
 }
 
-function get_html($xsl, $xml, $param)
+function get_html($config, $login, $xsl, $xml, $param)
 // retourne le r�sultat de la transformation appliqu� au fichier xml
 {
-    global $DEBUG, $wpkgAdmin, $wpkgUser, $wpkgroot;
 	$parametres = '';
     #$nomFichier = $aFilePath[$nPath-1];
     #if ($DEBUG > 0) echo "xsl=".$xsl."<br>\n";
     #if ($DEBUG > 0) echo "xml=".$xml."<br>\n";
     #if ($DEBUG > 0) print_r($param);
 # $wpkgAdmin=1;
-    if ($wpkgUser) {
+    if (isWpkgUser($config, $login)) {
         if (file_exists("$xml")) {
             // Date: Mon, 15 Jan 2007 10:06:50 GMT
             $dateLastModification = filemtime("$xml");
@@ -111,16 +94,15 @@ function get_html($xsl, $xml, $param)
     }
 }
 
-function get_xml($filename)
+function get_xml($config, $login, $filename)
 // Retourne le fichier xml demandé (profiles.xml, packages.xml ou hosts.xml) si les droits de l'utilisateur en cours le permettent
 {
-    global $DEBUG, $wpkgAdmin, $wpkgUser, $wpkgroot;
     #$nomFichier = $aFilePath[$nPath-1];
-    $PathFichier = "$wpkgroot/$filename";
+    $PathFichier = $config['wpkgroot']."/".$filename;
     #if ($DEBUG > 0) echo "nomFichier=".$nomFichier."<br>\n";
     #if ($DEBUG > 0) echo "PathFichier=".$PathFichier."<br>\n";
 # $wpkgAdmin=1;
-    if ($wpkgUser) {
+    if (isWpkgUser($config, $login)) {
         if (file_exists("$PathFichier")) {
             // Date: Mon, 15 Jan 2007 10:06:50 GMT
             $dateLastModification = filemtime("$PathFichier");
@@ -160,17 +142,16 @@ function get_xml($filename)
     }
 }
 
-function get_fichierCP850($filename)
+function get_fichierCP850($config, $login, $filename)
 // Retourne le fichier demandé (utilisé pour les fichiers rapports/*.log)
 // ap conversion CP850/CR-LF..819/CR-LF  ( dos oem -> iso-8859-1 )
 {
-    global $DEBUG, $wpkgAdmin, $wpkgUser, $wpkgroot;
     #$nomFichier = $aFilePath[$nPath-1];
-    $PathFichier = "$wpkgroot/$filename";
+    $PathFichier = $config['wpkgroot']."/".$filename;
     #if ($DEBUG > 0) echo "nomFichier=".$nomFichier."<br>\n";
     #if ($DEBUG > 0) echo "PathFichier=".$PathFichier."<br>\n";
 # $wpkgAdmin=1;
-    if ($wpkgUser) {
+    if (isWpkgUser($config, $login)) {
         if (file_exists("$PathFichier")) {
             // Date: Mon, 15 Jan 2007 10:06:50 GMT
             $DateFichier = gmdate("D, d M Y H:i:s T", filemtime("$PathFichier"));

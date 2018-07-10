@@ -12,7 +12,8 @@
  * file: reservations.php
 */
 	// loading libs and init
-	include "entete.inc.php";
+	require_once 'config.inc.php';
+    include "entete.inc.php";
 	include "ldap.inc.php";
 	include "ihm.inc.php";
 	include "wpkg_lib.php";
@@ -27,11 +28,11 @@
 		exit;
 	}
 	
-	if (is_admin("computers_is_admin",$login)!="Y")
+	if (is_admin($config, "computers_is_admin",$login)!="Y")
 		die (gettext("Vous n'avez pas les droits suffisants pour acc&#233;der &#224; cette fonction")."</BODY></HTML>");
 	
 	// HTMLpurifier
-	include("../se3/includes/library/HTMLPurifier.auto.php");
+	include("../sambaedu/includes/library/HTMLPurifier.auto.php");
 	$config = HTMLPurifier_Config::createDefault();
 	$purifier = new HTMLPurifier($config);
 

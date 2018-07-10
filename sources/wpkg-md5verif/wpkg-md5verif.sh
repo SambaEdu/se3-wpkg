@@ -2,13 +2,13 @@
 # Auteur : Olivier Lacroix
 # Script permettant de tester les xml du svn du crdp.ac-caen.fr afin de surveiller les sommes md5 des xml officiels.
 
-# ATTENTION : ce script ne doit pas tre exŽcutŽ sur un serveur en production. Il doit tre exŽcutŽ uniquement sur un serveur de tests car il modifie la base des xml wpkg automatiquement !
+# ATTENTION : ce script ne doit pas ï¿½tre exï¿½cutï¿½ sur un serveur en production. Il doit ï¿½tre exï¿½cutï¿½ uniquement sur un serveur de tests car il modifie la base des xml wpkg automatiquement !
 
 ######## Utilisation : ##########
 
 # 1. copier wpkg-md5verif.sh sur le serveur se3 de test.
 # 2. renseigner toutes les variables en debut de script : nom netbios du se3, IP du client windows de test, etc...
-# 3. exŽcuter une fois wpkg-md5verif.sh afin de generer les scripts utiles et la conf : installation en crontab de l'exŽcution de wpkg-md5verif.sh
+# 3. exï¿½cuter une fois wpkg-md5verif.sh afin de generer les scripts utiles et la conf : installation en crontab de l'exï¿½cution de wpkg-md5verif.sh
 # 4. sur le client windows, sous le compte admin executer une fois Y:\unattended\install\wpkg-md5verif\client\install.bat : renseigner le mot de passe d'admin lors de la creation de la tache planifiee.
 # 5. redemarrer le client windows pour activer automatiquement la tache planifiee.
 
@@ -20,8 +20,8 @@
 SE3="\\\\se3"
 
 # Dossier contenant tous les fichiers generes par ce script.
-REP=/var/se3/unattended/install/wpkg-md5verif
-REPSOUSWIN="$SE3\install\wpkg-md5verif"
+REP=/var/sambaedu/unattended/install/wpkg-md5verif
+REPSOUSWIN="${config_se4fs_name}\install\wpkg-md5verif"
 mkdir -p $REP
 
 # dossier contenant les fichiers temoins pour les pauses.
@@ -54,14 +54,14 @@ IPSE3="10.211.55.200"
 IPWIN="10.211.55.150"
 
 # Acces au script wpkg-se3.js
-WPKGJS="$SE3\install\wpkg\wpkg-se3.js"
+WPKGJS="${config_se4fs_name}\install\wpkg\wpkg-se3.js"
 
 # PARAMETRES wpkg-se3.js obligatoires
 PARAM="/noDownload:True"
 
 ####### CONF : ne pas modifier la suite ###########
 
-wpkgroot=/var/se3/unattended/install/wpkg
+wpkgroot=/var/sambaedu/unattended/install/wpkg
 
 LISTEDESXML=$REP/wpkg-LISTEDESXML
 
@@ -84,7 +84,7 @@ REPBAT=$REP/client
 mkdir -p $REPBAT
 REPBATWIN=$REPSOUSWIN\\client
 
-# Fichier de dialogue avec le client windows : contient la liste des instructions qu'il devra exŽcuter pour tester les xml modifiŽs.
+# Fichier de dialogue avec le client windows : contient la liste des instructions qu'il devra exï¿½cuter pour tester les xml modifiï¿½s.
 TESTFILE=$REPBAT/TesteXml.bat
 TESTFILEWIN=$REPBATWIN\\TesteXml.bat
 [ -e $TESTFILE ] && rm -f $TESTFILE
@@ -100,14 +100,14 @@ TACHEFILEWIN=$REPBATWIN\\bootscript.bat
 # Fichier provoquant une pause
 INSTALLSCRIPTCLIENT=$REPBAT/install.bat
 
-# Fichier de retour du client windows : contient les informations utiles pour savoir si l'install, l'upgrade, le remove ont fonctionnŽ.
+# Fichier de retour du client windows : contient les informations utiles pour savoir si l'install, l'upgrade, le remove ont fonctionnï¿½.
 RETOURFILE=$REPBAT/TesteXml.log
 RETOURFILEWIN=$REPBATWIN\\TesteXml.log
 
-# Dossier contenant toutes les commandes passŽes par le poste windows au serveur SE3.
+# Dossier contenant toutes les commandes passï¿½es par le poste windows au serveur SE3.
 REPCMDCRON=$REP/cron
 
-# Dossier contenant tous les xml modifiŽs ˆ tester par le poste windows.
+# Dossier contenant tous les xml modifiï¿½s ï¿½ tester par le poste windows.
 REPXML=$REP/xml
 
 # Fichier qui reste apres le lancement du script afin de ne pas reprendre tous les download depuis le debut.
@@ -207,8 +207,8 @@ function SupprimeTemoin {
 
 function CreeScriptClient {
 	echo "WScript.Sleep 10000" > $PAUSEFILE
-	echo "set Z=$SE3\\install" > $TACHEFILE
-	echo "set SOFTWARE=$SE3\\install\\packages" >> $TACHEFILE
+	echo "set Z=${config_se4fs_name}\\install" > $TACHEFILE
+	echo "set SOFTWARE=${config_se4fs_name}\\install\\packages" >> $TACHEFILE
 	echo ":debut" >> $TACHEFILE
 	echo "if exist $TESTFILEWIN (" >> $TACHEFILE
 	echo " call $TESTFILEWIN" >> $TACHEFILE
@@ -255,7 +255,7 @@ function InstallXmlSE3 {
 	NOMDUXML="`basename \"$XML\"`"
 	[ "$DEBUG" = "1" ] && echo "Installation de $XML dans la base packages.xml du SE3, telechargement des fichiers necessaires. En cours."
 	cp -f $XML $wpkgroot/tmp
-	retourinstallPackage=$(/var/www/se3/wpkg/bin/installPackage.sh $wpkgroot/tmp/$NOMDUXML 0 admin urlmd5 1)
+	retourinstallPackage=$(/var/www/sambaedu/wpkg/bin/installPackage.sh $wpkgroot/tmp/$NOMDUXML 0 admin urlmd5 1)
 	# reste : recuperer l'erreur en cas de probleme md5 (si besoin: pas forcement besoin car on a corrige la somme md5 au prealable sur les xml testes et les anciens liens, si non valides ne peuvent plus etre telechargees...)
 }
 
@@ -339,7 +339,7 @@ function MiseAJourDuLog {
 }
 
 function AjoutCrontabCommandeClientWindows {
-	CRONFILE=/etc/cron.d/se3-wpkg-md5verif
+	CRONFILE=/etc/cron.d/sambaedu-wpkg-md5verif
 	SCRIPT=$0
 	echo "# Execution de $SCRIPT tous les soirs a 2H du matin" > $CRONFILE
 	echo "0 2 * * * root $SCRIPT > /dev/null 2>&1" >> $CRONFILE
@@ -413,7 +413,7 @@ if [ -e $LISTEURLMD5 ]; then
 		url=$(echo "$LINE" | cut -d"#" -f1)
 		md5sum=$(echo "$LINE" | cut -d"#" -f2)
 	    DESTFILE=$(echo "$LINE" | cut -d"#" -f3)
-		DESTFILE=/var/se3/unattended/install/$DESTFILE
+		DESTFILE=/var/sambaedu/unattended/install/$DESTFILE
 		[ "$url" == "" ]&& exit 0
 		echo "Telechargement de $url. MD5 attendue : $md5sum sauve vers $DESTFILE"
         /usr/bin/wget -O "$DESTFILE" "$url" 1>/dev/null 2>/dev/null
@@ -555,7 +555,7 @@ function TestAndModify {
 AjoutCrontabCommandeClientWindows # ajout crontab pour dialogue avec le client windows
 CreeScriptClient # creation des scripts a executer cote client au boot , en tache planifiee
 
-GenereListeDesXml # Genere la liste des xml ˆ examiner. Permet de reprendre les tests la ou le script s'est interrompu
+GenereListeDesXml # Genere la liste des xml ï¿½ examiner. Permet de reprendre les tests la ou le script s'est interrompu
 
 # Pour chaque fichier de stable puis de testing faire
 cat $LISTEDESXML | while read XMLATESTER ; do

@@ -32,7 +32,7 @@
 		die (gettext("Vous n'avez pas les droits suffisants pour acc&#233;der &#224; cette fonction")."</BODY></HTML>");
 	
 	// HTMLpurifier
-	include("../se3/includes/library/HTMLPurifier.auto.php");
+	include("../sambaedu/includes/library/HTMLPurifier.auto.php");
 	$config = HTMLPurifier_Config::createDefault();
 	$purifier = new HTMLPurifier($config);
 

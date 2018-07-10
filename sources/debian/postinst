@@ -1,16 +1,10 @@
-#!/bin/sh
+#!/bin/bash
 #
 # see: dh_installdeb(1)
 
 set -e
 # postinst script for se3-wpkg
 #
-#  d'apres le script d'installation de Jean Le Bail
-#  Dernier update Fev 2016
-#
-## $Id$ ##
-
-
 # summary of how this script can be called:
 #        * <postinst> `configure' <most-recently-configured-version>
 #        * <old-postinst> `abort-upgrade' <new version>
@@ -24,47 +18,55 @@ set -e
 # the debian-policy package
 
 case "$1" in
-    	install|configure)
-	cd /var/cache/se3_install/
-	chmod +x wpkg-install.sh
-	./wpkg-install.sh
+configure)
 
-	chown www-se3:root /usr/share/se3/scripts/wakeonlan
-	chmod 750 /usr/share/se3/scripts/wakeonlan
+. /usr/share/sambaedu/includes/config.inc.sh
+. /usr/share/sambaedu/includes/utils.inc.sh
+. /usr/share/debconf/confmodule
 
-	echo "retablissement des droits sur /var/www/se3/wpkg"
-	chown -R www-se3:root /var/www/se3/wpkg
+# recup des parametres
 
-	echo "configuration de l'interface web de wpkg"
-	chmod +x /var/cache/se3_install/web-wpkg-install.sh
-	/var/cache/se3_install/web-wpkg-install.sh
+db_get sambaedu/wpkgroot
+set_config wpkg wpkgroot "$RET"
+db_get sambaedu/se3_name
+set_config wpkg se3_name "$RET"
 
-	WWWPATH="/var/www"
-	## recuperation des variables necessaires pour interoger mysql ###
-	if [ -e $WWWPATH/se3/includes/config.inc.php ]; then
-		dbhost=`cat $WWWPATH/se3/includes/config.inc.php | grep "dbhost=" | cut -d = -f2 | cut -d \" -f2`
-		dbname=`cat $WWWPATH/se3/includes/config.inc.php | grep "dbname=" | cut	-d = -f 2 |cut -d \" -f 2`
-		dbuser=`cat $WWWPATH/se3/includes/config.inc.php | grep "dbuser=" | cut -d = -f 2 | cut -d \" -f 2`
-		dbpass=`cat $WWWPATH/se3/includes/config.inc.php | grep "dbpass=" | cut -d = -f 2 | cut -d \" -f 2`
-	else
-		echo "Fichier de configuration inaccessible, le script ne peut se poursuivre."
-		exit 1
-	fi
-	##### Activation wpkg dans l'interface web 
-	test_exist=`echo "SELECT id FROM params WHERE name='wpkg'" | mysql -h $dbhost $dbname -u $dbuser -p$dbpass -N`
-	if [ "X$test_exist" = "X" ]; then # if empty
-		echo "INSERT into params (name,value,srv_id,descr,cat) VALUES (\"wpkg\",\"1\",\"\",\"Activation ou désactivation de wpkg\",6) " | mysql -h $dbhost $dbname -u $dbuser -p$dbpass -N
-	fi
-	
-	
-	;;
+#ajout d'un alias dns	
+su www-admin -c "samba-tool dns add ${config_se4ad_name} ${config_domain} ${config_se3_name} CNAME se4fs.${config_domain} -k yes" || true
 
-    abort-upgrade|abort-remove|abort-deconfigure)
-    ;;
+/usr/share/sambaedu/scripts/wpkg-install.sh
 
-    *)
-        echo "postinst called with unknown argument \`$1'" >&2
-        exit 1
-    ;;
+chown www-admin:root /usr/share/sambaedu/scripts/wakeonlan
+chmod 750 /usr/share/sambaedu/scripts/wakeonlan
+
+wpkgwww="/var/www/sambaedu/wpkg"
+
+if [ ! -d "${config_wpkgroot}/tmp" ]; then
+mkdir ${config_wpkgroot}/tmp
+	chown -R www-admin ${config_wpkgroot}/tmp
+fi
+if [ ! -e "${config_wpkgroot}/tmp/timeStamps.xml" ]; then
+echo "<installations/>" > ${config_wpkgroot}/tmp/timeStamps.xml
+	chown www-admin ${config_wpkgroot}/tmp/timeStamps.xml
+fi
+if [ ! -e "${wpkgwww}/sambaedu_wpkglist.php" ]; then
+	echo "<packages/>" > ${wpkgwww}/sambaedu_wpkglist.php
+chown www-admin ${wpkgwww}/sambaedu_wpkglist.php
+	# Pour que le fichier soit mis à jour à la prochaine demande
+	touch --date='jun 1 00:00:00 CEST 2007' ${wpkgwww}/sambaedu_wpkglist.php
+fi
+
+	chown -R www-admin:www-data $wpkgwww
+	chown -R www-admin:root $config_wpkgroot
+	chmod 775 ${wpkgwww}/bin/*
+	chown -R www-admin /var/www/sambaedu/includes/menu.d/
+;;
+
+abort-upgrade|abort-remove|abort-deconfigure)
+;;
+
+*)
+echo "postinst called with unknown argument \`$1'" >&2
+exit 1
+;;
 esac
-

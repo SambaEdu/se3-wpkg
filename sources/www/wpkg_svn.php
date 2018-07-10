@@ -3,7 +3,7 @@
 	$url_stable='http://wawadeb.crdp.ac-caen.fr/wpkg-list-ng/packages_stable.xml';
 	$url_testing='http://wawadeb.crdp.ac-caen.fr/wpkg-list-ng/packages_testing.xml';
 	$url_XP='http://wawadeb.crdp.ac-caen.fr/wpkg-list-ng/packages_XP.xml';
-	$url_forum = "/var/www/se3/wpkg/forum.xml";
+	$url_forum = "/var/www/sambaedu/wpkg/forum.xml";
 
 	$xml = new DOMDocument;
 	$xml->formatOutput = true;
