@@ -7,4 +7,4 @@
 00 22  * * *   www-admin    /usr/bin/php /var/www/sambaedu/wpkg/wpkg_svn.php >/dev/null 2>&1
 
 # mise a jour automatique du fichier rapport toutes les 5 minutes
-*/5 * * * *   root    /var/www/sambaedu/wpkg/bin/rapports.sh >/dev/null 2>&1
+*/5 * * * *   root    /usr/share/sambaedu/scripts/rapports.sh >/dev/null 2>&1
