@@ -1116,7 +1116,7 @@ echo "Mise en place des droits sur $WPKGDIR."
 setfacl -b -R $WPKGDIR
 # www-admin a tous les droits sur /var/sambaedu/unattended/install
 # C'est peut-etre trop. A voir...
-chown -R www-admin:admins /var/sambaedu/unattended/install
+chown -R www-admin:Domain\ Admins /var/sambaedu/unattended/install
 setfacl -R -m u:www-admin:rwx -m d:u:www-admin:rwx /var/sambaedu/unattended/install
 setfacl -R -m u:$${config_adminse_name}:rwx -m d:u:$${config_adminse_name}:rwx /var/sambaedu/unattended/install/wpkg/rapports
 setfacl -R -m u::rwx -m g::rx -m o::rx -m d:m:rwx -m d:u::rwx -m d:g::rx -m d:o::rx /var/sambaedu/unattended/install

@@ -51,11 +51,12 @@ if [ ! -e $RAPPORTMD5XML ] ; then
     echo '<!-- Genere par SambaEdu. Ne pas modifier -->' >> $RAPPORTMD5XML
     echo '<rapports />' >> $RAPPORTMD5XML
 fi
-
-/usr/bin/php /var/www/sambaedu/wpkg/wpkg_rapport.php
-
 chown www-admin:www-data $RAPPORTXML
 chown www-admin:www-data $RAPPORTMD5XML
+
+su www-admin -c "/usr/bin/php /var/www/sambaedu/wpkg/wpkg_rapport.php"
+su www-admin -c "/usr/bin/php /var/www/sambaedu/wpkg/wpkg_profiles.php"
+
 
 rm -f $fich_lock
 

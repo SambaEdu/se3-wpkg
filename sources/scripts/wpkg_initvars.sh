@@ -4,7 +4,7 @@
 #   /usr/share/sambaedu/scripts/wpkg_initvars.sh                             #
 #                                                                       #
 #########################################################################
-#
+#  TODO Est-il encore utile ?
 #
 #   Cree un fichier bat /var/sambaedu/unattended/install/wpkg/initvars_se3.bat
 #   d'initialisation des paramètres du serveur ( Set variable=valeur ...)
