@@ -5,7 +5,7 @@
 
 $login = "";
 $wpkgUser = false;
-include "inc/wpkg.auth.php";
+include "includes/wpkg.auth.php";
 
 if ( isWpkgUser($config, $login) && ($login != "")) {
 	// Mise à jour de tmp/wpkg.$login.xml en cas de besoin

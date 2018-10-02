@@ -14,7 +14,7 @@ foreach($_GET AS $key => $value) {
 }
 $login = "";
 
-include "inc/wpkg.auth.php";
+include "includes/wpkg.auth.php";
 
 
 $urlMD5 = "";

@@ -1,6 +1,6 @@
 <?php
 $wpkgUser = false;
-include "inc/wpkg.auth.php";
+include "includes/wpkg.auth.php";
 
 if ( ! $wpkgUser ) {
     include entete.inc.php; ?>

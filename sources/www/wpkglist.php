@@ -4,7 +4,7 @@
 // ## $Id$ ##
 
 
-include "inc/wpkg.auth.php";
+include "includes/wpkg.auth.php";
 //header("Pragma: no-cache");
 //header("Cache-Control: no-cache, must-revalidate");
 if ( $_GET['refresh'] == "1" ) {

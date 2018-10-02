@@ -4,7 +4,7 @@
 // ## $Id$ ##
 
 
-include "inc/wpkg.auth.php";
+include "includes/wpkg.auth.php";
 if ( isWpkgUser($config, $login) && ($login != "")) {
 	$filename = "profiles.xml";
 	$Maintenant = strftime ( "%D_%T" );

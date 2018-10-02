@@ -4,12 +4,12 @@
 
 header("Pragma: no-cache");
 header("Cache-Control: max-age=5, s-maxage=5, no-cache, must-revalidate");
-include "inc/wpkg.auth.php";
+include "includes/wpkg.auth.php";
 
 // version du paquet debian
-${config_se4fs_name}WPKGVERSION=exec("dpkg -p se3-wpkg | grep Version");
+$wpkgversion = exec("dpkg -p sambaedu-wpkg | grep Version");
 
-echo "var Debian = '${config_se4fs_name}WPKGVERSION';\r\n";
+echo "var Debian = '$wpkgversion';\r\n";
 echo "var wpkgAdmin = ".($wpkgAdmin ? 1 : 0) . "; // Est-ce que l'utilisateur est un administrateur\r\n";
 echo "var wpkgUser = ".($wpkgUser ? 1 : 0) . "; // Est-ce que l'utilisateur est autorisé à utiliser wpkg\r\n";
 echo "var login = '".$login."';\r\n";
@@ -27,11 +27,11 @@ echo "var ShowParcsUpdateLink = " . ($return_value ? 'true' : 'false') . ";\r\n"
 ?>
 // Teste si la configuration de wpkg a été effectuée par l'admin
 function alertConfigWpkg () {
-<?php      if ( file_exists("/var/sambaedu/Progs/ro/wpkgInstall.job" )) {
+<?php    //  if ( file_exists("/var/sambaedu/Progs/ro/wpkgInstall.job" )) {
                 echo "var wpkgInstalljob = true;\r\n";
-        } else {
-                echo "var wpkgInstalljob = false;\r\n";
-        }
+       // } else {
+      //          echo "var wpkgInstalljob = false;\r\n";
+      //  }
 ?>
 	if ( ! wpkgInstalljob ) {
 		alert("Wpkg n'a pas été correctement installé.\n" +

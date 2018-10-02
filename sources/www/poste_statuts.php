@@ -13,7 +13,7 @@
 */
 	// loading libs and init
 	include "entete.inc.php";
-	include "ldap.inc.php";
+	include_once "ldap.inc.php";
 	include "ihm.inc.php";
 	include "wpkg_lib.php";
 	
@@ -27,7 +27,7 @@
 		exit;
 	}
 	
-	if (is_admin($config, "computers_is_admin",$login)!="Y")
+	if (!have_right($config, "computers_is_admin"))
 		die (gettext("Vous n'avez pas les droits suffisants pour acc&#233;der &#224; cette fonction")."</BODY></HTML>");
 	
 	// HTMLpurifier

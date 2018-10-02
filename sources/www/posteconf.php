@@ -8,7 +8,7 @@
 header("Pragma: no-cache");
 header("Cache-Control: no-cache, must-revalidate");
 $wpkgUser = false;
-include "inc/wpkg.auth.php";
+include "includes/wpkg.auth.php";
 $ini = "";
 if ( ! $wpkgUser ) {
 	include entete.inc.php; ?>

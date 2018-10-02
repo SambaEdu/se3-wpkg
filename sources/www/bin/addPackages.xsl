@@ -5,7 +5,7 @@
    
 			## $Id$ ##
    -->
-   <xsl:variable name="PROFILES" select="document('/var/se3/unattended/install/wpkg/profiles.xml')/profiles"/>
+   <xsl:variable name="PROFILES" select="document('/var/sambaedu/unattended/install/wpkg/profiles.xml')/profiles"/>
 
     <xsl:template match="*">
         <!-- recopie le noeud -->

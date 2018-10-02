@@ -4,7 +4,7 @@
 // ## $Id$ ##
 
 
-include "inc/wpkg.auth.php";
+include "includes/wpkg.auth.php";
 
 // Mise à jour de rapports.xml en cas de besoin
 exec ( "bash $wpkgwebdir/bin/rapports.sh", $output, $return_value);
