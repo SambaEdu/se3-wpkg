@@ -162,7 +162,7 @@ if [ $? != 0 ]; then
 	SENDMAIL "WsusOffline : Reinstallation du xml qui est absent de WPKG."
 fi
 
-WSUSOFFLINEROOT=http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages-ng/files/wsusoffline
+WSUSOFFLINEROOT=http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages-ng/files/wsusoffline2
 TEMOIN=/var/se3/unattended/install/wsusoffline/WsusOffline-Versions.txt
 NEWTEMOIN=/tmp/wsusofflineversions.txt
 wget -O $NEWTEMOIN $WSUSOFFLINEROOT/WsusOffline-Versions.txt? >/dev/null 2>&1
@@ -329,6 +329,27 @@ else
 		echo "" >>$MAIL
 		echo "Sans intervention de votre part, une nouvelle tentative sera executee des demain a partir de 20h45" >>$MAIL
 		SENDMAIL "WsusOffline ERREUR : La nouvelle version du programme de configuration des mises a jour offlineupdate.cmd n'a pas pu etre telechargee." 
+		exit 1
+	fi
+	echo "" >>$MAIL
+	echo "Telechargement du programme de test des mises a jour installees checkversion.cmd :" >>$MAIL
+	wget $WSUSOFFLINEROOT/checkversion.cmd? -O /var/se3/unattended/install/packages/wsusoffline/checkversion.cmd >>$MAIL 2>&1
+	if [ -e /var/se3/unattended/install/packages/wsusoffline/checkversion.cmd ]; then
+		SIZEFILE=`ls -la /var/se3/unattended/install/packages/wsusoffline/checkversion.cmd | awk '{print $5}'`
+	else
+		SIZEFILE="0"
+	fi
+	# echo "SIZEFILE=$SIZEFILE"
+	if [ ! "$SIZEFILE" == "0" ]; then
+		echo "" >>$MAIL
+		echo "OK : Telechargement de checkversion.cmd" >>$MAIL
+		# SENDMAIL "WsusOffline : Une nouvelle version du fichier de test des mises a jour installees checkversion.cmd a ete telechargee."
+	else
+		echo "" >>$MAIL
+		echo "ERREUR : Telechargement du fichier checkversion.cmd" >>$MAIL
+		echo "" >>$MAIL
+		echo "Sans intervention de votre part, une nouvelle tentative sera executee des demain a partir de 20h45" >>$MAIL
+		SENDMAIL "WsusOffline ERREUR : La nouvelle version du programme de test des mises a jour installees checkversion.cmd n'a pas pu etre telechargee." 
 		exit 1
 	fi
 	echo "" >>$MAIL
