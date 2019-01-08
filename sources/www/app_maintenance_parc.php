@@ -10,7 +10,7 @@
 /**
  *
  * @Repertoire: dhcp
- * file: reservations.php
+ * file: reservations.gephp
  */
 // loading libs and init
 include "entete.inc.php";

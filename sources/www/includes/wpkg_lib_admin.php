@@ -81,10 +81,10 @@ function update_xml_profiles($config)
     foreach ($hosts as $machine) {
         if (isset($machine['memberof'])) {
             $parcs = $machine['memberof'];
-            if (count($parcs) > 0) {
+//            if (count($parcs) > 0) {
                 $new_profile = new DOMElement('profile');
                 $xml2->documentElement->appendChild($new_profile);
-                $new_profile->setAttribute("id", $machine['cn']);
+                $new_profile->setAttribute("id", ldap_hostname($machine));
                 $parcs[] = "cn=_TousLesPostes";
                 foreach ($parcs as $parcdn) {
                     $parc = ldap_dn2cn($parcdn);
@@ -94,7 +94,7 @@ function update_xml_profiles($config)
                 }
                 
                 foreach ($profiles as $profile) {
-                    if ($profile->getAttribute('id') == $host['cn']) {
+                    if ($profile->getAttribute('id') == ldap_hostname($machine)) {
                         $packages = $profile->getElementsByTagName('packages');
                         foreach ($packages as $package) {
                             $new_package = new DOMElement('package');
@@ -105,9 +105,9 @@ function update_xml_profiles($config)
                 }
                 $new_host = new DOMElement('host');
                 $xml3->documentElement->appendChild($new_host);
-                $new_host->setAttribute("name", $machine['cn']);
-                $new_host->setAttribute("profile-id", $machine['cn']);
-            }
+                $new_host->setAttribute("name", ldap_hostname($machine));
+                $new_host->setAttribute("profile-id", ldap_hostname($machine));
+  //          }
         }
     }
     $xml2->save($url_profiles);

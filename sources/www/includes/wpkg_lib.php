@@ -489,7 +489,9 @@
 			$liste_statuts["parc"]["nb_postes"]++;
 			foreach ($info_poste["app"] as $app_nom=>$info_app_poste)
 			{
-				if ($info_app_poste["deployed"]==1 and $info_app_poste["installed"]=="Installed")
+			    $info_app_poste["deployed"] = $info_app_poste["deployed"] ?? 0;
+			    $info_app_poste["installed"] = $info_app_poste["installed"] ?? "Not Installed";
+			    if ($info_app_poste["deployed"]==1 and $info_app_poste["installed"]=="Installed")
 				{
 					if ($info_app_poste["revision"]==$list_app_info[$app_nom]["revision"])
 					{
