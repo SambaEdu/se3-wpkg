@@ -16,6 +16,8 @@
 
 // listes des fonctions
 /*
+ * 
+ * Attention, l'appartenance à un parc est calculée uniquement avec l'appartenance aux groupes parcs
  *
  * set_app_parcs($post_parc,$get_Appli,$liste_parcs,$url_profiles)
  * set_app_postes($post_host,$get_Appli,$liste_parcs,$url_profiles)
@@ -55,14 +57,14 @@ function update_xml_profiles($config)
     $root->appendChild($comment);
     $host = $xml3->documentElement->getElementsByTagName('host');
     
-    $parcs = search_ad($config, "*", "parc");
+    $parcs = search_parcs($config, "*");
     $parcs[] = array(
-        'cn' => "_TousLesPostes"
+        'name' => "_TousLesPostes"
     );
     $exist = false;
     foreach ($parcs as $parc) {
         foreach ($profiles as $profile) {
-            if ($profile->getAttribute('id') == $parc['cn']) {
+            if ($profile->getAttribute('id') == $parc['name']) {
                 $node = $xml2->importNode($profile, true);
                 $xml2->documentElement->appendChild($node);
                 $xml->documentElement->removeChild($profile);
@@ -72,7 +74,7 @@ function update_xml_profiles($config)
         if (! $exist) {
             $new_profile = new DOMElement('profile');
             $xml2->documentElement->appendChild($new_profile);
-            $new_profile->setAttribute("id", $parc['cn']);
+            $new_profile->setAttribute("id", $parc['name']);
         }
     }
     
