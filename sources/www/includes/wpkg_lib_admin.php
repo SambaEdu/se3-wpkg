@@ -32,7 +32,10 @@ function update_xml_profiles($config)
 {
     $url_profiles = "/var/sambaedu/unattended/install/wpkg/profiles.xml";
     $url_hosts = "/var/sambaedu/unattended/install/wpkg/hosts.xml";
-    
+    while (apcu_fetch('profile_lock')) {
+        sleep(1);
+    }
+    apcu_add('profile_lock', 1, 300);
     $xml = new DOMDocument();
     $xml->formatOutput = true;
     $xml->preserveWhiteSpace = false;
@@ -61,8 +64,8 @@ function update_xml_profiles($config)
     $parcs[] = array(
         'name' => "_TousLesPostes"
     );
-    $exist = false;
     foreach ($parcs as $parc) {
+        $exist = false;
         foreach ($profiles as $profile) {
             if ($profile->getAttribute('id') == $parc['name']) {
                 $node = $xml2->importNode($profile, true);
@@ -114,7 +117,8 @@ function update_xml_profiles($config)
     }
     $xml2->save($url_profiles);
     $xml3->save($url_hosts);
-    
+    apcu_delete('profile_lock');
+   
 }
 
 function set_app_parcs($post_parc, $get_Appli, $liste_parcs, $url_profiles)
@@ -122,7 +126,12 @@ function set_app_parcs($post_parc, $get_Appli, $liste_parcs, $url_profiles)
     $xml = new DOMDocument();
     $xml->formatOutput = true;
     $xml->preserveWhiteSpace = false;
-    $xml->load($url_profiles);
+     while (apcu_fetch('profile_lock')) {
+        sleep(1);
+    }
+    apcu_add('profile_lock', 1, 300);
+
+	$xml->load($url_profiles);
     $element = $xml->documentElement;
     $profiles = $xml->documentElement->getElementsByTagName('profile');
 
@@ -150,7 +159,7 @@ function set_app_parcs($post_parc, $get_Appli, $liste_parcs, $url_profiles)
     }
 
     $xml->save($url_profiles);
-
+    apcu_delete('profile_lock');
     return $result;
 }
 
@@ -159,6 +168,11 @@ function set_app_postes($post_host, $get_Appli, $liste_parcs, $url_profiles)
     $xml = new DOMDocument();
     $xml->formatOutput = true;
     $xml->preserveWhiteSpace = false;
+     while (apcu_fetch('profile_lock')) {
+        sleep(1);
+    }
+    apcu_add('profile_lock', 1, 300);
+
     $xml->load($url_profiles);
     $element = $xml->documentElement;
     $profiles = $xml->documentElement->getElementsByTagName('profile');
@@ -187,7 +201,8 @@ function set_app_postes($post_host, $get_Appli, $liste_parcs, $url_profiles)
     }
 
     $xml->save($url_profiles);
-
+    apcu_delete('profile_lock');
+ 
     return $result;
 }
 
@@ -196,6 +211,10 @@ function set_parc_apps($post_appli, $get_parc, $url_profiles)
     $xml = new DOMDocument();
     $xml->formatOutput = true;
     $xml->preserveWhiteSpace = false;
+    while (apcu_fetch('profile_lock')) {
+        sleep(1);
+    }
+    apcu_add('profile_lock', 1, 300);
     $xml->load($url_profiles);
     $element = $xml->documentElement;
     $profiles = $xml->documentElement->getElementsByTagName('profile');
@@ -223,7 +242,8 @@ function set_parc_apps($post_appli, $get_parc, $url_profiles)
     }
 
     $xml->save($url_profiles);
-
+    apcu_delete('profile_lock');
+ 
     return $result;
 }
 
@@ -232,6 +252,10 @@ function clone_parc_apps($parc_source, $parc_cible, $url_profiles)
     $xml = new DOMDocument();
     $xml->formatOutput = true;
     $xml->preserveWhiteSpace = false;
+     while (apcu_fetch('profile_lock')) {
+        sleep(1);
+    }
+    apcu_add('profile_lock', 1, 300);
     $xml->load($url_profiles);
     $element = $xml->documentElement;
     $profiles = $xml->documentElement->getElementsByTagName('profile');
@@ -272,7 +296,8 @@ function clone_parc_apps($parc_source, $parc_cible, $url_profiles)
         }
     }
     $xml->save($url_profiles);
-
+    apcu_delete('profile_lock');
+ 
     return $result;
 }
 

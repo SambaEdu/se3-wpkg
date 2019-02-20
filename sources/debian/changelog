@@ -1,8 +1,8 @@
-sambaedu-wpkg (3.9.4~XP.23) UNRELEASED; urgency=medium
+sambaedu-wpkg (3.9.4~XP.24) UNRELEASED; urgency=medium
 
   * 
 
- -- Denis Bonnenfant <denis.bonnenfant@sambaedu.org>  Tue, 02 Oct 2018 22:32:09 +0200
+ -- Denis Bonnenfant <denis.bonnenfant@sambaedu.org>  Fri, 18 Jan 2019 21:16:40 +0100
 
 se3-wpkg (3.9.4~XP.0) unstable; urgency=low
 
