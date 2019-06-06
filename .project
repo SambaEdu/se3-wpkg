@@ -3,6 +3,7 @@
 	<name>sambaedu-wpkg</name>
 	<comment></comment>
 	<projects>
+		<project>se4</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

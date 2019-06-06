@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <buildpath>
-	<buildpathentry kind="src" path="sources/www"/>
-	<buildpathentry kind="src" path="sources/wawadeb"/>
+	<buildpathentry kind="src" path="sources/var/www/sambaedu"/>
 	<buildpathentry kind="con" path="org.eclipse.php.core.LANGUAGE"/>
-	<buildpathentry kind="src" path="sources/menu.d_temp"/>
 	<buildpathentry external="true" kind="lib" path="/home/denis/Donnees/se3-git/se4/sources/var/www/sambaedu/includes"/>
 </buildpath>
