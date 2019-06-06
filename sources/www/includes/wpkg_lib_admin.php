@@ -16,7 +16,7 @@
 
 // listes des fonctions
 /*
- * 
+ *
  * Attention, l'appartenance à un parc est calculée uniquement avec l'appartenance aux groupes parcs
  *
  * set_app_parcs($post_parc,$get_Appli,$liste_parcs,$url_profiles)
@@ -32,272 +32,323 @@ function update_xml_profiles($config)
 {
     $url_profiles = "/var/sambaedu/unattended/install/wpkg/profiles.xml";
     $url_hosts = "/var/sambaedu/unattended/install/wpkg/hosts.xml";
-    while (apcu_fetch('profile_lock')) {
-        sleep(1);
-    }
-    apcu_add('profile_lock', 1, 300);
-    $xml = new DOMDocument();
-    $xml->formatOutput = true;
-    $xml->preserveWhiteSpace = false;
-    $xml->load($url_profiles);
-    $profiles = $xml->documentElement->getElementsByTagName('profile');
-    
-    $xml2 = new DOMDocument();
-    $xml2->formatOutput = true;
-    $xml2->preserveWhiteSpace = false;
-    $root = $xml2->createElement("profiles");
-    $xml2->appendChild($root);
-    $comment = $xml2->createComment(" Fichier genere par SambaEdu. Ne pas modifier.");
-    $root->appendChild($comment);
-    $profiles2 = $xml2->documentElement->getElementsByTagName('profile');
-    
-    $xml3 = new DOMDocument();
-    $xml3->formatOutput = true;
-    $xml3->preserveWhiteSpace = false;
-    $root = $xml3->createElement("wpkg");
-    $xml3->appendChild($root);
-    $comment = $xml3->createComment(" Fichier genere par SambaEdu. Ne pas modifier.");
-    $root->appendChild($comment);
-    $host = $xml3->documentElement->getElementsByTagName('host');
-    
-    $parcs = search_parcs($config, "*");
-    $parcs[] = array(
-        'name' => "_TousLesPostes"
-    );
-    foreach ($parcs as $parc) {
-        $exist = false;
-        foreach ($profiles as $profile) {
-            if ($profile->getAttribute('id') == $parc['name']) {
-                $node = $xml2->importNode($profile, true);
-                $xml2->documentElement->appendChild($node);
-                $xml->documentElement->removeChild($profile);
-                $exist = true;
-            }
-        }
-        if (! $exist) {
-            $new_profile = new DOMElement('profile');
-            $xml2->documentElement->appendChild($new_profile);
-            $new_profile->setAttribute("id", $parc['name']);
-        }
-    }
-    
-    $hosts = search_ad($config, "*", "machine", $config['dn']['computers']);
-    
-    foreach ($hosts as $machine) {
-        if (isset($machine['memberof'])) {
-            $parcs = $machine['memberof'];
-//            if (count($parcs) > 0) {
-                $new_profile = new DOMElement('profile');
-                $xml2->documentElement->appendChild($new_profile);
-                $new_profile->setAttribute("id", ldap_hostname($machine));
-                $parcs[] = "cn=_TousLesPostes";
-                foreach ($parcs as $parcdn) {
-                    $parc = ldap_dn2cn($parcdn);
-                    $depends = new DOMElement('depends');
-                    $new_profile->appendChild($depends);
-                    $depends->setAttribute("profile-id", $parc);
-                }
-                
-                foreach ($profiles as $profile) {
-                    if ($profile->getAttribute('id') == ldap_hostname($machine)) {
-                        $packages = $profile->getElementsByTagName('packages');
-                        foreach ($packages as $package) {
-                            $new_package = new DOMElement('package');
-                            $new_profile->appendChild($new_package);
-                            $new_package->setAttribute("package-id", $package->getAttribute('package-id'));
+    if ($fp = fopen("/var/lock/wpkg.lock", 'w+')) {
+        $startTime = microtime();
+        do {
+            $canWrite = flock($fp, LOCK_EX);
+            // If lock not obtained sleep for 0 - 100 milliseconds, to avoid collision and CPU load
+            if (! $canWrite)
+                usleep(round(rand(0, 100) * 1000));
+        } while ((! $canWrite) and ((microtime() - $startTime) < 1000));
+
+        // file was locked so now we can store information
+        if ($canWrite) {
+            $xml = new DOMDocument();
+            $xml->formatOutput = true;
+            $xml->preserveWhiteSpace = false;
+            if ($xml->load($url_profiles)) {
+                $profiles = $xml->documentElement->getElementsByTagName('profile');
+
+                $xml2 = new DOMDocument();
+                $xml2->formatOutput = true;
+                $xml2->preserveWhiteSpace = false;
+                $root = $xml2->createElement("profiles");
+                $xml2->appendChild($root);
+                $comment = $xml2->createComment(" Fichier genere par SambaEdu. Ne pas modifier.");
+                $root->appendChild($comment);
+                $profiles2 = $xml2->documentElement->getElementsByTagName('profile');
+
+                $xml3 = new DOMDocument();
+                $xml3->formatOutput = true;
+                $xml3->preserveWhiteSpace = false;
+                $root = $xml3->createElement("wpkg");
+                $xml3->appendChild($root);
+                $comment = $xml3->createComment(" Fichier genere par SambaEdu. Ne pas modifier.");
+                $root->appendChild($comment);
+                $host = $xml3->documentElement->getElementsByTagName('host');
+
+                $parcs = search_parcs($config, "*");
+                $parcs[] = array(
+                    'name' => "_TousLesPostes"
+                );
+                foreach ($parcs as $parc) {
+                    $exist = false;
+                    foreach ($profiles as $profile) {
+                        if ($profile->getAttribute('id') == $parc['name']) {
+                            $node = $xml2->importNode($profile, true);
+                            $xml2->documentElement->appendChild($node);
+                            $xml->documentElement->removeChild($profile);
+                            $exist = true;
                         }
                     }
+                    if (! $exist) {
+                        $new_profile = new DOMElement('profile');
+                        $xml2->documentElement->appendChild($new_profile);
+                        $new_profile->setAttribute("id", $parc['name']);
+                    }
                 }
-                $new_host = new DOMElement('host');
-                $xml3->documentElement->appendChild($new_host);
-                $new_host->setAttribute("name", ldap_hostname($machine));
-                $new_host->setAttribute("profile-id", ldap_hostname($machine));
-  //          }
+
+                $hosts = search_ad($config, "*", "machine", $config['dn']['computers']);
+
+                foreach ($hosts as $machine) {
+                    if (isset($machine['memberof'])) {
+                        $parcs = $machine['memberof'];
+                        // if (count($parcs) > 0) {
+                        $new_profile = new DOMElement('profile');
+                        $xml2->documentElement->appendChild($new_profile);
+                        $new_profile->setAttribute("id", ldap_hostname($machine));
+                        $parcs[] = "cn=_TousLesPostes";
+                        foreach ($parcs as $parcdn) {
+                            $parc = ldap_dn2cn($parcdn);
+                            $depends = new DOMElement('depends');
+                            $new_profile->appendChild($depends);
+                            $depends->setAttribute("profile-id", $parc);
+                        }
+
+                        foreach ($profiles as $profile) {
+                            if ($profile->getAttribute('id') == ldap_hostname($machine)) {
+                                $packages = $profile->getElementsByTagName('packages');
+                                foreach ($packages as $package) {
+                                    $new_package = new DOMElement('package');
+                                    $new_profile->appendChild($new_package);
+                                    $new_package->setAttribute("package-id", $package->getAttribute('package-id'));
+                                }
+                            }
+                        }
+                        $new_host = new DOMElement('host');
+                        $xml3->documentElement->appendChild($new_host);
+                        $new_host->setAttribute("name", ldap_hostname($machine));
+                        $new_host->setAttribute("profile-id", ldap_hostname($machine));
+                        // }
+                    }
+                }
+                $xml3->save($url_hosts);
+                $xml2->save($url_profiles);
+                flock($fp, LOCK_UN);
+            }
         }
+        return fclose($fp);
+    } else {
+        return false;
     }
-    $xml2->save($url_profiles);
-    $xml3->save($url_hosts);
-    apcu_delete('profile_lock');
-   
 }
 
 function set_app_parcs($post_parc, $get_Appli, $liste_parcs, $url_profiles)
 {
-    $xml = new DOMDocument();
-    $xml->formatOutput = true;
-    $xml->preserveWhiteSpace = false;
-     while (apcu_fetch('profile_lock')) {
-        sleep(1);
-    }
-    apcu_add('profile_lock', 1, 300);
+    if ($fp = fopen("/var/lock/wpkg.lock", 'w+')) {
+        $startTime = microtime();
+        do {
+            $canWrite = flock($fp, LOCK_EX);
+            // If lock not obtained sleep for 0 - 100 milliseconds, to avoid collision and CPU load
+            if (! $canWrite)
+                usleep(round(rand(0, 100) * 1000));
+        } while ((! $canWrite) and ((microtime() - $startTime) < 1000));
 
-	$xml->load($url_profiles);
-    $element = $xml->documentElement;
-    $profiles = $xml->documentElement->getElementsByTagName('profile');
+        // file was locked so now we can store information
+        if ($canWrite) {
+            $xml = new DOMDocument();
+            $xml->formatOutput = true;
+            $xml->preserveWhiteSpace = false;
+            $xml->load($url_profiles);
+            $element = $xml->documentElement;
+            $profiles = $xml->documentElement->getElementsByTagName('profile');
 
-    $result = array(
-        "out" => 0,
-        "in" => 0
-    );
+            $result = array(
+                "out" => 0,
+                "in" => 0
+            );
 
-    foreach ($profiles as $profile) {
-        $packages = $profile->getElementsByTagName('package');
-        if (in_array($profile->getAttribute('id'), $liste_parcs)) {
-            foreach ($packages as $package) {
-                if ($package->getAttribute('package-id') == $get_Appli)
-                    $profile->removeChild($package);
+            foreach ($profiles as $profile) {
+                $packages = $profile->getElementsByTagName('package');
+                if (in_array($profile->getAttribute('id'), $liste_parcs)) {
+                    foreach ($packages as $package) {
+                        if ($package->getAttribute('package-id') == $get_Appli)
+                            $profile->removeChild($package);
+                    }
+
+                    if (in_array($profile->getAttribute('id'), $post_parc)) {
+                        $new_package = new DOMElement('package');
+                        $new_package2 = $profile->appendChild($new_package);
+                        $new_package2->setAttribute("package-id", $get_Appli);
+                        $result["in"] ++;
+                    } else
+                        $result["out"] ++;
+                }
             }
 
-            if (in_array($profile->getAttribute('id'), $post_parc)) {
-                $new_package = new DOMElement('package');
-                $new_package2 = $profile->appendChild($new_package);
-                $new_package2->setAttribute("package-id", $get_Appli);
-                $result["in"] ++;
-            } else
-                $result["out"] ++;
+            rewind($fp);
+            fwrite($fp, $xml->saveXML());
+            flock($fp, LOCK_UN);
+            fclose($fp);
         }
     }
 
-    $xml->save($url_profiles);
-    apcu_delete('profile_lock');
     return $result;
 }
 
 function set_app_postes($post_host, $get_Appli, $liste_parcs, $url_profiles)
 {
-    $xml = new DOMDocument();
-    $xml->formatOutput = true;
-    $xml->preserveWhiteSpace = false;
-     while (apcu_fetch('profile_lock')) {
-        sleep(1);
-    }
-    apcu_add('profile_lock', 1, 300);
+    if ($fp = fopen("/var/lock/wpkg.lock", 'w+')) {
+        $startTime = microtime();
+        do {
+            $canWrite = flock($fp, LOCK_EX);
+            // If lock not obtained sleep for 0 - 100 milliseconds, to avoid collision and CPU load
+            if (! $canWrite)
+                usleep(round(rand(0, 100) * 1000));
+        } while ((! $canWrite) and ((microtime() - $startTime) < 1000));
 
-    $xml->load($url_profiles);
-    $element = $xml->documentElement;
-    $profiles = $xml->documentElement->getElementsByTagName('profile');
+        // file was locked so now we can store information
+        if ($canWrite) {
+            $xml = new DOMDocument();
+            $xml->formatOutput = true;
+            $xml->preserveWhiteSpace = false;
+            $xml->load($url_profiles);
+            $element = $xml->documentElement;
+            $profiles = $xml->documentElement->getElementsByTagName('profile');
 
-    $result = array(
-        "out" => 0,
-        "in" => 0
-    );
+            $result = array(
+                "out" => 0,
+                "in" => 0
+            );
 
-    foreach ($profiles as $profile) {
-        $packages = $profile->getElementsByTagName('package');
-        if (! in_array($profile->getAttribute('id'), $liste_parcs)) {
-            foreach ($packages as $package) {
-                if ($package->getAttribute('package-id') == $get_Appli)
-                    $profile->removeChild($package);
+            foreach ($profiles as $profile) {
+                $packages = $profile->getElementsByTagName('package');
+                if (! in_array($profile->getAttribute('id'), $liste_parcs)) {
+                    foreach ($packages as $package) {
+                        if ($package->getAttribute('package-id') == $get_Appli)
+                            $profile->removeChild($package);
+                    }
+
+                    if (in_array($profile->getAttribute('id'), $post_host)) {
+                        $new_package = new DOMElement('package');
+                        $new_package2 = $profile->appendChild($new_package);
+                        $new_package2->setAttribute("package-id", $get_Appli);
+                        $result["in"] ++;
+                    } else
+                        $result["out"] ++;
+                }
             }
-
-            if (in_array($profile->getAttribute('id'), $post_host)) {
-                $new_package = new DOMElement('package');
-                $new_package2 = $profile->appendChild($new_package);
-                $new_package2->setAttribute("package-id", $get_Appli);
-                $result["in"] ++;
-            } else
-                $result["out"] ++;
+            rewind($fp);
+            fwrite($fp, $xml->saveXML());
+            flock($fp, LOCK_UN);
+            fclose($fp);
         }
     }
-
-    $xml->save($url_profiles);
-    apcu_delete('profile_lock');
- 
     return $result;
 }
 
 function set_parc_apps($post_appli, $get_parc, $url_profiles)
 {
-    $xml = new DOMDocument();
-    $xml->formatOutput = true;
-    $xml->preserveWhiteSpace = false;
-    while (apcu_fetch('profile_lock')) {
-        sleep(1);
-    }
-    apcu_add('profile_lock', 1, 300);
-    $xml->load($url_profiles);
-    $element = $xml->documentElement;
-    $profiles = $xml->documentElement->getElementsByTagName('profile');
+    if ($fp = fopen("/var/lock/wpkg.lock", 'w+')) {
+        $startTime = microtime();
+        do {
+            $canWrite = flock($fp, LOCK_EX);
+            // If lock not obtained sleep for 0 - 100 milliseconds, to avoid collision and CPU load
+            if (! $canWrite)
+                usleep(round(rand(0, 100) * 1000));
+        } while ((! $canWrite) and ((microtime() - $startTime) < 1000));
 
-    $result = array(
-        "out" => 0,
-        "in" => 0
-    );
+        // file was locked so now we can store information
+        if ($canWrite) {
+            $xml = new DOMDocument();
+            $xml->formatOutput = true;
+            $xml->preserveWhiteSpace = false;
+            $xml->load($url_profiles);
+            $element = $xml->documentElement;
+            $profiles = $xml->documentElement->getElementsByTagName('profile');
 
-    foreach ($profiles as $profile) {
-        if ($profile->getAttribute('id') == $get_parc) {
-            $packages = $profile->getElementsByTagName('package');
-            $length = $packages->length;
-            $i = $length;
-            for ($i = $length - 1; $i >= 0; $i --) {
-                $profile->removeChild($packages->item($i));
+            $result = array(
+                "out" => 0,
+                "in" => 0
+            );
+
+            foreach ($profiles as $profile) {
+                if ($profile->getAttribute('id') == $get_parc) {
+                    $packages = $profile->getElementsByTagName('package');
+                    $length = $packages->length;
+                    $i = $length;
+                    for ($i = $length - 1; $i >= 0; $i --) {
+                        $profile->removeChild($packages->item($i));
+                    }
+                    foreach ($post_appli as $appli) {
+                        $new_package = new DOMElement('package');
+                        $new_package2 = $profile->appendChild($new_package);
+                        $new_package2->setAttribute("package-id", $appli);
+                        $result["in"] ++;
+                    }
+                }
             }
-            foreach ($post_appli as $appli) {
-                $new_package = new DOMElement('package');
-                $new_package2 = $profile->appendChild($new_package);
-                $new_package2->setAttribute("package-id", $appli);
-                $result["in"] ++;
-            }
+            rewind($fp);
+            fwrite($fp, $xml->saveXML());
+            flock($fp, LOCK_UN);
+            fclose($fp);
         }
     }
 
-    $xml->save($url_profiles);
-    apcu_delete('profile_lock');
- 
     return $result;
 }
 
 function clone_parc_apps($parc_source, $parc_cible, $url_profiles)
 {
-    $xml = new DOMDocument();
-    $xml->formatOutput = true;
-    $xml->preserveWhiteSpace = false;
-     while (apcu_fetch('profile_lock')) {
-        sleep(1);
-    }
-    apcu_add('profile_lock', 1, 300);
-    $xml->load($url_profiles);
-    $element = $xml->documentElement;
-    $profiles = $xml->documentElement->getElementsByTagName('profile');
-    $list_appli = array();
+    if ($fp = fopen("/var/lock/wpkg.lock", 'w+')) {
+        $startTime = microtime();
+        do {
+            $canWrite = flock($fp, LOCK_EX);
+            // If lock not obtained sleep for 0 - 100 milliseconds, to avoid collision and CPU load
+            if (! $canWrite)
+                usleep(round(rand(0, 100) * 1000));
+        } while ((! $canWrite) and ((microtime() - $startTime) < 1000));
 
-    $result = array(
-        "out" => 0,
-        "in" => 0
-    );
+        // file was locked so now we can store information
+        if ($canWrite) {
+            $xml = new DOMDocument();
+            $xml->formatOutput = true;
+            $xml->preserveWhiteSpace = false;
+            $xml->load($url_profiles);
+            $element = $xml->documentElement;
+            $profiles = $xml->documentElement->getElementsByTagName('profile');
+            $list_appli = array();
 
-    foreach ($profiles as $profile) {
-        if ($profile->getAttribute('id') == $parc_cible) {
-            $packages = $profile->getElementsByTagName('package');
-            $length = $packages->length;
-            $i = $length;
-            for ($i = $length - 1; $i >= 0; $i --) {
-                $profile->removeChild($packages->item($i));
-                $result["out"] ++;
-            }
-        }
-        if ($profile->getAttribute('id') == $parc_source) {
-            $packages = $profile->getElementsByTagName('package');
-            foreach ($packages as $package) {
-                $list_appli[] = $package->getAttribute('package-id');
-            }
-        }
-    }
-    foreach ($profiles as $profile) {
-        if ($profile->getAttribute('id') == $parc_cible) {
-            if (is_array($list_appli)) {
-                foreach ($list_appli as $appli) {
-                    $new_package = new DOMElement('package');
-                    $new_package2 = $profile->appendChild($new_package);
-                    $new_package2->setAttribute("package-id", $appli);
-                    $result["in"] ++;
+            $result = array(
+                "out" => 0,
+                "in" => 0
+            );
+
+            foreach ($profiles as $profile) {
+                if ($profile->getAttribute('id') == $parc_cible) {
+                    $packages = $profile->getElementsByTagName('package');
+                    $length = $packages->length;
+                    $i = $length;
+                    for ($i = $length - 1; $i >= 0; $i --) {
+                        $profile->removeChild($packages->item($i));
+                        $result["out"] ++;
+                    }
+                }
+                if ($profile->getAttribute('id') == $parc_source) {
+                    $packages = $profile->getElementsByTagName('package');
+                    foreach ($packages as $package) {
+                        $list_appli[] = $package->getAttribute('package-id');
+                    }
                 }
             }
+            foreach ($profiles as $profile) {
+                if ($profile->getAttribute('id') == $parc_cible) {
+                    if (is_array($list_appli)) {
+                        foreach ($list_appli as $appli) {
+                            $new_package = new DOMElement('package');
+                            $new_package2 = $profile->appendChild($new_package);
+                            $new_package2->setAttribute("package-id", $appli);
+                            $result["in"] ++;
+                        }
+                    }
+                }
+            }
+            rewind($fp);
+            fwrite($fp, $xml->saveXML());
+            flock($fp, LOCK_UN);
+            fclose($fp);
         }
     }
-    $xml->save($url_profiles);
-    apcu_delete('profile_lock');
- 
     return $result;
 }
 
