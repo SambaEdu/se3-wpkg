@@ -16,11 +16,11 @@ if ( $_GET['refresh'] == "1" ) {
 	}
 }
 $ErreurWget=false;
-$url='http://wawadeb.crdp.ac-caen.fr/wpkg-list-ng/packages_stable.xml';
+$url='http://deb.sambaedu.org/wpkg/se3/packages_stable.xml';
 $fichier='se3_wpkglist.php';
-$urlTest='http://wawadeb.crdp.ac-caen.fr/wpkg-list-ng/packages_testing.xml';
+$urlTest='http://deb.sambaedu.org/wpkg/se3/packages_testing.xml';
 $fichiertest='se3_wpkglist.php?branch=testing';
-$urlXP='http://wawadeb.crdp.ac-caen.fr/wpkg-list-ng/packages_XP.xml';
+$urlXP='http://deb.sambaedu.org/wpkg/se3/packages_XP.xml';
 $fichierXP='se3_wpkglist.php?branch=XP';
 exec ( "cd $wpkgwebdir;wget -N --timeout=15 --cache=off --tries=3 '$url' -O '$fichier' 2>&1", $output, $return_value);
 if ( $return_value != 0 ) {

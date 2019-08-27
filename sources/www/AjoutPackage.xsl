@@ -23,9 +23,9 @@
 	<!-- url fournissant les packages officiels pour se3 
 			pas besoin d'un serveur sécurisé car le md5sum des fichiers appli.xml 
 			est ensuite controlé sur le serveur se3 avant l'installation -->
-	<xsl:param name="urlWawadeb" select="'http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages-ng/stable'" />
+	<xsl:param name="urlWawadeb" select="'http://deb.sambaedu.org/wpkg/wpkg/stable'" />
 	<!-- url fournissant le xml des packages du forum (nom de variable à changer!). -->
-	<xsl:param name="urlWawadebMD5" select="'http://wawadeb.crdp.ac-caen.fr/wpkg-list-ng/se3_wpkglist.php'" />
+	<xsl:param name="urlWawadebMD5" select="'http://deb.sambaedu.org/wpkg/se3/se3_wpkglist.php'" />
 
 	<xsl:param name="Local" select="false()" />
 	<xsl:variable name="WPKGROOT" select="'/var/se3/unattended/install/wpkg'" />
@@ -46,7 +46,7 @@
 						Erreur : <xsl:value-of select="$urlWawadebMD5"/> n'est pas accessible !
 					</xsl:when>
 					<xsl:otherwise>
-						Les mises à jour proposées ici sont celles des paquets WPKG du <a href="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages-ng/stable" target="_blank">SVN du CRDP de Basse-Normandie</a>.
+						Les mises à jour proposées ici sont celles des paquets WPKG du <a href="http://deb.sambaedu.org/wpkg/wpkg/stable" target="_blank">SambaEdu 4, suite à la fermeture du dépot du SVN présent sur les serveurs du CRDP de Basse-Normandie.</a>.
 						
 						<form name="formUpdateXml" method="post" action="index.php?UpdateApplis=1" enctype="multipart/form-data">
 							<table align="center">
@@ -318,9 +318,9 @@
 		<div id="updatedXml">
 			<table>
 				<tr>
-					<td><p>Pour mettre à jour ou installer des paquets WPKG à partir du <a href="http://wawadeb.crdp.ac-caen.fr/versions-xml-se3.php" target="_blank">SVN du CRDP de Caen</a> : </p></td>
+					<td><p>Pour mettre à jour ou installer des paquets WPKG à partir du <a href="http://deb.sambaedu.org/wpkg/versions-xml.php" target="_blank">dépôt officiel SE4</a> : </p></td>
 					<td>
-						<input value="Afficher les applications disponibles" type="button" onclick="MAJPackages=1;urlWawadebMD5='view-source:http://wawadeb.crdp.ac-caen.fr/wpkg-list-ng/se3_wpkglist.php';testUpdatedXml();"></input>
+						<input value="Afficher les applications disponibles" type="button" onclick="MAJPackages=1;urlWawadebMD5='view-source:http://deb.sambaedu.org/wpkg/se3/se3_wpkglist.php';testUpdatedXml();"></input>
 						<!-- Devenu inutile puisque la nouvelle page listant les applis du svn est regénérée systématiquement
 						<br/><br/> 
 						<input name="forceRefresh" id="forceRefresh" value="0" type="checkbox" title="Récupérer les données du SVN même si elle ne semble pas avoir été modifiées"></input>forçer le rafraîchissement.<br/>
@@ -339,7 +339,7 @@ N'oubliez pas, après avoir installé une application de "test", d'écrire sur l
 	<xsl:template name="explication">
 		<div>
 			<h3>Information</h3>
-			En dehors du <a href="http://wawadeb.crdp.ac-caen.fr/versions-xml-se3.php" target="_blank">SVN</a>,
+			En dehors du <a href="http://deb.sambaedu.org/wpkg/versions-xml.php" target="_blank">dépôt officiel SambaEdu 4</a>,
 			vous pouvez ajouter une application de votre cru ou inspirée d'applications téléchargées sur internet (voir 'Compléments' plus bas).<br></br>
 			<dir>
 				<li >Créer un fichier (*.xml) en vous aidant de la <a href="http://wwdeb.crdp.ac-caen.fr/mediase3/index.php/FaqWpkg#Comment_fabriquer_un_xml_destin.C3.A9_.C3.A0_devenir_officiellement_d.C3.A9ploy.C3.A9.3F" target="_blank">documentation officielle SE3</a> et en vous inspirant de ceux disponibles depuis les liens ci-dessous.</li>
@@ -400,7 +400,7 @@ N'oubliez pas, après avoir installé une application de "test", d'écrire sur l
 		Le plus souvent, ces fichiers devront d'être adaptés pour fonctionner sur votre réseau.<br></br>
 		Voici quelques liens :<br></br>
 		<!-- obsolete <a href="http://wpkg.linuxkidd.com/live/packages_list.php">http://wpkg.linuxkidd.com/live/packages_list.php</a><br></br> -->
-		<a href="http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages-ng/stable" target="_blank">L'ensemble des XML prévus pour SambaEdu3 : http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages-ng/stable</a><br></br>
+		<a href="http://deb.sambaedu.org/wpkg/wpkg/stable" target="_blank">L'ensemble des XML prévus pour SambaEdu4 et potentiellement compatibles sur SE3 : http://deb.sambaedu.org/wpkg/wpkg/stable</a><br></br>
 		<a href="http://wpkg.org/index.php/Category:Silent_Installers" target="_blank">XML prévus pour wpkg dont les chemins doivent être adaptés : http://wpkg.org/index.php/Category:Silent_Installers</a><br></br>
 		<!-- inutile ? <a href="http://www.sp.phy.cam.ac.uk/%7Erl201/wpkg/licences.php?action=listsoftware">http://www.sp.phy.cam.ac.uk/~rl201/wpkg/licences.php?action=listsoftware</a> -->
 		

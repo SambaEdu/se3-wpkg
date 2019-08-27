@@ -1,8 +1,8 @@
 <?php
 
-	$url_stable='http://wawadeb.crdp.ac-caen.fr/wpkg-list-ng/packages_stable.xml';
-	$url_testing='http://wawadeb.crdp.ac-caen.fr/wpkg-list-ng/packages_testing.xml';
-	$url_XP='http://wawadeb.crdp.ac-caen.fr/wpkg-list-ng/packages_XP.xml';
+	$url_stable='http://deb.sambaedu.org/wpkg/se3/packages_stable.xml';
+	$url_testing='http://deb.sambaedu.org/wpkg/se3/packages_testing.xml';
+	$url_XP='http://deb.sambaedu.org/wpkg/se3/packages_XP.xml';
 	$url_forum = "/var/www/se3/wpkg/forum.xml";
 
 	$xml = new DOMDocument;
