@@ -5,7 +5,7 @@
 # Si vous reprenez ou vous inspirez de ce programme, vous devez citer le Projet Samba Edu
 #
 #### Telechargement automatique des mises a jour wsusoffline en fonction du contenu de /var/se3/unattended/install/wsusoffline/UpdateGenerator.ini #####
-# 
+#
 #  Auteur : Olivier Lacroix
 #
 #    mars 2012
@@ -30,6 +30,7 @@
 #          - default.txt
 #          - install.cmd
 #          - offlineupdate.cmd
+#          - checkversion.cmd
 #          - cmd64.exe
 #          - wpkgMessage.exe
 #          - wpkgMessage.ini
@@ -39,7 +40,7 @@
 #       Si l'installation echoue, envoi d'un mail a l'admin, et sans intervention, une nouvelle tentative d'installation a lieu des le lendemain a 20h45.
 #       Mise a jour des droits sur les dossiers WPKG pour contourner un probleme d'acl non correctes apres le telechargement du xml de wsusoffline
 #       Suppression des rapports de plus de 1 an
-#    
+#
 
 
 # Mode debug "1" ou "0"
@@ -162,7 +163,7 @@ if [ $? != 0 ]; then
 	SENDMAIL "WsusOffline : Reinstallation du xml qui est absent de WPKG."
 fi
 
-WSUSOFFLINEROOT=http://svn.tice.ac-caen.fr/svn/SambaEdu3/wpkg-packages-ng/files/wsusoffline2
+WSUSOFFLINEROOT=http://deb.sambaedu.org/wpkg/files/wsusoffline2
 TEMOIN=/var/se3/unattended/install/wsusoffline/WsusOffline-Versions.txt
 NEWTEMOIN=/tmp/wsusofflineversions.txt
 wget -O $NEWTEMOIN $WSUSOFFLINEROOT/WsusOffline-Versions.txt? >/dev/null 2>&1
@@ -181,7 +182,7 @@ fi
 [ -e $TEMOIN ] && TESTTEMOIN=$(md5sum $TEMOIN | cut -d" " -f1)
 
 # echo "temoin $TESTTEMOIN et newtemoin :$TESTNEWTEMOIN"
-if [ "$TESTTEMOIN" == "$TESTNEWTEMOIN" ]; then
+if [ "$TESTTEMOIN" == "$TESTNEWTEMOIN" ] && [ -e /var/se3/unattended/install/packages/wsusoffline/checkversion.cmd ]; then
 	echo "La version de wsusoffline presente est identique a celle du svn."
 else
 	echo "Une mise a jour de wsusoffline est disponible sur le svn.... Veuillez patienter." >$MAIL
@@ -578,7 +579,7 @@ if [ ! -e /var/se3/unattended/install/wsusoffline/sh/DownloadUpdates.sh ]; then
 	SENDMAIL "WsusOffline ERREUR : Le script DownloadUpdates.sh est absent." 
 	exit 1
 fi
-	
+
 PARAMS=/var/se3/unattended/install/wsusoffline/UpdateGenerator.ini
 if [ ! -e $PARAMS ]; then
 	echo "" >$MAIL
@@ -673,7 +674,7 @@ if [  "$AncienneTailleDossierMaj" != "$NouvelleTailleDossierMaj" ]; then
 	SENDMAIL "WsusOffline $VersionWsusOffline : Nouvelles Maj Microsoft telechargees. Taille du dossier des Maj : $MailTailleDossierMaj"
 	echo $NouvelleTailleDossierMaj > /var/se3/unattended/install/wsusoffline/wsusoffline_client_size.txt
 else
-	SENDMAIL "WsusOffline $VersionWsusOffline : Pas de nouvelles Maj Microsoft telechargees."
+#	SENDMAIL "WsusOffline $VersionWsusOffline : Pas de nouvelles Maj Microsoft telechargees."
 	[ -e $MAIL ] && rm -f $MAIL
 fi
 
